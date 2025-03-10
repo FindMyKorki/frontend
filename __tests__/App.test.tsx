@@ -5,6 +5,6 @@ import App from '../App';
 describe('App', () => {
   test('renders App component without crashing', () => {
     const { getByTestId } = render(<App/>);
-    expect(getByTestId('App:View:AppContainer')).toBeTruthy();
+    expect(getByTestId('App:SafeAreaView:AppContainer')).toBeTruthy();
   });
 });
