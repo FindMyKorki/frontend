@@ -5,7 +5,7 @@ const HomeScreen = () => {
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
       <Text style={styles.text}>
-          Home Screen! Hi
+          Home Screen! Hi!!!!!!!!!!!!!!
       </Text>
     </ScrollView>
   );
