@@ -1,0 +1,40 @@
+services:
+  frontend:
+    build:
+      context: .
+    # volumes:
+    #   - ./:/app
+    #   - /app/node_modules
+    ports:
+      - 19000:19000
+      - 19001:19001
+      - 19002:19002
+      - ${FRONTEND_PORT}:${FRONTEND_PORT}
+    # environment:
+    #   - METRO_BUNDLER_HOST=0.0.0.0
+    #   - REACT_NATIVE_PACKAGER_HOSTNAME="0.0.0.0"
+    command: ["expo", "start", "--tunnel", "--port", "${FRONTEND_PORT}"]
+    tty: true
+    stdin_open: true
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: backend
+      dockerfile: Dockerfile_dev.dockerfile
+    environment:
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_KEY=${SUPABASE_KEY}
+      - ENVIRONMENT=development
+    ports:
+      - ${BACKEND_PORT}:${BACKEND_PORT}
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "${BACKEND_PORT}", "--reload"]
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
