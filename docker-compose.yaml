@@ -5,6 +5,8 @@ services:
       context: .
     volumes:
       - ./app:/frontend/app
+      - ./Dockerfile:/frontend/Dockerfile
+      - ./docker-compose.yaml:/frontend/docker-compose.yaml
     ports:
       - 19000:19000
       - 19001:19001
