@@ -14,4 +14,4 @@ Normally, there should be a QR code coming from the frontend, but that doesn't w
 You can try using this one below 
                   |
                   V
-![qr code](qr_code.png)
+![qr code](assets/qr_code.png)
