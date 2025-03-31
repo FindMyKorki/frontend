@@ -9,7 +9,9 @@
     "web": "expo start --web",
     "eject": "expo eject",
     "test": "jest --watchAll",
-    "test:ci": "jest --ci --runInBand"
+    "test:ci": "jest --ci --runInBand",
+    "format": "prettier --write app/",
+    "prepare": "husky"
   },
   "jest": {
     "preset": "jest-expo",
@@ -53,6 +55,10 @@
     "@babel/core": "^7.25.2",
     "@types/jest": "^29.5.14",
     "@types/react": "~18.3.12",
+    "babel-preset-expo": "^12.0.10",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.0",
+    "prettier": "^3.5.3",
     "react-test-renderer": "^18.3.1",
     "typescript": "^5.3.3"
   },

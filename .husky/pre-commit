@@ -1,0 +1,2 @@
+npx lint-staged
+# this will run every time you commit

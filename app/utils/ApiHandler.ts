@@ -35,7 +35,8 @@ class ApiHandler {
     };
 
     if (options.data) {
-      fetchOptions.body = typeof options.data === 'string' ? options.data : JSON.stringify(options.data);
+      fetchOptions.body =
+        typeof options.data === 'string' ? options.data : JSON.stringify(options.data);
     }
 
     const response = await fetch(`${this.baseURL}${options.url}`, fetchOptions);
