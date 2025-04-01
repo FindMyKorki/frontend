@@ -1,21 +1,16 @@
-import {ScrollView, StyleSheet, Text} from "react-native";
+import {ScrollView, Text} from "react-native";
+import ReusableExampleComponent from "../components/ReusableExampleComponent";
 
 const HomeScreen = () => {
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
-      <Text style={styles.text}>
-          Home Screen! Hi!!!!!!!!!!!!!!
+      <ReusableExampleComponent exampleProp={'Hi!'} />
+      <Text className={`px-def-hor`}>
+          Home Screen! Hi
       </Text>
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  text: {
-      paddingTop: 20,
-      paddingBottom: 20,
-  }
-});
 
 export default HomeScreen;
