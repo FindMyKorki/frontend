@@ -1,9 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import TabsNavigator from './navigation/TabsNavigator';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import '../global.css';
 
 const Stack = createNativeStackNavigator();
 
@@ -12,7 +12,7 @@ export default function App() {
     <>
       <StatusBar />
       <SafeAreaProvider testID={'App:SafeAreaProvider:AppContainer'}>
-        <SafeAreaView style={{ flex: 1 }}>
+        <SafeAreaView className={`flex-1 bg-white justify-center align-center`}>
           <NavigationContainer>
             <Stack.Navigator>
               <Stack.Screen
@@ -27,12 +27,3 @@ export default function App() {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
