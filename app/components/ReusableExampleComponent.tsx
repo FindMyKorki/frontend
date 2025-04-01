@@ -1,10 +1,10 @@
-import { FC } from "react";
-import { View, Text } from "react-native";
+import { FC } from 'react';
+import { View, Text } from 'react-native';
 
 type ReusableExampleComponentType = {
   exampleProp: string;
-  className?: string
-}
+  className?: string;
+};
 
 const ReusableExampleComponent: FC<ReusableExampleComponentType> = ({ exampleProp, className }) => {
   return (
@@ -12,6 +12,6 @@ const ReusableExampleComponent: FC<ReusableExampleComponentType> = ({ examplePro
       <Text className={`text-white`}>{exampleProp}</Text>
     </View>
   );
-}
+};
 
 export default ReusableExampleComponent;
