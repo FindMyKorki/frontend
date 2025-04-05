@@ -1,7 +1,8 @@
 import * as SecureStore from 'expo-secure-store';
 
 class ApiHandler {
-  private baseURL: string;
+  // private baseURL: string;
+  private baseURL = 'http://192.168.1.85:8000';
   private token: string | null = null;
 
   constructor() {
