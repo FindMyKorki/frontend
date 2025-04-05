@@ -41,8 +41,7 @@ services:
       - ENVIRONMENT=development
     ports:
       - ${BACKEND_PORT}:${BACKEND_PORT}
-    command:
-      ['uvicorn', 'app.main:app', '--host', '0.0.0.0', '--port', '${BACKEND_PORT}', '--reload']
+    command: ['uvicorn', 'main:app', '--host', '0.0.0.0', '--port', '${BACKEND_PORT}', '--reload']
     networks:
       - app-network
 
