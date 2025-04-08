@@ -4,6 +4,7 @@ import ApiHandler from './ApiHandler';
 import LoginScreen from '../screens//LoginScreen';
 
 const api = new ApiHandler();
+const BACKEND_URL = process.env.EXPO_PUBLIC_API_BASE_URL!;
 
 interface AuthContextType {
   isAuthenticated: boolean;
