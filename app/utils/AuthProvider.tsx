@@ -2,6 +2,7 @@ import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import * as Linking from 'expo-linking';
 import ApiHandler from './ApiHandler';
 import LoginScreen from '../screens//LoginScreen';
+import * as SecureStore from 'expo-secure-store';
 
 const api = new ApiHandler();
 const BACKEND_URL = process.env.EXPO_PUBLIC_API_BASE_URL!;
@@ -26,6 +27,20 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
       if (code) {
         console.log('Odebrany code:', code);
+
+        const codeVerifier = await SecureStore.getItemAsync('code_verifier');
+        const response = await fetch(
+          `${BACKEND_URL}/auth/exchange-code-for-session/${code}/${codeVerifier}`,
+        );
+        const data = await response.json();
+
+        if (data.tokens?.access_token) {
+          await SecureStore.setItemAsync('access_token', data.tokens.access_token);
+          await SecureStore.setItemAsync('refresh_token', data.tokens.refresh_token);
+          setIsAuthenticated(true);
+        } else {
+          console.warn('Nie udało się pobrać tokenów.');
+        }
       }
     };
 

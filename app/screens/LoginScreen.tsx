@@ -5,14 +5,12 @@ import * as SecureStore from 'expo-secure-store';
 import * as Linking from 'expo-linking';
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_API_BASE_URL!;
-const REDIRECT_URL = 'https://192.168.1.85:8081/auth/callback';
+const FRONTEND_URL = process.env.FRONTEND_URL;
 
 const LoginScreen = () => {
-  const [canOpenDeepLink, setCanOpenDeepLink] = useState<boolean | null>(null);
-
   const handleOAuthLogin = async (provider: 'google' | 'facebook') => {
     try {
-      const REDIRECT_URL = 'findmykorki://auth/callback';
+      const REDIRECT_URL = `${BACKEND_URL}/auth/callback`;
 
       console.log('!!!!!Sending redirect_to:', REDIRECT_URL);
       console.log('!!!!!Backend URL:', BACKEND_URL);
@@ -21,14 +19,14 @@ const LoginScreen = () => {
         `${BACKEND_URL}/auth/sign-in/${provider}?redirect_to=${encodeURIComponent(REDIRECT_URL)}`,
       );
       const data = await response.json();
-
+      console.log('json data:', data);
       const authUrl = data.oauth_response.url;
       const codeVerifier = data.code_verifier;
 
       await SecureStore.setItemAsync('code_verifier', codeVerifier);
 
-      const result = await WebBrowser.openAuthSessionAsync(authUrl, REDIRECT_URL);
-      console.log('Wynik openAuthSessionAsync:', result);
+      const result = await WebBrowser.openBrowserAsync(authUrl);
+      //console.log('CODE HELLLEEEEAAAAA:', result.url);
     } catch (error) {
       console.error(error);
       Alert.alert('Błąd logowania', 'Nie udało się otworzyć strony logowania.');
