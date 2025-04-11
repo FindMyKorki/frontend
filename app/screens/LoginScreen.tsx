@@ -24,6 +24,7 @@ const LoginScreen = () => {
       const codeVerifier = data.code_verifier;
 
       await SecureStore.setItemAsync('code_verifier', codeVerifier);
+      console.log('✅ Zapisany code_verifier:', codeVerifier);
 
       const result = await WebBrowser.openBrowserAsync(authUrl);
       //console.log('CODE HELLLEEEEAAAAA:', result.url);

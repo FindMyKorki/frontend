@@ -20,35 +20,36 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    const handleDeepLink = async (event: Linking.EventType) => {
-      const url = event.url;
-      const parsed = Linking.parse(url);
-      const code = parsed.queryParams?.code;
+    const checkInitialURL = async () => {
+      const initialUrl = await Linking.getInitialURL();
 
-      if (code) {
-        console.log('Odebrany code:', code);
+      if (initialUrl) {
+        const parsed = Linking.parse(initialUrl);
+        const code = parsed.queryParams?.code;
 
-        const codeVerifier = await SecureStore.getItemAsync('code_verifier');
-        const response = await fetch(
-          `${BACKEND_URL}/auth/exchange-code-for-session/${code}/${codeVerifier}`,
-        );
-        const data = await response.json();
+        if (code) {
+          console.log('Odebrany code:', code);
 
-        if (data.tokens?.access_token) {
-          await SecureStore.setItemAsync('access_token', data.tokens.access_token);
-          await SecureStore.setItemAsync('refresh_token', data.tokens.refresh_token);
-          setIsAuthenticated(true);
-        } else {
-          console.warn('Nie udało się pobrać tokenów.');
+          const codeVerifier = await SecureStore.getItemAsync('code_verifier');
+          console.log('📦 Odczytany code_verifier w AuthProvider:', codeVerifier);
+
+          const response = await fetch(
+            `${BACKEND_URL}/auth/exchange-code-for-session/${code}/${codeVerifier}`,
+          );
+          const data = await response.json();
+
+          if (data.tokens?.access_token) {
+            await SecureStore.setItemAsync('access_token', data.tokens.access_token);
+            await SecureStore.setItemAsync('refresh_token', data.tokens.refresh_token);
+            setIsAuthenticated(true);
+          } else {
+            console.warn('Nie udało się pobrać tokenów.');
+          }
         }
       }
     };
 
-    const listener = Linking.addEventListener('url', handleDeepLink);
-
-    return () => {
-      listener.remove();
-    };
+    checkInitialURL();
     // const checkAuth = async () => {
     //   try {
     //     await api.apiCall({ method: 'GET', url: '/user/info' });
