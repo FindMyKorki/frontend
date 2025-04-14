@@ -1,23 +1,53 @@
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import * as Linking from 'expo-linking';
-import ApiHandler from './ApiHandler';
+import { apiCall, loadTokens, setAccessToken, setRefreshToken } from './ApiHandler';
 import LoginScreen from '../screens//LoginScreen';
 import * as SecureStore from 'expo-secure-store';
-
-const api = new ApiHandler();
-const BACKEND_URL = process.env.EXPO_PUBLIC_API_BASE_URL!;
+import * as WebBrowser from 'expo-web-browser';
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  setIsAuthenticated: (auth: boolean) => void;
-  //setToken: (token: string) => void;
 }
+
+const BACKEND_URL = process.env.EXPO_PUBLIC_API_BASE_URL!;
 
 export const AuthContext = createContext<AuthContextType | null>(null);
 
 const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  //const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
+
+  const saveCodeVerifier = async (codeVerifier: string) => {
+    await SecureStore.setItemAsync('code_verifier', codeVerifier);
+  };
+
+  const handleOAuthLogin = async (provider: 'google' | 'facebook') => {
+    try {
+      const redirectUrl = `${BACKEND_URL}/auth/callback`;
+      const parsedRedirectUrl = `/auth/sign-in/${provider}?redirect_to=${encodeURIComponent(redirectUrl)}`;
+      const newResponse = await apiCall({ method: 'GET', url: parsedRedirectUrl });
+
+      await WebBrowser.openBrowserAsync(newResponse?.oauth_response.url);
+      saveCodeVerifier(newResponse?.code_verifier);
+    } catch (error) {
+      setAuthError('Błąd logowania, ' + error);
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        await loadTokens();
+        const res = await apiCall({ method: 'GET', url: '/user/info' });
+        if (res?.id) setIsAuthenticated(true);
+      } catch {
+        setIsAuthenticated(false);
+      }
+    };
+
+    checkAuth();
+  }, []);
 
   useEffect(() => {
     const checkInitialURL = async () => {
@@ -28,63 +58,35 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         const code = parsed.queryParams?.code;
 
         if (code) {
-          console.log('Odebrany code:', code);
-
           const codeVerifier = await SecureStore.getItemAsync('code_verifier');
-          console.log('📦 Odczytany code_verifier w AuthProvider:', codeVerifier);
+          const response = await apiCall({
+            method: 'GET',
+            url: `/auth/exchange-code-for-session/${code}/${codeVerifier}`,
+          });
 
-          const response = await fetch(
-            `${BACKEND_URL}/auth/exchange-code-for-session/${code}/${codeVerifier}`,
-          );
-          const data = await response.json();
-
-          if (data.tokens?.access_token) {
-            await SecureStore.setItemAsync('access_token', data.tokens.access_token);
-            await SecureStore.setItemAsync('refresh_token', data.tokens.refresh_token);
+          if (response?.tokens?.access_token) {
+            await setAccessToken(response?.tokens.access_token);
+            await setRefreshToken(response?.tokens.refresh_token);
             setIsAuthenticated(true);
           } else {
-            console.warn('Nie udało się pobrać tokenów.');
+            setAuthError('Nie udało się pobrać tokenów logowania.');
           }
         }
       }
     };
 
     checkInitialURL();
-    // const checkAuth = async () => {
-    //   try {
-    //     await api.apiCall({ method: 'GET', url: '/user/info' });
-    //     setIsAuthenticated(true);
-    //   } catch {
-    //     setIsAuthenticated(false);
-    //   }
-    // };
-
-    // checkAuth();
   }, []);
 
   const contextValue = {
     isAuthenticated,
-    setIsAuthenticated,
   };
 
   return (
     <AuthContext.Provider value={contextValue}>
-      {isAuthenticated ? children : <LoginScreen />}
+      {isAuthenticated ? children : <LoginScreen login={handleOAuthLogin} authError={authError} />}
     </AuthContext.Provider>
   );
-
-  // const setToken = (token: string) => {
-  //   api.setToken(token);
-  //   setIsAuthenticated(true);
-  // };
-
-  // if (isAuthenticated === null) return <div>Ładowanie...</div>;
-
-  // return (
-  //   <AuthContext.Provider value={{ isAuthenticated, setToken }}>
-  //     {isAuthenticated ? children : <LoginScreen />}
-  //   </AuthContext.Provider>
-  // );
 };
 
 export default AuthProvider;

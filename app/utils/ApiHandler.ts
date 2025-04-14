@@ -1,57 +1,83 @@
 import * as SecureStore from 'expo-secure-store';
+import axios, { AxiosResponse } from 'axios';
 
-class ApiHandler {
-  // private baseURL: string;
-  private baseURL = 'http://192.168.1.85:8000';
-  private token: string | null = null;
+let accessToken: string | null = null;
+let refreshToken: string | null = null;
 
-  constructor() {
-    this.baseURL = process.env.API_BASE_URL || 'http://localhost:3000';
+const baseURL = process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+
+export const setAccessToken = async (token: string): Promise<void> => {
+  accessToken = token;
+  await SecureStore.setItemAsync('accessToken', token);
+};
+
+export const setRefreshToken = async (token: string): Promise<void> => {
+  refreshToken = token;
+  await SecureStore.setItemAsync('refreshToken', token);
+};
+
+export const loadTokens = async (): Promise<void> => {
+  const aToken = await SecureStore.getItemAsync('accessToken');
+  const rToken = await SecureStore.getItemAsync('accessToken');
+
+  if (aToken) {
+    accessToken = aToken;
   }
 
-  async setToken(token: string): Promise<void> {
-    this.token = token;
-    await SecureStore.setItemAsync('authToken', token);
+  if (rToken) {
+    refreshToken = rToken;
+  }
+};
+
+const refreshAccessToken = async (options: any) => {
+  if (!refreshToken) {
+    throw new Error('Brak refresh token.');
   }
 
-  async loadToken(): Promise<void> {
-    const token = await SecureStore.getItemAsync('authToken');
-    if (token) {
-      this.token = token;
+  try {
+    const response = await apiCall({ method: 'GET', url: '/auth/refresh_token' });
+    if (response?.access_token) {
+      await setAccessToken(response?.access_token);
+      await apiCall(options);
     }
+  } catch (error) {
+    console.error('Error refreshing token:', error);
+    throw new Error('Nie można odświeżyć tokena.');
+  }
+};
+
+export const apiCall = async <T>(
+  options: { method: string; url: string; data?: object | string },
+  refreshed: boolean = false,
+): Promise<T> => {
+  console.log('APICall', options);
+
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+
+  if (accessToken) {
+    headers['Authorization'] = `Bearer ${accessToken}`;
   }
 
-  async apiCall<T>(options: { method: string; url: string; data?: object | string }): Promise<T> {
-    const headers: HeadersInit = {
-      'Content-Type': 'application/json',
-    };
-
-    if (this.token) {
-      headers['Authorization'] = `Bearer ${this.token}`;
-    }
-
-    const fetchOptions: RequestInit = {
+  try {
+    const response: AxiosResponse<T> = await axios({
       method: options.method,
+      url: `${baseURL}${options.url}`,
       headers,
-    };
+      data: options.data,
+      timeout: 2000,
+    });
 
-    if (options.data) {
-      fetchOptions.body =
-        typeof options.data === 'string' ? options.data : JSON.stringify(options.data);
+    return response.data;
+  } catch (error: any) {
+    if (error.response?.status === 401) {
+      if (refreshed)
+        throw new Error('Nieautoryzowany – accessToken wygasł lub jest nieprawidłowy.');
+      else {
+        await refreshAccessToken(options);
+      }
     }
-
-    const response = await fetch(`${this.baseURL}${options.url}`, fetchOptions);
-
-    if (response.status === 401) {
-      throw new Error('Nieautoryzowany – token wygasł lub jest nieprawidłowy.');
-    }
-
-    if (!response.ok) {
-      throw new Error(`API error: ${response.status}`);
-    }
-
-    return response.json();
+    throw new Error(`API error: ${error.response?.status || error.message}`);
   }
-}
-
-export default ApiHandler;
+};
