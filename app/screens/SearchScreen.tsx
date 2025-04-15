@@ -1,16 +1,16 @@
 import { ScrollView } from 'react-native';
-import ReusableExampleComponent from '../../components/ReusableExampleComponent';
+import ReusableExampleComponent from '../components/ReusableExampleComponent';
 
-const ProfileScreen = () => {
+const SearchScreen = () => {
   const customFunction = () => {
     console.log('Hello World!');
   };
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
-      <ReusableExampleComponent exampleProp={'Profile screen'} />
+      <ReusableExampleComponent exampleProp={'SearchScreen screen'} />
     </ScrollView>
   );
 };
 
-export default ProfileScreen;
+export default SearchScreen;

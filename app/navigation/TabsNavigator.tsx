@@ -1,6 +1,6 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from '../screens/tabs/HomeScreen';
-import ProfileScreen from '../screens/tabs/LibraryScreen';
+import ProfileScreen from '../screens/tabs/ProfileScreen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import ChatsListScreen from '../screens/tabs/ChatsListScreen';
 import ClassesListScreen from '../screens/tabs/ClassesListScreen';

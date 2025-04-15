@@ -1,8 +1,8 @@
 import { Button, ScrollView } from 'react-native';
-import ReusableExampleComponent from '../../components/ReusableExampleComponent';
+import ReusableExampleComponent from '../components/ReusableExampleComponent';
 import { useNavigation } from '@react-navigation/native';
 
-const ClassesListScreen = () => {
+const ClassAppointmentScreen = () => {
   const nav = useNavigation();
 
   const customFunction = () => {
@@ -11,7 +11,7 @@ const ClassesListScreen = () => {
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
-      <ReusableExampleComponent exampleProp={'Classes list screen'} />
+      <ReusableExampleComponent exampleProp={'ClassAppointment screen'} />
       <Button
         title={'Przejdź do ClassDetailsScreen'}
         onPress={() => nav.navigate('ClassDetails')}
@@ -20,4 +20,4 @@ const ClassesListScreen = () => {
   );
 };
 
-export default ClassesListScreen;
+export default ClassAppointmentScreen;
