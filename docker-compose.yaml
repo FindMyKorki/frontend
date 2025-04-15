@@ -1,28 +1,4 @@
 services:
-  frontend:
-    container_name: fmk-frontend
-    build:
-      context: .
-    volumes:
-      - ./app:/frontend/app
-      - ./Dockerfile:/frontend/Dockerfile
-      - ./docker-compose.yaml:/frontend/docker-compose.yaml
-    ports:
-      - 19000:19000
-      - 19001:19001
-      - 19002:19002
-      - ${FRONTEND_PORT}:${FRONTEND_PORT}
-    environment:
-      - METRO_BUNDLER_HOST=0.0.0.0
-      - REACT_NATIVE_PACKAGER_HOSTNAME=10.0.0.114
-    command: ["expo", "start", "--tunnel", "--port", "${FRONTEND_PORT}"]
-    tty: true
-    stdin_open: true
-    depends_on:
-      - backend
-    networks:
-      - app-network
-
   backend:
     build:
       context: backend
@@ -35,7 +11,7 @@ services:
       - ENVIRONMENT=development
     ports:
       - ${BACKEND_PORT}:${BACKEND_PORT}
-    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "${BACKEND_PORT}", "--reload"]
+    command: ['uvicorn', 'main:app', '--host', '0.0.0.0', '--port', '${BACKEND_PORT}', '--reload']
     networks:
       - app-network
 

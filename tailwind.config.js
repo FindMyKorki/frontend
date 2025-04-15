@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+const { Colors } = require('react-native/Libraries/NewAppScreen');
 module.exports = {
   content: ['./app/**/*.{tsx,ts}'],
   presets: [require('nativewind/preset')],

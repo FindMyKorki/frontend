@@ -1,17 +1,16 @@
-import { ScrollView, Text } from 'react-native';
+import { ScrollView } from 'react-native';
 import ReusableExampleComponent from '../components/ReusableExampleComponent';
 
-const HomeScreen = () => {
+const ChatScreen = () => {
   const customFunction = () => {
     console.log('Hello World!');
   };
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
-      <ReusableExampleComponent exampleProp={'Hi!'} />
-      <Text className={`px-def-hor`}>Home Screen! Hi</Text>
+      <ReusableExampleComponent exampleProp={'Chat screen'} />
     </ScrollView>
   );
 };
 
-export default HomeScreen;
+export default ChatScreen;
