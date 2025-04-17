@@ -25,7 +25,7 @@ const button = tv({
   },
 });
 
-type ButtonProps = {
+export type ButtonProps = {
   label: string;
   onPress: () => void;
   icon?: React.ReactNode;
@@ -49,7 +49,9 @@ const Button = ({
   const finalButtonClass = button({ outlined, disabled, size }) + ' ' + className;
 
   const textColor = outlined ? 'text-primary' : 'text-white';
-  const finalTextClass = `text-sm font-semibold ${textColor} ${textClassName}`;
+  const isFullSize = size == 'full';
+  const fontWeight = isFullSize ? 'font-bold' : 'font-semibold';
+  const finalTextClass = `text-sm ${fontWeight} ${textColor} ${textClassName}`;
 
   return (
     <Pressable
