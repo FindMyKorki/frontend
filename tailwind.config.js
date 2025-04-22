@@ -9,7 +9,12 @@ module.exports = {
         'def-x': '1.5rem',
       },
       colors: {
-        primary: '#1E40AF',
+        primary: '#1A5100',
+        background: '#ffffff',
+        'background-alt': '#f1f1f1',
+        'text-dark': '#000000',
+        'text-medium': '#3d3d3d',
+        'text-light': '#424242',
       },
     },
   },
