@@ -1,44 +1,25 @@
 import { FC } from 'react';
-import { View, Text, StyleSheet, StyleProp, ViewStyle } from 'react-native';
+import { View, Text } from 'react-native';
 
-interface TutorDescriptionProps {
+type TutorDescriptionProps = {
   title?: string;
+  className?: string;
   description: string;
-  style?: StyleProp<ViewStyle>;
-}
+};
 
-const TutorDescription: FC<TutorDescriptionProps> = ({ title = 'opis', description, style }) => {
+const TutorDescription: FC<TutorDescriptionProps> = ({
+  title = 'opis',
+  className,
+  description,
+}) => {
   return (
-    <View style={[styles.container, style]}>
-      <Text style={styles.header}>{title}</Text>
-      <View style={styles.card}>
-        <Text style={styles.description}>{description}</Text>
+    <View className={`items-center ${className}`}>
+      <Text className="text-[12px] text-primary mb-[10px] font-['Inter']">{title}</Text>
+      <View className="bg-background-alt rounded-[7px] py-[10px] px-[14px]">
+        <Text className="text-[14px] text-text-dark font-['Inter']">{description}</Text>
       </View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-  },
-  header: {
-    fontSize: 12,
-    color: '#1A5100',
-    marginBottom: 10,
-    fontFamily: 'Inter',
-  },
-  card: {
-    backgroundColor: '#f1f1f1',
-    borderRadius: 7,
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-  },
-  description: {
-    fontSize: 14,
-    color: '#000000',
-    fontFamily: 'Inter',
-  },
-});
 
 export default TutorDescription;
