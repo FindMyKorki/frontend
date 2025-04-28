@@ -2,13 +2,13 @@ import { FC } from 'react';
 import { View } from 'react-native';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
-type StarRatingType = {
+type StarRatingProps = {
   rating: number;
   size: number;
   maxRating?: number;
 };
 
-const StarRating: FC<StarRatingType> = ({ rating, size, maxRating = 5 }) => {
+const StarRating: FC<StarRatingProps> = ({ rating, size, maxRating = 5 }) => {
   const getStarIconName = (starNum: number) => {
     if (starNum <= rating) return 'star';
     if (starNum - rating < 1) return 'star-half';

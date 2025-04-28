@@ -1,31 +1,50 @@
 import { FC } from 'react';
 import { View, Text, Image } from 'react-native';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import StarRating from './StarRating';
+import Button from './AppButton';
 
-type ReviewType = {
+type ReviewProps = {
   fullName: string;
   avatarUrl: string;
   comment: string;
   rating: number;
-  maxRating?: number;
+  buttonOnPress?: () => void;
 };
 
-const Review: FC<ReviewType> = ({ fullName, avatarUrl, comment, rating, maxRating = 5 }) => {
+const Review: FC<ReviewProps> = ({
+  fullName,
+  avatarUrl,
+  comment,
+  rating,
+  buttonOnPress = null,
+}) => {
   return (
     <View className="bg-background px-def-x py-def-y rounded-lg border-2 border-background-alt space-y-3">
-      <View className="flex-row justify-between items-center">
+      <View className="flex-row flex-wrap justify-between items-center">
         <View className="flex-row items-center space-x-3">
           <Image source={{ uri: avatarUrl }} className="w-12 h-12 rounded-full text-left" />
 
-          <Text className="font-bold text-primary text-base">{fullName}</Text>
+          <Text className="font-bold text-base">{fullName}</Text>
         </View>
 
         <View className="flex-col h-full">
-          <StarRating rating={rating} size={22} maxRating={maxRating} />
+          <StarRating rating={rating} size={22} maxRating={5} />
         </View>
       </View>
 
       <Text className="text-text-light italic">{comment}</Text>
+
+      {buttonOnPress && (
+        <View className="flex-row justify-end">
+          <Button
+            label="Zgłoś"
+            onPress={buttonOnPress}
+            icon={<MaterialIcons name="flag" size={20} className="text-primary" />}
+            appearance="transparent"
+          />
+        </View>
+      )}
     </View>
   );
 };
