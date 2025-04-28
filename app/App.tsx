@@ -25,7 +25,7 @@ export default function App() {
       <SafeAreaProvider testID={'App:SafeAreaProvider:AppContainer'}>
         <SafeAreaView className={`flex-1 bg-white justify-center align-center`}>
           <NavigationContainer>
-            <Stack.Navigator>
+            <Stack.Navigator screenOptions={{ navigationBarColor: 'white' }}>
               <Stack.Screen
                 name="Tabs"
                 component={TabsNavigator}
