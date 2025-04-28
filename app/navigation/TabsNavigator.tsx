@@ -1,11 +1,8 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import HomeScreen from '../screens/tabs/HomeScreen';
-import ProfileScreen from '../screens/tabs/ProfileScreen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import ChatsListScreen from '../screens/tabs/ChatsListScreen';
-import ClassesListScreen from '../screens/tabs/ClassesListScreen';
 import { Colors } from '../../src/colors';
 import { View } from 'react-native';
+import { ChatsListScreen, ClassesListScreen, HomeScreen, ProfileScreen } from '../index';
 
 export type TabsParamList = {
   Home: undefined;

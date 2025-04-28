@@ -4,17 +4,19 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import TabsNavigator from './navigation/TabsNavigator';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import ChatScreen from './screens/ChatScreen';
-import FiltersScreen from './screens/FiltersScreen';
-import SortOptionsScreen from './screens/SortOptionsScreen';
-import SearchScreen from './screens/SearchScreen';
-import EditProfileScreen from './screens/profile/EditProfileScreen';
-import EditOfferScreen from './screens/profile/EditOfferScreen';
-import UserDetailsScreen from './screens/UserDetailsScreen';
-import ClassAppointmentScreen from './screens/ClassAppointmentScreen';
-import ProfileScreen from './screens/tabs/ProfileScreen';
-import ClassDetailsScreen from './screens/ClassDetailsScreen';
-import ReportScreen from './screens/ReportScreen';
+import {
+  ChatScreen,
+  ClassAppointmentScreen,
+  ClassDetailsScreen,
+  EditOfferScreen,
+  EditProfileScreen,
+  FiltersScreen,
+  ProfileScreen,
+  ReportScreen,
+  SearchScreen,
+  SortOptionsScreen,
+  UserDetailsScreen,
+} from './index';
 
 const Stack = createNativeStackNavigator();
 
