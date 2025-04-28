@@ -5,6 +5,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import ChatsListScreen from '../screens/tabs/ChatsListScreen';
 import ClassesListScreen from '../screens/tabs/ClassesListScreen';
 import { Colors } from '../../src/colors';
+import { View } from 'react-native';
 
 export type TabsParamList = {
   Home: undefined;
@@ -33,8 +34,20 @@ const TabsNavigator = () => {
             iconName = focused ? 'account' : 'account-outline';
           }
 
-          return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
+          return (
+            <View className={'flex-1 w-[100%] items-center justify-center'}>
+              <View className={`${focused ? 'bg-primary' : 'bg-white'} w-full h-1 pb-0.5`} />
+              <MaterialCommunityIcons
+                className={'pt-1'}
+                name={iconName}
+                size={size}
+                color={color}
+              />
+            </View>
+          );
         },
+        tabBarLabelStyle: { fontSize: 11, fontWeight: 'bold' },
+        tabBarStyle: { paddingBottom: 5, height: 50 },
         tabBarActiveTintColor: Colors.primary,
       })}
     >
