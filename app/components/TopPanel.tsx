@@ -20,12 +20,10 @@ const TopPanel = ({
   centerContentClassName = '',
 }: TopPanelProps) => {
   return (
-    <View
-      className={`flex-row items-center justify-between px-4 py-2.5 bg-[#F1F1F1] border-b border-[#D9D9D9] border-b-[1px] ${className}`}
-    >
+    <View className={`flex-row items-center justify-between px-4 py-2.5 bg-[#FFFFFF] ${className}`}>
       {/* Strzałka (zawsze widoczna) */}
       <Pressable onPress={onBackPress} className="p-1">
-        <MaterialIcons name="arrow-back" size={24} color="#1A5100" />
+        <MaterialIcons name="arrow-back" size={24} color="#000000" />
       </Pressable>
 
       {/* Środek (tylko jeśli tutorName i tutorImage są podane) */}
@@ -36,14 +34,14 @@ const TopPanel = ({
             className="w-10 h-10 rounded-full"
             resizeMode="cover"
           />
-          <Text className="ml-2 font-semibold text-base text-[#1A5100]">{tutorName}</Text>
+          <Text className="ml-2 font-semibold text-base text-[#000000]">{tutorName}</Text>
         </View>
       )}
 
       {/* Ikona ustawień (pokazywana tylko jeśli przekazano onSettingsPress) */}
       {onSettingsPress && (
         <Pressable onPress={onSettingsPress} className="p-1">
-          <MaterialIcons name="more-vert" size={24} color="#1A5100" />
+          <MaterialIcons name="more-vert" size={24} color="#000000" />
         </Pressable>
       )}
     </View>
