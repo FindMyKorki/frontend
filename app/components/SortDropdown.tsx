@@ -29,18 +29,20 @@ const SortDropdown: FC<SortDropdownProps> = ({ options, onSelect = () => {} }) =
         visible={modalVisible}
         setVisible={setModalVisible}
       >
-        {options.map((option) => (
-          <Pressable
-            key={option}
-            onPress={() => {
-              onSelect(option);
-              setModalVisible(false);
-              setSelected(option);
-            }}
-          >
-            <Text className="text-text-light">{option}</Text>
-          </Pressable>
-        ))}
+        <View className="py-4 px-5 gap-y-2">
+          {options.map((option) => (
+            <Pressable
+              key={option}
+              onPress={() => {
+                onSelect(option);
+                setModalVisible(false);
+                setSelected(option);
+              }}
+            >
+              <Text className="text-text-light">{option}</Text>
+            </Pressable>
+          ))}
+        </View>
       </ModalAtButton>
     </View>
   );

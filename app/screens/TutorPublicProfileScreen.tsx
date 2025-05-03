@@ -1,4 +1,6 @@
 import { ScrollView, View, Text, Pressable } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { useState } from 'react';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import TopPanel from '../components/TopPanel';
@@ -7,10 +9,13 @@ import TutorOffer from '../components/TutorOffer';
 import TutorProfile from '../components/TutorProfile';
 import BottomPanelButtons from '../components/BottomPanelButtons';
 import SortDropdown from '../components/SortDropdown';
-import { useState } from 'react';
+import BottomModal from '../components/BottomModal';
+import Button from '../components/AppButton';
 
 const TutorPublicProfile = () => {
   const [activeTab, setActiveTab] = useState('Oferty');
+  const [bottomModalVisible, setBottomModalVisible] = useState(false);
+  const navigation = useNavigation();
 
   const reviewSortOptions = [
     'Po ocenie malejąco',
@@ -234,19 +239,42 @@ const TutorPublicProfile = () => {
         leftButtonProps={{
           label: 'Wyślij wiadomość',
           onPress: () => {
-            console.log('Wyślij wiadomość');
+            navigation.navigate('Chat');
           },
           icon: <MaterialCommunityIcons name="chat" size={20} color="#ffffff" />,
         }}
         rightButtonProps={{
           label: 'Zadzwoń / SMS',
           onPress: () => {
-            console.log('Zadzwoń / SMS');
+            setBottomModalVisible(true);
           },
           appearance: 'outlined',
           icon: <MaterialIcons name="phone" size={20} color="#1A5100" />,
         }}
       />
+
+      <BottomModal visible={bottomModalVisible} setVisible={setBottomModalVisible}>
+        <View className="w-full items-center justify-center">
+          <View className="flex flex-col items-center gap-y-2">
+            <Button
+              label="Zadzwoń"
+              appearance="transparent"
+              onPress={() => {
+                console.log('Zadzwoń');
+              }}
+              icon={<MaterialIcons name="phone" size={20} color="#1A5100" />}
+            />
+            <Button
+              label="Wyślij SMS"
+              appearance="transparent"
+              onPress={() => {
+                console.log('Wyślij SMS');
+              }}
+              icon={<MaterialCommunityIcons name="chat" size={20} color="#1A5100" />}
+            />
+          </View>
+        </View>
+      </BottomModal>
     </View>
   );
 };

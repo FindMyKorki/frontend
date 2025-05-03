@@ -4,7 +4,7 @@ import { useState, FC, useRef, ReactNode, cloneElement, ReactElement } from 'rea
 type ModalAtButtonProps = {
   spaceBetween: number;
   button: ReactNode;
-  children: ReactNode;
+  children?: ReactNode;
   visible: boolean;
   setVisible: (visible: boolean) => void;
 };
@@ -33,7 +33,7 @@ const ModalAtButton: FC<ModalAtButtonProps> = ({
       <Modal transparent visible={visible} animationType="fade">
         <Pressable className="flex-1 bg-black/30" onPress={() => setVisible(false)}>
           <View
-            className="absolute bg-background py-4 px-5 rounded-md shadow-md gap-y-2"
+            className="absolute bg-background rounded-md shadow-md"
             style={{
               top: dropdownPosition.top,
               left: dropdownPosition.left,
