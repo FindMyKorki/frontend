@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { View, Text } from 'react-native';
-import Buttonq from './AppButton';
+import Button from './AppButton';
 import { twMerge } from 'tailwind-merge';
 
 export type TutorOfferProps = {
@@ -25,19 +25,17 @@ const TutorOffer: FC<TutorOfferProps> = ({
   return (
     <View
       className={twMerge(
-        `bg-white border-[2px] border-[#D9D9D9] px-5 py-3.5 rounded-md flex-row justify-between items-center`,
+        'bg-white border-2 border-border-gray px-5 py-3.5 rounded-md flex-row justify-between items-center',
         className,
       )}
     >
       <View className="flex-1">
-        <Text className="text-[14px] font-bold text-left font-['Inter']  uppercase">{subject}</Text>
-        <Text className="text-[12px] font-medium text-left font-['Inter'] mb-1">
-          {educationLevel}
-        </Text>
+        <Text className="text-sm font-bold text-left font-inter uppercase">{subject}</Text>
+        <Text className="text-xs font-medium text-left font-inter mb-1">{educationLevel}</Text>
         {userType === 'tutor' && (
-          <Text className="text-[12px] font-bold text-left font-['Inter'] mb-1">{price}</Text>
+          <Text className="text-xs font-bold text-left font-inter mb-1">{price}</Text>
         )}
-        <Text className="text-[12px] font-normal text-left font-['Inter'] mb-1 flex-1 max-w-[80%]">
+        <Text className="text-xs font-normal text-left font-inter mb-1 flex-1 max-w-[65%]">
           {description}
         </Text>
       </View>
@@ -45,31 +43,28 @@ const TutorOffer: FC<TutorOfferProps> = ({
       <View className="flex flex-col items-end justify-center ml-4">
         {userType === 'student' ? (
           <View className="flex flex-col items-center">
-            <Text className="text-[14px] font-bold font-['Inter'] mb-2">{price}</Text>
-            <Buttonq
+            <Text className="text-sm font-bold font-inter mb-2">{price}</Text>
+            <Button
               label="Umów"
               onPress={() => {}}
               size="auto"
-              textClassName="text-[14px] font-semibold font-['Inter']"
               className={twMerge(buttonWrapperClassName.replace(/mb-\d+/g, ''), 'mb-0')}
             />
           </View>
         ) : (
           <View className="flex flex-col items-end">
-            <Buttonq
+            <Button
               label="Edytuj"
               onPress={() => {}}
               size="auto"
               className={twMerge(buttonWrapperClassName)}
-              textClassName="text-[14px] font-semibold font-['Inter']"
             />
-            <Buttonq
+            <Button
               label=" Usuń "
               onPress={() => {}}
               size="auto"
-              outlined
+              appearance="outlined"
               className={twMerge(buttonWrapperClassName.replace(/mb-\d+/g, ''), 'mb-0')}
-              textClassName="text-[14px] font-semibold font-['Inter']"
             />
           </View>
         )}
