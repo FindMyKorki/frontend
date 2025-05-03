@@ -15,6 +15,9 @@ services:
     environment:
       - METRO_BUNDLER_HOST=0.0.0.0
       - REACT_NATIVE_PACKAGER_HOSTNAME=10.0.0.114
+      - EXPO_PUBLIC_API_BASE_URL=${EXPO_PUBLIC_API_BASE_URL}
+      - FRONTEND_URL=${FRONTEND_URL}
+
     command: ['expo', 'start', '--tunnel', '--port', '${FRONTEND_PORT}']
     tty: true
     stdin_open: true
@@ -25,17 +28,21 @@ services:
 
   backend:
     build:
-      context: backend
+      context: backend/.
       dockerfile: Dockerfile_dev.dockerfile
     stdin_open: true
     tty: true
     environment:
+      - PYTHONPATH=/app
       - SUPABASE_URL=${SUPABASE_URL}
       - SUPABASE_KEY=${SUPABASE_KEY}
+      - FRONTEND_URL=${FRONTEND_URL}
+      - EXPO_PUBLIC_API_BASE_URL=${EXPO_PUBLIC_API_BASE_URL}
       - ENVIRONMENT=development
     ports:
       - ${BACKEND_PORT}:${BACKEND_PORT}
-    command: ['uvicorn', 'main:app', '--host', '0.0.0.0', '--port', '${BACKEND_PORT}', '--reload']
+    command:
+      ['uvicorn', 'app.main:app', '--host', '0.0.0.0', '--port', '${BACKEND_PORT}', '--reload']
     networks:
       - app-network
 
