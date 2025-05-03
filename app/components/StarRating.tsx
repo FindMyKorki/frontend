@@ -18,7 +18,7 @@ const StarRating: FC<StarRatingProps> = ({ rating, size, maxRating = 5 }) => {
   return (
     <View className="flex-row">
       {[...Array(maxRating)].map((_, i) => (
-        <MaterialIcons key={i} name={getStarIconName(i + 1)} size={size} className="text-primary" />
+        <MaterialIcons key={i} name={getStarIconName(i + 1)} size={size} color="#1A5100" />
       ))}
     </View>
   );
