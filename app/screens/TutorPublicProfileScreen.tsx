@@ -239,7 +239,8 @@ const TutorPublicProfile = () => {
         leftButtonProps={{
           label: 'Wyślij wiadomość',
           onPress: () => {
-            navigation.navigate('Chat');
+            console.log('Wyślij wiadomość');
+            // navigation.navigate('Chat');
           },
           icon: <MaterialCommunityIcons name="chat" size={20} color="#ffffff" />,
         }}
