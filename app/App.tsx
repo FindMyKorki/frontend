@@ -17,6 +17,8 @@ import {
   SearchScreen,
   SortOptionsScreen,
   UserDetailsScreen,
+  LoginScreen,
+  RoleScreen,
   TutorPublicProfile,
 } from './index';
 import AuthProvider from "./utils/AuthProvider";
@@ -93,6 +95,8 @@ export default function App() {
                   component={ReportScreen}
                   options={{ headerShown: false }}
                 />
+                <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }}/>
+                <Stack.Screen name="Role" component={RoleScreen} options={{ headerShown: false }}/>
               </Stack.Navigator>
             </NavigationContainer>
           </AuthProvider>
