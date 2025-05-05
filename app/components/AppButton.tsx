@@ -30,7 +30,8 @@ const button = tv({
 export type ButtonProps = {
   label: string;
   onPress: () => void;
-  icon?: React.ReactNode;
+  icon?: React.ReactNode; // left icon
+  rightIcon?: React.ReactNode; // right icon
   disabled?: boolean;
   appearance?: 'filled' | 'outlined' | 'transparent';
   size?: 'auto' | 'full';
@@ -43,6 +44,7 @@ const Button = ({
   label,
   onPress,
   icon,
+  rightIcon,
   disabled = false,
   appearance = 'filled',
   size = 'auto',
@@ -55,7 +57,7 @@ const Button = ({
   const textColor = ['outlined', 'transparent'].includes(appearance)
     ? 'text-primary'
     : 'text-white';
-  const isFullSize = size == 'full';
+  const isFullSize = size === 'full';
   const fontWeight = isFullSize ? 'font-bold' : 'font-semibold';
   const finalTextClass = `text-sm ${fontWeight} ${textColor} ${textClassName}`;
 
