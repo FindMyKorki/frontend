@@ -1,8 +1,9 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { View, Text, Image } from 'react-native';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import StarRating from './StarRating';
 import Button from './AppButton';
+import { Colors } from '../../src/colors';
 
 type ReviewProps = {
   fullName: string;
@@ -40,7 +41,7 @@ const Review: FC<ReviewProps> = ({
           <Button
             label="Zgłoś"
             onPress={buttonOnPress}
-            icon={<MaterialIcons name="flag" size={20} color="#1A5100" />}
+            icon={<MaterialIcons name="flag" size={20} color={Colors.primary} />}
             appearance="transparent"
           />
         </View>
