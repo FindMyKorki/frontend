@@ -11,6 +11,7 @@ import BottomPanelButtons from '../components/BottomPanelButtons';
 import SortDropdown from '../components/SortDropdown';
 import BottomModal from '../components/BottomModal';
 import Button from '../components/AppButton';
+import React from 'react';
 
 const TutorPublicProfile = () => {
   const [activeTab, setActiveTab] = useState('Oferty');
