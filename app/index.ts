@@ -12,6 +12,9 @@ export { default as SortOptionsScreen } from './screens/SortOptionsScreen';
 export { default as UserDetailsScreen } from './screens/UserDetailsScreen';
 export { default as TutorPublicProfile } from './screens/TutorPublicProfileScreen';
 
+export { default as LoginScreen } from './screens/auth/LoginScreen';
+export { default as RoleScreen } from './screens/auth/RoleScreen';
+
 export { default as EditOfferScreen } from './screens/profile/EditOfferScreen';
 export { default as EditProfileScreen } from './screens/profile/EditProfileScreen';
 
