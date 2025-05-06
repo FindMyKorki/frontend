@@ -31,12 +31,12 @@ const TutorPublicProfile = () => {
 
   return (
     <View className="flex-1">
-      <ScrollView showsVerticalScrollIndicator={false} className="bg-white pb-10">
+      <ScrollView showsVerticalScrollIndicator={false} className="bg-background pb-10">
         <TopPanel
           onBackPress={() => console.log('Back')}
           onSettingsPress={() => console.log('Settings')}
-          tutorName="Jan Kowalski"
-          tutorImage="https://randomuser.me/api/portraits/men/32.jpg"
+          name="Jan Kowalski"
+          image="https://randomuser.me/api/portraits/men/32.jpg"
           centerContentClassName="ml-3"
         />
 
@@ -53,7 +53,7 @@ const TutorPublicProfile = () => {
         </View>
 
         {/* Wyróżniona opinia */}
-        <Text className="text-[12px] font-['Inter'] font-bold text-[#1A5100] px-4 pt-4 ml-2">
+        <Text className="text-[12px] font-['Inter'] font-bold text-primary px-4 pt-4 ml-2">
           WYRÓŻNIONA OPINIA
         </Text>
         <View className="px-4 pt-2">
@@ -74,11 +74,9 @@ const TutorPublicProfile = () => {
                 className="py-3 items-center justify-center"
               >
                 <Text
-                  style={{
-                    fontSize: 16,
-                    fontWeight: 'bold',
-                    color: activeTab === tab ? '#1A5100' : '#424242',
-                  }}
+                  className={`text-[16px] font-bold ${
+                    activeTab === tab ? 'text-primary' : 'text-text-light'
+                  }`}
                 >
                   {tab}
                 </Text>
@@ -86,16 +84,7 @@ const TutorPublicProfile = () => {
 
               {/* Szary separator tylko dla Oferty i Informacje */}
               {index < 2 && (
-                <View
-                  style={{
-                    position: 'absolute',
-                    right: 0,
-                    top: 6,
-                    bottom: 6,
-                    width: 1,
-                    backgroundColor: '#D9D9D9',
-                  }}
-                />
+                <View className="bg-border-gray absolute right-0 top-1.5 bottom-1.5 w-[1px]" />
               )}
             </View>
           ))}
@@ -105,7 +94,7 @@ const TutorPublicProfile = () => {
         {activeTab === 'Oferty' && (
           <View className="flex-row items-center justify-end px-4 mt-4">
             <MaterialIcons name="info" size={11} color="#1A5100" />
-            <Text className="text-[#1A5100] text-[9px] font-semibold ml-1">
+            <Text className="text-primary text-[9px] font-semibold ml-1">
               Cena za 60 min. zajęć
             </Text>
           </View>
@@ -243,7 +232,7 @@ const TutorPublicProfile = () => {
             console.log('Wyślij wiadomość');
             // navigation.navigate('Chat');
           },
-          icon: <MaterialCommunityIcons name="chat" size={20} color="#ffffff" />,
+          icon: <MaterialIcons name="chat-bubble" size={20} color="#ffffff" />,
         }}
         rightButtonProps={{
           label: 'Zadzwoń / SMS',
@@ -272,7 +261,7 @@ const TutorPublicProfile = () => {
               onPress={() => {
                 console.log('Wyślij SMS');
               }}
-              icon={<MaterialCommunityIcons name="chat" size={20} color="#1A5100" />}
+              icon={<MaterialIcons name="chat-bubble" size={20} color="#1A5100" />}
             />
           </View>
         </View>

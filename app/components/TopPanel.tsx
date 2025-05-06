@@ -5,8 +5,8 @@ import { MaterialIcons } from '@expo/vector-icons';
 export type TopPanelProps = {
   onBackPress: () => void;
   onSettingsPress?: () => void;
-  tutorName?: string;
-  tutorImage?: string;
+  name?: string;
+  image?: string;
   className?: string;
   centerContentClassName?: string;
 };
@@ -14,34 +14,35 @@ export type TopPanelProps = {
 const TopPanel = ({
   onBackPress,
   onSettingsPress,
-  tutorName,
-  tutorImage,
+  name,
+  image,
   className = '',
   centerContentClassName = '',
 }: TopPanelProps) => {
   return (
-    <View className={`flex-row items-center justify-between px-4 py-2.5 bg-[#FFFFFF] ${className}`}>
-      {/* Strzałka (zawsze widoczna) */}
+    <View
+      className={`flex-row items-center justify-between px-4 py-2.5 bg-background ${className}`}
+    >
       <Pressable onPress={onBackPress} className="p-1">
-        <MaterialIcons name="arrow-back" size={24} color="#000000" />
+        <MaterialIcons name="arrow-back" size={24} color="black" />
       </Pressable>
 
-      {/* Środek (tylko jeśli tutorName i tutorImage są podane) */}
-      {tutorName && tutorImage && (
+      {(name || image) && (
         <View className={`flex-1 flex-row items-center ${centerContentClassName}`}>
-          <Image
-            source={{ uri: tutorImage }}
-            className="w-10 h-10 rounded-full"
-            resizeMode="cover"
-          />
-          <Text className="ml-2 font-semibold text-base text-[#000000]">{tutorName}</Text>
+          {image && (
+            <Image source={{ uri: image }} className="w-10 h-10 rounded-full" resizeMode="cover" />
+          )}
+          {name && (
+            <Text className={`ml-2 font-semibold text-base text-text-dark ${!image && 'ml-0'}`}>
+              {name}
+            </Text>
+          )}
         </View>
       )}
 
-      {/* Ikona ustawień (pokazywana tylko jeśli przekazano onSettingsPress) */}
       {onSettingsPress && (
         <Pressable onPress={onSettingsPress} className="p-1">
-          <MaterialIcons name="more-vert" size={24} color="#000000" />
+          <MaterialIcons name="more-vert" size={24} color="black" />
         </Pressable>
       )}
     </View>
