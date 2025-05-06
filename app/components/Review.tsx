@@ -1,8 +1,9 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { View, Text, Image } from 'react-native';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import StarRating from './StarRating';
 import Button from './AppButton';
+import { Colors } from '../../src/colors';
 
 type ReviewProps = {
   fullName: string;
@@ -20,9 +21,9 @@ const Review: FC<ReviewProps> = ({
   buttonOnPress = null,
 }) => {
   return (
-    <View className="bg-background px-def-x py-def-y rounded-lg border-2 border-background-alt space-y-3">
+    <View className="bg-background px-def-x py-def-y rounded-lg border-2 border-background-alt gap-y-3">
       <View className="flex-row flex-wrap justify-between items-center">
-        <View className="flex-row items-center space-x-3">
+        <View className="flex-row items-center gap-x-3">
           <Image source={{ uri: avatarUrl }} className="w-12 h-12 rounded-full text-left" />
 
           <Text className="font-bold text-base">{fullName}</Text>
@@ -40,7 +41,7 @@ const Review: FC<ReviewProps> = ({
           <Button
             label="Zgłoś"
             onPress={buttonOnPress}
-            icon={<MaterialIcons name="flag" size={20} className="text-primary" />}
+            icon={<MaterialIcons name="flag" size={20} color={Colors.primary} />}
             appearance="transparent"
           />
         </View>
