@@ -2,7 +2,6 @@ import { ScrollView, View, Text, Pressable } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useState } from 'react';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import TopPanel from '../components/TopPanel';
 import Review from '../components/Review';
 import TutorOffer from '../components/TutorOffer';
@@ -12,6 +11,7 @@ import SortDropdown from '../components/SortDropdown';
 import BottomModal from '../components/BottomModal';
 import Button from '../components/AppButton';
 import React from 'react';
+import { Colors } from '../../src/colors';
 
 const TutorPublicProfile = () => {
   const [activeTab, setActiveTab] = useState('Oferty');
@@ -93,7 +93,7 @@ const TutorPublicProfile = () => {
         {/* Informacja o cenie */}
         {activeTab === 'Oferty' && (
           <View className="flex-row items-center justify-end px-4 mt-4">
-            <MaterialIcons name="info" size={11} color="#1A5100" />
+            <MaterialIcons name="info" size={11} color={Colors.primary} />
             <Text className="text-primary text-[9px] font-semibold ml-1">
               Cena za 60 min. zajęć
             </Text>
@@ -232,7 +232,7 @@ const TutorPublicProfile = () => {
             console.log('Wyślij wiadomość');
             // navigation.navigate('Chat');
           },
-          icon: <MaterialIcons name="chat-bubble" size={20} color="#ffffff" />,
+          icon: <MaterialIcons name="chat-bubble" size={20} color="white" />,
         }}
         rightButtonProps={{
           label: 'Zadzwoń / SMS',
@@ -240,7 +240,7 @@ const TutorPublicProfile = () => {
             setBottomModalVisible(true);
           },
           appearance: 'outlined',
-          icon: <MaterialIcons name="phone" size={20} color="#1A5100" />,
+          icon: <MaterialIcons name="phone" size={20} color={Colors.primary} />,
         }}
       />
 
@@ -253,7 +253,7 @@ const TutorPublicProfile = () => {
               onPress={() => {
                 console.log('Zadzwoń');
               }}
-              icon={<MaterialIcons name="phone" size={20} color="#1A5100" />}
+              icon={<MaterialIcons name="phone" size={20} color={Colors.primary} />}
             />
             <Button
               label="Wyślij SMS"
@@ -261,7 +261,7 @@ const TutorPublicProfile = () => {
               onPress={() => {
                 console.log('Wyślij SMS');
               }}
-              icon={<MaterialIcons name="chat-bubble" size={20} color="#1A5100" />}
+              icon={<MaterialIcons name="chat-bubble" size={20} color={Colors.primary} />}
             />
           </View>
         </View>
