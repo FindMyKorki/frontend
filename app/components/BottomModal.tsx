@@ -1,4 +1,4 @@
-import { ReactNode, FC, useRef, useEffect } from 'react';
+import React, { ReactNode, FC, useRef, useEffect } from 'react';
 import { View, Pressable, Modal, Animated } from 'react-native';
 
 type BottomModalProps = {

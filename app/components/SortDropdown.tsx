@@ -1,6 +1,6 @@
 import { View, Text, Pressable } from 'react-native';
-import { useState, FC } from 'react';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import React, { useState, FC } from 'react';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import ModalAtButton from './ModalAtButton';
 
 type SortDropdownProps = {
@@ -15,7 +15,7 @@ const SortDropdown: FC<SortDropdownProps> = ({ options, onSelect = () => {} }) =
   const button = (
     <Pressable className="flex-row items-center px-3 py-2 bg-background-alt rounded-md gap-x-3 relative">
       <Text className="font-semibold">{selected}</Text>
-      <MaterialCommunityIcons name="pencil-outline" size={16} color="black" />
+      <MaterialIcons name="edit" size={16} color="black" />
     </Pressable>
   );
 
