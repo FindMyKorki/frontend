@@ -1,6 +1,7 @@
 import React from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { tv } from 'tailwind-variants';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const button = tv({
   base: 'flex-row items-center justify-center box-border',
@@ -64,7 +65,7 @@ const Button = ({
       disabled={disabled}
       className={finalButtonClass.trim()}
     >
-      {icon && <View className="mr-1">{icon}</View>}
+      {icon && <MaterialCommunityIcons className="mr-1" name={icon} color={'#FFFFFF'} />}
       <Text className={finalTextClass.trim()}>{label}</Text>
     </Pressable>
   );
