@@ -53,9 +53,7 @@ const TutorPublicProfile = () => {
         </View>
 
         {/* Wyróżniona opinia */}
-        <Text className="text-[12px] font-['Inter'] font-bold text-primary px-4 pt-4 ml-2">
-          WYRÓŻNIONA OPINIA
-        </Text>
+        <Text className="text-xs font-bold text-primary px-4 pt-4 ml-2">WYRÓŻNIONA OPINIA</Text>
         <View className="px-4 pt-2">
           <Review
             fullName="Anna Kowalska"
@@ -74,7 +72,7 @@ const TutorPublicProfile = () => {
                 className="py-3 items-center justify-center"
               >
                 <Text
-                  className={`text-[16px] font-bold ${
+                  className={`text-base font-bold ${
                     activeTab === tab ? 'text-primary' : 'text-text-light'
                   }`}
                 >
@@ -94,7 +92,7 @@ const TutorPublicProfile = () => {
         {activeTab === 'Oferty' && (
           <View className="flex-row items-center justify-end px-4 mt-4">
             <MaterialIcons name="info" size={11} color="#1A5100" />
-            <Text className="text-primary text-[9px] font-semibold ml-1">
+            <Text className="text-primary text-[0.5rem] font-semibold ml-1">
               Cena za 60 min. zajęć
             </Text>
           </View>
