@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View, ActivityIndicator } from 'react-native';
 import { tv } from 'tailwind-variants';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
@@ -36,6 +36,7 @@ export type ButtonProps = {
   size?: 'auto' | 'full';
   className?: string;
   textClassName?: string;
+  loading?: boolean;
 };
 
 const Button = ({
@@ -47,8 +48,9 @@ const Button = ({
   size = 'auto',
   className = '',
   textClassName = '',
+  loading = false,
 }: ButtonProps) => {
-  const finalButtonClass = button({ appearance, disabled, size }) + ' ' + className;
+  const finalButtonClass = button({ appearance, size }) + ' ' + className;
 
   const textColor = ['outlined', 'transparent'].includes(appearance)
     ? 'text-primary'
@@ -65,8 +67,14 @@ const Button = ({
       disabled={disabled}
       className={finalButtonClass.trim()}
     >
-      {icon && <MaterialCommunityIcons className="mr-1" name={icon} color={'#FFFFFF'} />}
-      <Text className={finalTextClass.trim()}>{label}</Text>
+      {loading ? (
+        <ActivityIndicator color={'#FFFFFF'} size={'small'} />
+      ) : (
+        <>
+          {icon && <MaterialCommunityIcons className="mr-1" name={icon} color={'#FFFFFF'} />}
+          <Text className={finalTextClass.trim()}>{label}</Text>
+        </>
+      )}
     </Pressable>
   );
 };
