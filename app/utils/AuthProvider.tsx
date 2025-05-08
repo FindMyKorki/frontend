@@ -4,7 +4,7 @@ import { apiCall, loadTokens, setAccessToken, setRefreshToken } from './ApiHandl
 import LoginScreen from '../screens//LoginScreen';
 import * as SecureStore from 'expo-secure-store';
 import * as WebBrowser from 'expo-web-browser';
-import { User } from '../../types/User';
+import { User } from '../types/User';
 
 interface AuthContextType {
   user: User | null;
