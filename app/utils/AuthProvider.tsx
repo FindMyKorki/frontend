@@ -8,6 +8,7 @@ import { User } from '../../types/User';
 
 interface AuthContextType {
   user: User | null;
+  getSession: () => Promise<void>;
   isAuthenticated: boolean;
 }
 
@@ -19,6 +20,23 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    getSession();
+  }, []);
+
+  const getSession = async () => {
+    try {
+      await loadTokens();
+      const res = await apiCall({ method: 'GET', url: '/user' });
+      if (res?.id) {
+        setUser(res);
+        setIsAuthenticated(true);
+      }
+    } catch {
+      setIsAuthenticated(false);
+    }
+  };
 
   const saveCodeVerifier = async (codeVerifier: string) => {
     await SecureStore.setItemAsync('code_verifier', codeVerifier);
@@ -37,23 +55,6 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       console.error(error);
     }
   };
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        await loadTokens();
-        const res = await apiCall({ method: 'GET', url: '/user' });
-        if (res?.id) {
-          setUser(res);
-          setIsAuthenticated(true);
-        }
-      } catch {
-        setIsAuthenticated(false);
-      }
-    };
-
-    checkAuth();
-  }, []);
 
   useEffect(() => {
     const handleURL = async (url: string) => {
@@ -94,6 +95,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
   const contextValue = {
     user,
+    getSession,
     isAuthenticated,
   };
 
