@@ -25,6 +25,7 @@ import {
   BookingDetailsScreen,
 } from './index';
 import AuthProvider from './utils/AuthProvider';
+import { FiltersProvider } from './store/FiltersContext';
 
 const Stack = createNativeStackNavigator();
 
@@ -35,6 +36,7 @@ export default function App() {
       <SafeAreaProvider testID={'App:SafeAreaProvider:AppContainer'}>
         <SafeAreaView className={`flex-1 bg-white justify-center align-center`}>
           <AuthProvider>
+        <FiltersProvider>
             <NavigationContainer>
               <Stack.Navigator screenOptions={{ navigationBarColor: 'white' }}>
                 <Stack.Screen
@@ -103,7 +105,11 @@ export default function App() {
                   component={LoginScreen}
                   options={{ headerShown: false }}
                 />
-                <Stack.Screen name="Role" component={RoleScreen} options={{ headerShown: false }} />
+                <Stack.Screen 
+                name="Role" 
+                component={RoleScreen} 
+                options={{ headerShown: false }} 
+                />
                 <Stack.Screen
                   name="BookingLesson"
                   component={BookingLessonScreen}
@@ -116,6 +122,7 @@ export default function App() {
                 />
               </Stack.Navigator>
             </NavigationContainer>
+            </FiltersProvider>
           </AuthProvider>
         </SafeAreaView>
       </SafeAreaProvider>
