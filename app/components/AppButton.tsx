@@ -7,7 +7,7 @@ const button = tv({
   variants: {
     size: {
       auto: 'self-start px-2.5 py-[5px] rounded',
-      full: 'flex-1 px-5 py-2.5 rounded-lg',
+      full: 'w-full px-5 py-2.5 rounded-lg',
     },
     appearance: {
       filled: 'border border-transparent bg-primary',
