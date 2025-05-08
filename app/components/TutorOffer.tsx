@@ -2,6 +2,7 @@ import { FC } from 'react';
 import { View, Text } from 'react-native';
 import Button from './AppButton';
 import { twMerge } from 'tailwind-merge';
+import React from 'react';
 
 export type TutorOfferProps = {
   subject: string;
