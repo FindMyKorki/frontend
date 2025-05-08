@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import * as Linking from 'expo-linking';
 import { apiCall, loadTokens, setAccessToken, setRefreshToken } from './ApiHandler';
-import LoginScreen from '../screens//LoginScreen';
+import LoginScreen from '../screens/auth/LoginScreen';
 import * as SecureStore from 'expo-secure-store';
 import * as WebBrowser from 'expo-web-browser';
 import { User } from '../types/User';
@@ -18,6 +18,7 @@ const BACKEND_URL = process.env.EXPO_PUBLIC_API_BASE_URL!;
 export const AuthContext = createContext<AuthContextType | null>(null);
 
 const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [loading, setLoading] = useState<false | 'google' | 'facebook'>(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
@@ -45,6 +46,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
   const handleOAuthLogin = async (provider: 'google' | 'facebook') => {
     try {
+      setLoading(provider);
       const redirectUrl = `/auth/callback`;
       const parsedRedirectUrl = `/auth/sign-in/${provider}?redirect_to=${encodeURIComponent(redirectUrl)}`;
       const newResponse = await apiCall({ method: 'GET', url: parsedRedirectUrl });
@@ -52,6 +54,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       await WebBrowser.openBrowserAsync(newResponse?.oauth_response.url);
       saveCodeVerifier(newResponse?.code_verifier);
     } catch (error) {
+      setLoading(false);
       setAuthError('Błąd logowania, ' + error);
       console.error(error);
     }
@@ -77,6 +80,8 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
           setAuthError('Nie udało się pobrać tokenów logowania.');
         }
       }
+
+      setLoading(false);
     };
 
     const checkInitialURL = async () => {
@@ -117,7 +122,11 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
   return (
     <AuthContext.Provider value={contextValue}>
-      {isAuthenticated ? children : <LoginScreen login={handleOAuthLogin} authError={authError} />}
+      {isAuthenticated ? (
+        children
+      ) : (
+        <LoginScreen login={handleOAuthLogin} loading={loading} authError={authError} />
+      )}
     </AuthContext.Provider>
   );
 };
