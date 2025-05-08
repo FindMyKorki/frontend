@@ -50,32 +50,40 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    const checkInitialURL = async () => {
-      const initialUrl = await Linking.getInitialURL();
+    const handleURL = async (url: string) => {
+      const parsed = Linking.parse(url);
+      const code = parsed.queryParams?.code;
 
-      if (initialUrl) {
-        const parsed = Linking.parse(initialUrl);
-        const code = parsed.queryParams?.code;
+      if (code) {
+        const codeVerifier = await SecureStore.getItemAsync('code_verifier');
+        const response = await apiCall({
+          method: 'GET',
+          url: `/auth/exchange-code-for-session/${code}/${codeVerifier}`,
+        });
 
-        if (code) {
-          const codeVerifier = await SecureStore.getItemAsync('code_verifier');
-          const response = await apiCall({
-            method: 'GET',
-            url: `/auth/exchange-code-for-session/${code}/${codeVerifier}`,
-          });
-
-          if (response?.tokens?.access_token) {
-            await setAccessToken(response?.tokens.access_token);
-            await setRefreshToken(response?.tokens.refresh_token);
-            setIsAuthenticated(true);
-          } else {
-            setAuthError('Nie udało się pobrać tokenów logowania.');
-          }
+        if (response?.tokens?.access_token) {
+          await setAccessToken(response.tokens.access_token);
+          await setRefreshToken(response.tokens.refresh_token);
+          setIsAuthenticated(true);
+        } else {
+          setAuthError('Nie udało się pobrać tokenów logowania.');
         }
       }
     };
 
+    const checkInitialURL = async () => {
+      const initialUrl = await Linking.getInitialURL();
+      if (initialUrl) {
+        await handleURL(initialUrl);
+      }
+    };
+
+    const handleOpenURL = ({ url }: { url: string }) => handleURL(url);
+
     checkInitialURL();
+
+    const listener = Linking.addEventListener('url', handleOpenURL);
+    return () => listener.remove();
   }, []);
 
   const contextValue = {
