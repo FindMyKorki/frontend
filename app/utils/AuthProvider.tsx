@@ -4,8 +4,10 @@ import { apiCall, loadTokens, setAccessToken, setRefreshToken } from './ApiHandl
 import LoginScreen from '../screens//LoginScreen';
 import * as SecureStore from 'expo-secure-store';
 import * as WebBrowser from 'expo-web-browser';
+import { User } from '../../types/User';
 
 interface AuthContextType {
+  user: User | null;
   isAuthenticated: boolean;
 }
 
@@ -16,6 +18,7 @@ export const AuthContext = createContext<AuthContextType | null>(null);
 const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   const saveCodeVerifier = async (codeVerifier: string) => {
     await SecureStore.setItemAsync('code_verifier', codeVerifier);
@@ -39,8 +42,11 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const checkAuth = async () => {
       try {
         await loadTokens();
-        const res = await apiCall({ method: 'GET', url: '/user/info' });
-        if (res?.id) setIsAuthenticated(true);
+        const res = await apiCall({ method: 'GET', url: '/user' });
+        if (res?.id) {
+          setUser(res);
+          setIsAuthenticated(true);
+        }
       } catch {
         setIsAuthenticated(false);
       }
@@ -87,6 +93,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   }, []);
 
   const contextValue = {
+    user,
     isAuthenticated,
   };
 
@@ -95,6 +102,14 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       {isAuthenticated ? children : <LoginScreen login={handleOAuthLogin} authError={authError} />}
     </AuthContext.Provider>
   );
+};
+
+export const useAuth = () => {
+  const context = React.useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 };
 
 export default AuthProvider;
