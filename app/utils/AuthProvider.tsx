@@ -10,6 +10,7 @@ interface AuthContextType {
   user: User | null;
   getSession: () => Promise<void>;
   isAuthenticated: boolean;
+  signOut: () => Promise<void>;
 }
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_API_BASE_URL!;
@@ -93,10 +94,25 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     return () => listener.remove();
   }, []);
 
+  const signOut = async () => {
+    try {
+      await apiCall({ method: 'POST', url: '/auth/sign-out' });
+      await SecureStore.deleteItemAsync('accessToken');
+      await SecureStore.deleteItemAsync('refreshToken');
+      setAccessToken('');
+      setRefreshToken('');
+      setUser(null);
+      setIsAuthenticated(false);
+    } catch (error) {
+      console.error('Błąd podczas wylogowywania:', error);
+    }
+  };
+
   const contextValue = {
     user,
     getSession,
     isAuthenticated,
+    signOut,
   };
 
   return (
