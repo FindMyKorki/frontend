@@ -8,9 +8,10 @@ type Props = {
   onClose: () => void;
   onMute: () => void;
   onArchive: () => void;
+  onReport: () => void;
 };
 
-const ChatMenuModal = ({ visible, onClose, onMute, onArchive }: Props) => (
+const ChatMenuModal = ({ visible, onClose, onMute, onArchive, onReport }: Props) => (
   <Modal transparent visible={visible} animationType="slide" onRequestClose={onClose}>
     <Pressable onPress={onClose} className="flex-1 bg-black/30 justify-end">
       <View className="bg-white p-6 rounded-t-2xl space-y-4 items-center">
@@ -26,10 +27,7 @@ const ChatMenuModal = ({ visible, onClose, onMute, onArchive }: Props) => (
           <Text className="text-base text-text-dark pl-4">Archiwizuj</Text>
         </Pressable>
 
-        <Pressable
-          className="flex-row items-center space-x-2 py-3"
-          onPress={() => console.log('Zgłoś')}
-        >
+        <Pressable className="flex-row items-center space-x-2 py-3" onPress={onReport}>
           <Entypo name="flag" size={20} color="#1A5100" />
           <Text className="text-base text-text-dark pl-4">Zgłoś</Text>
         </Pressable>

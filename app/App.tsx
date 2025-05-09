@@ -17,6 +17,7 @@ import {
   SortOptionsScreen,
   UserDetailsScreen,
   TutorPublicProfile,
+  ReportChatScreen,
 } from './index';
 
 const Stack = createNativeStackNavigator();
@@ -88,6 +89,11 @@ export default function App() {
               <Stack.Screen
                 name="Report"
                 component={ReportScreen}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="ReportChat"
+                component={ReportChatScreen}
                 options={{ headerShown: false }}
               />
             </Stack.Navigator>

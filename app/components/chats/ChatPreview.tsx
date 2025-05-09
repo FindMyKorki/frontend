@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Image, Pressable } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
-import BellOffIcon from './BellOffIcon';
+import { useNavigation } from '@react-navigation/native';
 import ChatHeader from './ChatHeader';
 import ChatMessagePreview from './ChatMessagePreview';
 import ChatMenuModal from './ChatMenuModal';
@@ -28,6 +28,7 @@ const ChatPreview = ({
 }: ChatPreviewProps) => {
   const [muteOptionsVisible, setMuteOptionsVisible] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
+  const navigation = useNavigation();
 
   const muteChat = (chatId: string) => {
     console.log(`Wyciszam czat: ${chatId}`);
@@ -37,6 +38,10 @@ const ChatPreview = ({
   const archiveChat = (chatId: string) => {
     console.log(`Archiwizuję czat: ${chatId}`);
     // Tutaj można dodać rzeczywiste wywołanie API
+  };
+
+  const reportChat = (chatId: string, chatName: string) => {
+    navigation.navigate('ReportChat' as never, { chatId, name: chatName } as never);
   };
 
   return (
@@ -68,6 +73,10 @@ const ChatPreview = ({
         onArchive={() => {
           archiveChat(id);
           setMenuVisible(false);
+        }}
+        onReport={() => {
+          setMenuVisible(false);
+          reportChat(id, name);
         }}
       />
 
