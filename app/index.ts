@@ -3,6 +3,7 @@ import { registerRootComponent } from 'expo';
 import App from './App';
 
 export { default as ChatScreen } from './screens/ChatScreen';
+export { default as ReportChatScreen } from './screens/ReportChatScreen';
 export { default as ClassAppointmentScreen } from './screens/ClassAppointmentScreen';
 export { default as ClassDetailsScreen } from './screens/ClassDetailsScreen';
 export { default as FiltersScreen } from './screens/FiltersScreen';

@@ -11,19 +11,12 @@ const ChatSettings = () => {
   const [menuVisible, setMenuVisible] = useState(false);
   const [muteOptionsVisible, setMuteOptionsVisible] = useState(false);
 
-  // const handleMute = (duration: string) => {
-  //     console.log(`Wyciszam czat ${chatId} (${chatName}) na ${duration}`);
-  //     // Tu bede wyciszac
-  // };
-
   return (
     <>
-      {/* Przycisk do otwarcia menu */}
       <Pressable onPress={() => setMenuVisible(true)}>
         <Entypo name="dots-three-vertical" size={20} color="#000" />
       </Pressable>
 
-      {/* Główne menu */}
       <Modal transparent visible={menuVisible} animationType="slide">
         <Pressable onPress={() => setMenuVisible(false)} className="flex-1 bg-black/30 justify-end">
           <View className="bg-white p-6 rounded-t-2xl space-y-6 items-center">
@@ -59,7 +52,6 @@ const ChatSettings = () => {
         </Pressable>
       </Modal>
 
-      {/* Submenu: czas wyciszenia */}
       <Modal transparent visible={muteOptionsVisible} animationType="slide">
         <Pressable
           onPress={() => setMuteOptionsVisible(false)}
