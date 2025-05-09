@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { View, FlatList, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, FlatList } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import ChatMessage from '../components/chats/ChatMessage';
 import MessageInput from '../components/chats/MessageInput';
 import TopPanel from '../components/TopPanel';
 
 const ChatScreen = ({ route }: any) => {
   const { user } = route.params;
-
+  const navigation = useNavigation();
   const [messages, setMessages] = useState([
     {
       id: '1',
@@ -37,10 +38,11 @@ const ChatScreen = ({ route }: any) => {
     <View style={{ flex: 1 }}>
       <TopPanel
         onBackPress={() => navigation.goBack()}
-        onSettingsPress={() => console.log('More options')}
-        name={user.name}
+        onSettingsPress={() => console.log('Opcje konwersacji')}
+        name={String(user.name)}
         image={user.avatarUrl}
       />
+
       <FlatList
         contentContainerStyle={{ padding: 16 }}
         data={messages}

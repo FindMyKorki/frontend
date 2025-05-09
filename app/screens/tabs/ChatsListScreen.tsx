@@ -1,5 +1,4 @@
 import { Button, ScrollView, Text, View } from 'react-native';
-import ReusableExampleComponent from '../../components/ReusableExampleComponent';
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import ChatPreview from '../../components/chats/ChatPreview';
@@ -115,6 +114,7 @@ const ChatsListScreen = () => {
             lastMessage={chat.lastMessage}
             timestamp={chat.timestamp}
             unreadCount={chat.unreadCount}
+            // @ts-ignore
             onPress={() => navigation.navigate('Chat', { user: chat })}
           />
         ))}
