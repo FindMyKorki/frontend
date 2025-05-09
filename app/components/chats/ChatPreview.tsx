@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, Image, Pressable, Modal } from 'react-native';
-import { Entypo } from '@expo/vector-icons';
+import { Entypo, MaterialIcons } from '@expo/vector-icons';
 import Svg, { Path } from 'react-native-svg';
 
 const BellOffIcon = ({ width = 21, height = 21 }: { width?: number; height?: number }) => (
@@ -29,6 +29,7 @@ const ChatPreview = ({
   unreadCount,
   onPress,
 }: ChatPreviewProps) => {
+  const [muteOptionsVisible, setMuteOptionsVisible] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
 
   return (
@@ -57,7 +58,7 @@ const ChatPreview = ({
           </View>
         </View>
 
-        <Pressable onPress={() => setMenuVisible(true)} className="pl-4 pr-1" hitSlop={10}>
+        <Pressable onPress={() => setMenuVisible(true)} className="pl-3 pr-1" hitSlop={10}>
           <Entypo name="dots-three-vertical" size={20} color="#333" />
         </Pressable>
       </Pressable>
@@ -70,30 +71,78 @@ const ChatPreview = ({
       >
         <Pressable onPress={() => setMenuVisible(false)} className="flex-1 bg-black/30 justify-end">
           <View className="bg-white p-6 rounded-t-2xl space-y-4 items-center">
-            <View className="h-1 w-12 bg-gray-300 self-center  rounded-full mb-2" />
+            <View className="h-1 w-12 bg-gray-300 self-center rounded-full mb-2" />
 
             <Pressable
-              className="flex-row items-center space-x-2 py-4"
-              onPress={() => console.log('Wycisz')}
+              onPress={() => {
+                setMenuVisible(false);
+                setMuteOptionsVisible(true);
+              }}
+              className="flex-row items-center space-x-2 py-3"
             >
               <BellOffIcon />
-              <Text className="text-base text-text-dark pl-2">Wycisz</Text>
+              <Text className="text-base text-text-dark pl-4">Wycisz</Text>
             </Pressable>
 
             <Pressable
-              className="flex-row items-center space-x-2 py-4"
+              className="flex-row items-center space-x-2 py-3"
               onPress={() => console.log('Archiwizuj')}
             >
               <Entypo name="download" size={20} color="#1A5100" />
-              <Text className="text-base text-text-dark pl-2">Archiwizuj</Text>
+              <Text className="text-base text-text-dark pl-4">Archiwizuj</Text>
             </Pressable>
 
             <Pressable
-              className="flex-row items-center space-x-2 py-4"
+              className="flex-row items-center space-x-2 py-3"
               onPress={() => console.log('Zgłoś')}
             >
               <Entypo name="flag" size={20} color="#1A5100" />
-              <Text className="text-base text-text-dark pl-2">Zgłoś</Text>
+              <Text className="text-base text-text-dark pl-4">Zgłoś</Text>
+            </Pressable>
+          </View>
+        </Pressable>
+      </Modal>
+
+      <Modal transparent visible={muteOptionsVisible} animationType="slide">
+        <Pressable
+          onPress={() => setMuteOptionsVisible(false)}
+          className="flex-1 bg-black/30 justify-end"
+        >
+          <View className="bg-white p-6 rounded-t-2xl space-y-6 items-center">
+            <View className="h-1 w-12 bg-gray-300 self-center rounded-full mb-2" />
+
+            <Text className="text-lg font-semibold text-text-dark mb-2">Czas wyciszenia:</Text>
+
+            <Pressable
+              className="flex-row items-center space-x-3 py-3"
+              onPress={() => console.log('15 minut')}
+            >
+              <MaterialIcons name="schedule" size={20} color="#1A5100 " />
+              <Text className="text-base text-text-dark pl-3">15 minut</Text>
+            </Pressable>
+
+            <Pressable
+              className="flex-row items-center space-x-3 py-3"
+              onPress={() => console.log('1 godzina')}
+            >
+              <MaterialIcons name="schedule" size={20} color="#1A5100" />
+              <Text className="text-base text-text-dark pl-3">1 godzina</Text>
+            </Pressable>
+
+            <Pressable
+              className="flex-row items-center space-x-3 py-3"
+              onPress={() => console.log('8 godzin')}
+            >
+              <MaterialIcons name="schedule" size={20} color="#1A5100 " />
+              <Text className="text-base text-text-dark pl-3">8 godzin</Text>
+            </Pressable>
+
+            <Pressable
+              className="flex-row items-center space-x-3 py-3"
+              onPress={() => console.log('Bezterminowo')}
+            >
+              <MaterialIcons name="pause-circle-outline" size={20} color="#1A5100 " />
+              <Text className="text-base text-text-dark pl-3">Bezterminowo</Text>
             </Pressable>
           </View>
         </Pressable>
