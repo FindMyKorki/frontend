@@ -109,6 +109,7 @@ const ChatsListScreen = () => {
         {chats.map((chat) => (
           <ChatPreview
             key={chat.id}
+            id={chat.id}
             name={chat.name}
             avatarUrl={chat.avatarUrl}
             lastMessage={chat.lastMessage}
