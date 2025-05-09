@@ -7,18 +7,29 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Alert,
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import TopPanel from '../components/TopPanel';
 
 const ReportChatScreen = () => {
   const route = useRoute();
-  const { chatId, name } = route.params as { chatId: string; name: string };
   const navigation = useNavigation();
+  const { chatId, name } = route.params as { chatId: string; name: string };
+
   const [reason, setReason] = useState('');
 
   const handleSubmit = () => {
+    if (reason.trim() === '') {
+      Alert.alert('Błąd', 'Proszę wpisać powód zgłoszenia.');
+      return;
+    }
+
     console.log(`Zgłoszono czat ${chatId} z powodem: ${reason}`);
+
+    Alert.alert('Zgłoszenie wysłane', 'Dziękujemy za zgłoszenie. Nasz zespół się nim zajmie.', [
+      { text: 'OK', onPress: () => navigation.goBack() },
+    ]);
   };
 
   return (
@@ -31,6 +42,7 @@ const ReportChatScreen = () => {
           <TopPanel onBackPress={() => navigation.goBack()} name="Zgłoś czat" />
 
           <Text className="text-base mb-2">Powód zgłoszenia:</Text>
+
           <TextInput
             value={reason}
             onChangeText={setReason}

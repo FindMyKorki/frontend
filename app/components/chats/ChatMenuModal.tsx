@@ -7,7 +7,7 @@ type Props = {
   visible: boolean;
   onClose: () => void;
   onMute: () => void;
-  onArchive: () => void;
+  onArchive: (id: string) => void;
   onReport: () => void;
 };
 

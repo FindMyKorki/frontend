@@ -1,11 +1,12 @@
 import { Button, ScrollView, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import React from 'react';
+import React, { useState } from 'react';
 import ChatPreview from '../../components/chats/ChatPreview';
 import SearchBar from '../../components/chats/SerchBar';
 
 const ChatsListScreen = () => {
   const navigation = useNavigation();
+  const [archivedChatIds, setArchivedChatIds] = useState<string[]>([]);
 
   const chats = [
     {
@@ -102,23 +103,29 @@ const ChatsListScreen = () => {
     },
   ];
 
+  const handleArchiveChat = (chatId: string) => {
+    setArchivedChatIds((prev) => [...prev, chatId]);
+  };
+
   return (
     <View className="flex-1 bg-background">
       <SearchBar />
       <ScrollView showsVerticalScrollIndicator={false}>
-        {chats.map((chat) => (
-          <ChatPreview
-            key={chat.id}
-            id={chat.id}
-            name={chat.name}
-            avatarUrl={chat.avatarUrl}
-            lastMessage={chat.lastMessage}
-            timestamp={chat.timestamp}
-            unreadCount={chat.unreadCount}
-            // @ts-ignore
-            onPress={() => navigation.navigate('Chat', { user: chat })}
-          />
-        ))}
+        {chats
+          .filter((chat) => !archivedChatIds.includes(chat.id))
+          .map((chat) => (
+            <ChatPreview
+              key={chat.id}
+              id={chat.id}
+              name={chat.name}
+              avatarUrl={chat.avatarUrl}
+              lastMessage={chat.lastMessage}
+              timestamp={chat.timestamp}
+              unreadCount={chat.unreadCount}
+              onPress={() => navigation.navigate('Chat', { user: chat })}
+              onArchive={handleArchiveChat}
+            />
+          ))}
       </ScrollView>
     </View>
   );
