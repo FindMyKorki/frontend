@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Image, Pressable, Modal } from 'react-native';
+import { View, Text, Image, Pressable } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
 import BellOffIcon from './BellOffIcon';
 import ChatHeader from './ChatHeader';
@@ -8,6 +8,7 @@ import ChatMenuModal from './ChatMenuModal';
 import MuteOptionsModal from './MuteOptionsModal';
 
 export type ChatPreviewProps = {
+  id: string;
   name: string;
   avatarUrl: string;
   lastMessage: string;
@@ -17,6 +18,7 @@ export type ChatPreviewProps = {
 };
 
 const ChatPreview = ({
+  id,
   name,
   avatarUrl,
   lastMessage,
@@ -26,6 +28,16 @@ const ChatPreview = ({
 }: ChatPreviewProps) => {
   const [muteOptionsVisible, setMuteOptionsVisible] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
+
+  const muteChat = (chatId: string) => {
+    console.log(`Wyciszam czat: ${chatId}`);
+    // Tutaj można dodać rzeczywiste wywołanie API
+  };
+
+  const archiveChat = (chatId: string) => {
+    console.log(`Archiwizuję czat: ${chatId}`);
+    // Tutaj można dodać rzeczywiste wywołanie API
+  };
 
   return (
     <>
@@ -49,8 +61,13 @@ const ChatPreview = ({
         visible={menuVisible}
         onClose={() => setMenuVisible(false)}
         onMute={() => {
+          muteChat(id);
           setMenuVisible(false);
           setMuteOptionsVisible(true);
+        }}
+        onArchive={() => {
+          archiveChat(id);
+          setMenuVisible(false);
         }}
       />
 
