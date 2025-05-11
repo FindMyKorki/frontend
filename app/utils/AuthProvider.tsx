@@ -5,6 +5,8 @@ import LoginScreen from '../screens/auth/LoginScreen';
 import * as SecureStore from 'expo-secure-store';
 import * as WebBrowser from 'expo-web-browser';
 import { User } from '../types/User';
+import { ActivityIndicator, View } from 'react-native';
+import RoleScreen from '../screens/auth/RoleScreen';
 
 interface AuthContextType {
   user: User | null;
@@ -19,7 +21,7 @@ export const AuthContext = createContext<AuthContextType | null>(null);
 
 const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [loading, setLoading] = useState<false | 'google' | 'facebook'>(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(null);
   const [authError, setAuthError] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
 
@@ -120,12 +122,22 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     signOut,
   };
 
+  if (isAuthenticated == null) {
+    return (
+      <View className="flex-1 justify-center items-center">
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
   return (
     <AuthContext.Provider value={contextValue}>
-      {isAuthenticated ? (
-        children
-      ) : (
+      {!user ? (
         <LoginScreen login={handleOAuthLogin} loading={loading} authError={authError} />
+      ) : user.profile?.is_tutor == undefined ? (
+        <RoleScreen />
+      ) : (
+        children
       )}
     </AuthContext.Provider>
   );
