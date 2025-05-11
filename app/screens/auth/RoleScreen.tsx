@@ -3,10 +3,13 @@ import { Pressable, Text, View } from 'react-native';
 import { RadioButton } from 'react-native-paper';
 import Role from '../../../assets/role.svg';
 import AppButton from '../../components/AppButton';
+import { updateUserProfile } from '../../hooks/useApi';
+import { useAuth } from '../../utils/AuthProvider';
 
 const RoleScreen = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [role, setRole] = useState<string>('student');
+  const auth = useAuth();
 
   const handleRoleChange = (newRole: string) => {
     setRole(newRole);
@@ -14,6 +17,9 @@ const RoleScreen = () => {
 
   const handleNextButtonPress = async () => {
     setLoading(true);
+    await updateUserProfile(role !== 'student');
+    await auth.getSession();
+    setLoading(false);
   };
 
   return (
