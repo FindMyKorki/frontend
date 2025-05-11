@@ -14,11 +14,8 @@ type Props = {
 };
 
 const DateSelector = ({ startDate, endDate, setShowCalendar, setActiveInput }: Props) => {
-  const safeStartDate = startDate ?? new Date();
-  const safeEndDate = endDate ?? dayjs().add(7, 'day').toDate();
-
   return (
-    <View className={`mt-4`}>
+    <View className="mt-4">
       <Text className="mt-4 text-primary font-semibold text-sm mb-2">Termin:</Text>
       <View className="flex-row gap-2">
         <Pressable
@@ -26,9 +23,11 @@ const DateSelector = ({ startDate, endDate, setShowCalendar, setActiveInput }: P
             setActiveInput('start');
             setShowCalendar(true);
           }}
-          className={`flex-1 flex-row items-center justify-between border-2 bg-white border-background-alt px-2.5 py-[5px] rounded`}
+          className="flex-1 flex-row items-center justify-between border-2 bg-white border-background-alt px-2.5 py-[5px] rounded"
         >
-          <Text className="text-black">Od {dayjs(safeStartDate).format('DD.MM.YYYY')}</Text>
+          <Text className={`${startDate ? 'text-black' : 'text-gray-400 italic'}`}>
+            {startDate ? `Od ${dayjs(startDate).format('DD.MM.YYYY')}` : 'Data poczatkowa'}
+          </Text>
           <MaterialIcons name="calendar-today" size={20} />
         </Pressable>
 
@@ -37,9 +36,11 @@ const DateSelector = ({ startDate, endDate, setShowCalendar, setActiveInput }: P
             setActiveInput('end');
             setShowCalendar(true);
           }}
-          className={`flex-1 flex-row items-center justify-between border-2 bg-white border-background-alt px-2.5 py-[5px] rounded`}
+          className="flex-1 flex-row items-center justify-between border-2 bg-white border-background-alt px-2.5 py-[5px] rounded"
         >
-          <Text className="text-black">Do {dayjs(safeEndDate).format('DD.MM.YYYY')}</Text>
+          <Text className={`${endDate ? 'text-black' : 'text-gray-400 italic'}`}>
+            {endDate ? `Do ${dayjs(endDate).format('DD.MM.YYYY')}` : 'Data końcowa'}
+          </Text>
           <MaterialIcons name="calendar-today" size={20} color="#1A5100" />
         </Pressable>
       </View>
