@@ -41,7 +41,7 @@ const refreshAccessToken = async (options: any) => {
   try {
     const response = await apiCall<RefreshTokenResponse>({
       method: 'GET',
-      url: '/auth/refresh_token',
+      url: '/auth/refresh-tokens',
     });
     if (response?.access_token) {
       await setAccessToken(response?.access_token);
