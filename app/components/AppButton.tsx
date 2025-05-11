@@ -16,13 +16,13 @@ const button = tv({
       transparent: 'border-transparent',
     },
     disabled: {
-      true: 'opacity-50',
+      true: 'opacity-80',
       false: '',
     },
   },
   defaultVariants: {
     size: 'auto',
-    type: 'filled',
+    appearance: 'filled',
     disabled: false,
   },
 });
@@ -50,7 +50,7 @@ const Button = ({
   textClassName = '',
   loading = false,
 }: ButtonProps) => {
-  const finalButtonClass = button({ appearance, size }) + ' ' + className;
+  const finalButtonClass = button({ appearance, size, disabled }) + ' ' + className;
 
   const textColor = ['outlined', 'transparent'].includes(appearance)
     ? 'text-primary'

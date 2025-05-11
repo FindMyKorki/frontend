@@ -1,12 +1,11 @@
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import * as Linking from 'expo-linking';
 import { apiCall, loadTokens, setAccessToken, setRefreshToken } from './ApiHandler';
-import LoginScreen from '../screens/auth/LoginScreen';
 import * as SecureStore from 'expo-secure-store';
 import * as WebBrowser from 'expo-web-browser';
 import { User } from '../types/User';
 import { ActivityIndicator, View } from 'react-native';
-import RoleScreen from '../screens/auth/RoleScreen';
+import { CompleteProfileScreen, LoginScreen, RoleScreen } from '../index';
 
 interface AuthContextType {
   user: User | null;
@@ -21,7 +20,7 @@ export const AuthContext = createContext<AuthContextType | null>(null);
 
 const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [loading, setLoading] = useState<false | 'google' | 'facebook'>(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [authError, setAuthError] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
 
@@ -77,7 +76,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         if (response?.tokens?.access_token) {
           await setAccessToken(response.tokens.access_token);
           await setRefreshToken(response.tokens.refresh_token);
-          setIsAuthenticated(true);
+          await getSession();
         } else {
           setAuthError('Nie udało się pobrać tokenów logowania.');
         }
@@ -135,7 +134,9 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       {!user ? (
         <LoginScreen login={handleOAuthLogin} loading={loading} authError={authError} />
       ) : user.profile?.is_tutor == undefined ? (
-        <RoleScreen />
+        <RoleScreen getSession={getSession} />
+      ) : user.profile?.full_name || (user.profile?.is_tutor && !user.tutor_profile?.bio) ? (
+        <CompleteProfileScreen />
       ) : (
         children
       )}

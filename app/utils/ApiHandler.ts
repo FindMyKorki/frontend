@@ -47,14 +47,16 @@ const refreshAccessToken = async (options: any) => {
 };
 
 export const apiCall = async <T>(
-  options: { method: string; url: string; data?: object | string },
+  options: { method: string; url: string; data?: object | string | FormData },
   refreshed: boolean = false,
 ): Promise<T> => {
   console.log('APICall', options);
 
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-  };
+  const headers: Record<string, string> = {};
+
+  if (!(options.data instanceof FormData)) {
+    headers['Content-Type'] = 'application/json';
+  }
 
   if (accessToken) {
     headers['Authorization'] = `Bearer ${accessToken}`;
