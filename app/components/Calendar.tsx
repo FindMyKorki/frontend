@@ -15,6 +15,7 @@ import {
   setDay,
 } from 'date-fns';
 import { pl } from 'date-fns/locale';
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 type TimeBlock = {
   start_date: string;
@@ -38,17 +39,84 @@ const Calendar: FC<CalendarType> = ({ tutor_id, className = '', onSelect }) => {
 
   const fetchAvailableBlocks = async () => {
     setLoading(true);
-    try {
-      const response = await fetch(
-        `http://127.0.0.1:8000/tutors/${tutor_id}/available-hours?start_date=${currentDate}`,
-      );
-      const data = await response.json();
-      setAvailableBlocks(data.available_blocks || []);
-    } catch (error) {
-      console.error('Fetch error:', error);
-    } finally {
-      setLoading(false);
-    }
+
+    // Example data
+    setAvailableBlocks([
+      {
+        start_date: '2025-05-03T18:16:56.531000+00:00',
+        end_date: '2025-05-03T20:16:56.531000+00:00',
+      },
+      {
+        start_date: '2025-05-04T10:00:00+00:00',
+        end_date: '2025-05-04T12:00:00+00:00',
+      },
+      {
+        start_date: '2025-05-04T18:16:56.531000+00:00',
+        end_date: '2025-05-04T20:16:56.531000+00:00',
+      },
+      {
+        start_date: '2025-05-05T10:00:00+00:00',
+        end_date: '2025-05-05T12:00:00+00:00',
+      },
+      {
+        start_date: '2025-05-05T13:00:00+00:00',
+        end_date: '2025-05-05T16:00:00+00:00',
+      },
+      {
+        start_date: '2025-05-05T18:16:56.531000+00:00',
+        end_date: '2025-05-05T20:16:56.531000+00:00',
+      },
+      {
+        start_date: '2025-05-06T10:00:00+00:00',
+        end_date: '2025-05-06T12:00:00+00:00',
+      },
+      {
+        start_date: '2025-05-19T13:00:00+00:00',
+        end_date: '2025-05-19T16:00:00+00:00',
+      },
+      {
+        start_date: '2025-05-19T18:16:56.531000+00:00',
+        end_date: '2025-05-19T20:16:56.531000+00:00',
+      },
+      {
+        start_date: '2025-05-20T10:00:00+00:00',
+        end_date: '2025-05-20T12:00:00+00:00',
+      },
+      {
+        start_date: '2025-05-20T18:16:56.531000+00:00',
+        end_date: '2025-05-20T20:16:56.531000+00:00',
+      },
+      {
+        start_date: '2025-05-21T10:00:00+00:00',
+        end_date: '2025-05-21T12:00:00+00:00',
+      },
+      {
+        start_date: '2025-05-21T13:00:00+00:00',
+        end_date: '2025-05-21T15:00:00+00:00',
+      },
+      {
+        start_date: '2025-05-21T18:16:56.531000+00:00',
+        end_date: '2025-05-21T20:16:56.531000+00:00',
+      },
+      {
+        start_date: '2025-06-21T18:16:56.531000+00:00',
+        end_date: '2025-06-21T20:16:56.531000+00:00',
+      },
+      {
+        start_date: '2025-06-21T13:00:00+00:00',
+        end_date: '2025-06-21T15:00:00+00:00',
+      },
+      {
+        start_date: '2025-06-21T18:16:56.531000+00:00',
+        end_date: '2025-06-21T20:16:56.531000+00:00',
+      },
+      {
+        start_date: '2025-06-5T18:16:56.531000+00:00',
+        end_date: '2025-06-5T20:16:56.531000+00:00',
+      },
+    ]);
+
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -99,16 +167,16 @@ const Calendar: FC<CalendarType> = ({ tutor_id, className = '', onSelect }) => {
   return (
     <View className={className}>
       <View className="pb-4 flex-row justify-between items-center">
-        <TouchableOpacity onPress={handlePrevMonth} className="items-center w-7 h-7">
-          <Text className="text-lg font-bold color-text-light">{'<'}</Text>
+        <TouchableOpacity onPress={handlePrevMonth} className="items-center justify-center w-7 h-7">
+          <AntDesign name="left" size={15} color="#000000" />
         </TouchableOpacity>
 
         <Text className="text-lg font-bold font-['Inter'] color-text-light">
           {format(currentDate, 'LLLL yyyy', { locale: pl }).toUpperCase()}
         </Text>
 
-        <TouchableOpacity onPress={handleNextMonth} className="items-center w-7 h-7">
-          <Text className="text-lg font-bold color-text-light">{'>'}</Text>
+        <TouchableOpacity onPress={handleNextMonth} className="items-center justify-center w-7 h-7">
+          <AntDesign name="right" size={15} color="#000000" />
         </TouchableOpacity>
       </View>
 
