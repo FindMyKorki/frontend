@@ -20,6 +20,10 @@ const HomeScreen = () => {
         title={'Przejdź do ProfileScreen (Tutor)'}
         onPress={() => nav.navigate('TutorProfile')}
       />
+      <Button
+        title={'Przejdź do TutorPublicProfile (Uczeń)'}
+        onPress={() => nav.navigate('TutorPublicProfile')}
+      />
       <Button title={'Przejdź do ReportScreen'} onPress={() => nav.navigate('Report')} />
     </ScrollView>
   );

@@ -10,6 +10,7 @@ export { default as ReportScreen } from './screens/ReportScreen';
 export { default as SearchScreen } from './screens/SearchScreen';
 export { default as SortOptionsScreen } from './screens/SortOptionsScreen';
 export { default as UserDetailsScreen } from './screens/UserDetailsScreen';
+export { default as TutorPublicProfile } from './screens/TutorPublicProfileScreen';
 
 export { default as EditOfferScreen } from './screens/profile/EditOfferScreen';
 export { default as EditProfileScreen } from './screens/profile/EditProfileScreen';

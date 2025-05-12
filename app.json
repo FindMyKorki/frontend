@@ -2,7 +2,7 @@
   "expo": {
     "name": "FindMyKorki",
     "slug": "FindMyKorki",
-    "scheme": "FindMyKorki",
+    "scheme": "findmykorki",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./app/assets/icon.png",
@@ -31,6 +31,6 @@
       "favicon": "./app/assets/favicon.png",
       "bundler": "metro"
     },
-    "plugins": ["expo-image-picker"]
+    "plugins": ["expo-secure-store", "expo-image-picker"]
   }
 }

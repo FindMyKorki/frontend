@@ -1,6 +1,7 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { View } from 'react-native';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { Colors } from '../../src/colors';
 
 type StarRatingProps = {
   rating: number;
@@ -18,7 +19,8 @@ const StarRating: FC<StarRatingProps> = ({ rating, size, maxRating = 5 }) => {
   return (
     <View className="flex-row">
       {[...Array(maxRating)].map((_, i) => (
-        <MaterialIcons key={i} name={getStarIconName(i + 1)} size={size} className="text-primary" />
+        // @ts-ignore
+        <MaterialIcons key={i} name={getStarIconName(i + 1)} size={size} color={Colors.primary} />
       ))}
     </View>
   );
