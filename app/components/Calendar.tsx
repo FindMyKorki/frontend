@@ -1,4 +1,4 @@
-import React, { useEffect, useState, FC } from 'react';
+import React, { useEffect, useState, FC, useRef } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import {
   format,
@@ -8,18 +8,26 @@ import {
   endOfMonth,
   startOfWeek,
   endOfWeek,
-  eachDayOfInterval,
   isSameMonth,
-  isSameDay,
   addDays,
-  setDay,
+  subDays,
+  setDate,
+  addHours,
 } from 'date-fns';
 import { pl } from 'date-fns/locale';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import AvailabilityModal from './AvailabilityModal';
 
 type TimeBlock = {
   start_date: string;
   end_date: string;
+};
+
+type CalendarDay = {
+  day: number;
+  isCurrentMonth: boolean;
+  isAvailable: boolean;
+  times: TimeBlock[];
 };
 
 type CalendarType = {
@@ -29,131 +37,131 @@ type CalendarType = {
 };
 
 const WEEK = ['PON', 'WT', 'ŚR', 'CZW', 'PT', 'SOB', 'ND'];
-const tomorrow = addDays(new Date(), 1);
+const earliestDate = addHours(new Date(), 2);
+const apiBaseUrl = process.env.EXPO_PUBLIC_API_BASE_URL;
 
 const Calendar: FC<CalendarType> = ({ tutor_id, className = '', onSelect }) => {
-  const [currentDate, setCurrentDate] = useState(tomorrow);
-  const [availableBlocks, setAvailableBlocks] = useState<TimeBlock[]>([]);
-  const [selectedBlocks, setSelectedBlocks] = useState<TimeBlock[]>([]);
-  const [loading, setLoading] = useState(false);
+  {
+    /*for booking pass onSelect, for profile dont pass onSelect*/
+  }
+  const calendarRef = useRef<View>(null);
+  const [calendarTop, setCalendarTop] = useState(0);
+
+  const [currentMonth, setCurrentMonth] = useState(earliestDate);
+  const [selectedDay, setSelectedDay] = useState(0);
+  const [isloading, setIsloading] = useState(false);
+  const [calendarDays, setCalendarDays] = useState<CalendarDay[]>([]);
 
   const fetchAvailableBlocks = async () => {
-    setLoading(true);
+    try {
+      setIsloading(true);
 
-    // Example data
-    setAvailableBlocks([
-      {
-        start_date: '2025-05-03T18:16:56.531000+00:00',
-        end_date: '2025-05-03T20:16:56.531000+00:00',
-      },
-      {
-        start_date: '2025-05-04T10:00:00+00:00',
-        end_date: '2025-05-04T12:00:00+00:00',
-      },
-      {
-        start_date: '2025-05-04T18:16:56.531000+00:00',
-        end_date: '2025-05-04T20:16:56.531000+00:00',
-      },
-      {
-        start_date: '2025-05-05T10:00:00+00:00',
-        end_date: '2025-05-05T12:00:00+00:00',
-      },
-      {
-        start_date: '2025-05-05T13:00:00+00:00',
-        end_date: '2025-05-05T16:00:00+00:00',
-      },
-      {
-        start_date: '2025-05-05T18:16:56.531000+00:00',
-        end_date: '2025-05-05T20:16:56.531000+00:00',
-      },
-      {
-        start_date: '2025-05-06T10:00:00+00:00',
-        end_date: '2025-05-06T12:00:00+00:00',
-      },
-      {
-        start_date: '2025-05-19T13:00:00+00:00',
-        end_date: '2025-05-19T16:00:00+00:00',
-      },
-      {
-        start_date: '2025-05-19T18:16:56.531000+00:00',
-        end_date: '2025-05-19T20:16:56.531000+00:00',
-      },
-      {
-        start_date: '2025-05-20T10:00:00+00:00',
-        end_date: '2025-05-20T12:00:00+00:00',
-      },
-      {
-        start_date: '2025-05-20T18:16:56.531000+00:00',
-        end_date: '2025-05-20T20:16:56.531000+00:00',
-      },
-      {
-        start_date: '2025-05-21T10:00:00+00:00',
-        end_date: '2025-05-21T12:00:00+00:00',
-      },
-      {
-        start_date: '2025-05-21T13:00:00+00:00',
-        end_date: '2025-05-21T15:00:00+00:00',
-      },
-      {
-        start_date: '2025-05-21T18:16:56.531000+00:00',
-        end_date: '2025-05-21T20:16:56.531000+00:00',
-      },
-      {
-        start_date: '2025-06-21T18:16:56.531000+00:00',
-        end_date: '2025-06-21T20:16:56.531000+00:00',
-      },
-      {
-        start_date: '2025-06-21T13:00:00+00:00',
-        end_date: '2025-06-21T15:00:00+00:00',
-      },
-      {
-        start_date: '2025-06-21T18:16:56.531000+00:00',
-        end_date: '2025-06-21T20:16:56.531000+00:00',
-      },
-      {
-        start_date: '2025-06-5T18:16:56.531000+00:00',
-        end_date: '2025-06-5T20:16:56.531000+00:00',
-      },
-    ]);
+      const response = await fetch(
+        `${apiBaseUrl}/tutors/${tutor_id}/available-hours?start_date=${format(currentMonth, 'yyyy-MM-dd')}T${format(currentMonth, 'HH:mm:ss')}`,
+      );
+      const data = await response.json();
+      const blocks: TimeBlock[] = data.available_blocks;
+      const calendar = daysInCalendar();
 
-    setLoading(false);
+      let monthStart = startOfMonth(currentMonth).getDay();
+      monthStart = monthStart == 0 ? 6 : monthStart - 1;
+
+      for (let i = 0; i < blocks.length; i++) {
+        let day = parseInt(blocks[i].start_date.substring(8, 10)) - 1;
+        let idx = day + monthStart;
+        calendar[idx].isAvailable = true;
+        calendar[idx].times.push(blocks[i]);
+      }
+      setCalendarDays(calendar);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsloading(false);
+    }
   };
 
   useEffect(() => {
     fetchAvailableBlocks();
-  }, [currentDate, tutor_id]);
+  }, [currentMonth, tutor_id]);
 
   const handlePrevMonth = () => {
-    if (isSameMonth(currentDate, tomorrow)) return;
+    if (isloading) return;
 
-    const prevMonth = subMonths(currentDate, 1);
-    if (isSameMonth(prevMonth, tomorrow)) {
-      setCurrentDate(tomorrow);
+    if (isSameMonth(currentMonth, earliestDate)) return;
+    setSelectedDay(0);
+
+    const prevMonth = subMonths(currentMonth, 1);
+
+    if (isSameMonth(prevMonth, earliestDate)) {
+      setCurrentMonth(earliestDate);
       return;
     }
 
-    setCurrentDate(prevMonth);
+    prevMonth.setHours(0, 0, 0, 0);
+    setCurrentMonth(prevMonth);
   };
 
   const handleNextMonth = () => {
-    const nextMonth = addMonths(currentDate, 1);
-    setDay(nextMonth, 1);
-    setCurrentDate(nextMonth);
+    if (isloading) return;
+
+    const nextMonth = addMonths(currentMonth, 1);
+    setSelectedDay(0);
+    setCurrentMonth(setDate(nextMonth, 1));
   };
 
-  const daysInCalendar = eachDayOfInterval({
-    start: startOfWeek(startOfMonth(currentDate), { weekStartsOn: 1 }),
-    end: endOfWeek(endOfMonth(currentDate), { weekStartsOn: 1 }),
-  });
+  function daysInCalendar(): CalendarDay[] {
+    const startMonth = startOfMonth(currentMonth);
+    const prevStart = startOfWeek(startMonth, { weekStartsOn: 1 }).getDate();
+    const prevEnd = subDays(startMonth, 1).getDate();
 
-  const dateHasAvailability = (date: Date) => {
-    return availableBlocks.some((block) => isSameDay(new Date(block.start_date), date));
-  };
+    const endMonth = endOfMonth(currentMonth);
+    const nextStart = addDays(endMonth, 1).getDate();
+    const nextEnd = endOfWeek(endMonth, { weekStartsOn: 1 }).getDate();
 
-  const handleDayPress = (date: Date) => {
-    const blocks = availableBlocks.filter((block) => isSameDay(new Date(block.start_date), date));
-    setSelectedBlocks(blocks);
-    onSelect?.(blocks);
+    let days: CalendarDay[] = Array.from(
+      { length: endMonth.getDate() - startMonth.getDate() + 1 },
+      (_, i) => ({
+        day: startMonth.getDate() + i,
+        isCurrentMonth: true,
+        isAvailable: false,
+        times: [],
+      }),
+    );
+
+    if (prevStart !== 1) {
+      const days1: CalendarDay[] = Array.from({ length: prevEnd - prevStart + 1 }, (_, i) => ({
+        day: prevStart + i,
+        isCurrentMonth: false,
+        isAvailable: false,
+        times: [],
+      }));
+      days = [...days1, ...days];
+    }
+
+    if (nextEnd < 7) {
+      const days3: CalendarDay[] = Array.from({ length: nextEnd - nextStart + 1 }, (_, i) => ({
+        day: nextStart + i,
+        isCurrentMonth: false,
+        isAvailable: false,
+        times: [],
+      }));
+      days = [...days, ...days3];
+    }
+
+    return days;
+  }
+
+  const handleDayPress = (day: CalendarDay) => {
+    if (calendarRef.current) {
+      calendarRef.current.measure((_x, _y, _width, _height, _pageX, pageY) => {
+        setCalendarTop(pageY + _height - 50);
+      });
+    }
+
+    let monthStart = startOfMonth(currentMonth).getDay();
+    monthStart = monthStart == 0 ? 5 : monthStart - 2;
+    setSelectedDay(day.day);
+    onSelect?.(calendarDays[day.day + monthStart].times);
   };
 
   function chunkArray<T>(array: T[], chunkSize: number): T[][] {
@@ -165,14 +173,14 @@ const Calendar: FC<CalendarType> = ({ tutor_id, className = '', onSelect }) => {
   }
 
   return (
-    <View className={className}>
+    <View className={className} ref={calendarRef}>
       <View className="pb-4 flex-row justify-between items-center">
         <TouchableOpacity onPress={handlePrevMonth} className="items-center justify-center w-7 h-7">
           <AntDesign name="left" size={15} color="#000000" />
         </TouchableOpacity>
 
         <Text className="text-lg font-bold font-['Inter'] color-text-light">
-          {format(currentDate, 'LLLL yyyy', { locale: pl }).toUpperCase()}
+          {format(currentMonth, 'LLLL yyyy', { locale: pl }).toUpperCase()}
         </Text>
 
         <TouchableOpacity onPress={handleNextMonth} className="items-center justify-center w-7 h-7">
@@ -191,46 +199,51 @@ const Calendar: FC<CalendarType> = ({ tutor_id, className = '', onSelect }) => {
         ))}
       </View>
 
-      {loading ? (
-        <></>
-      ) : (
-        <View className="flex-wrap w-full">
-          {chunkArray(daysInCalendar, 7).map((week, weekIndex) => (
-            <View key={weekIndex} className="flex-row pt-4 w-full justify-between">
-              {week.map((day) => {
-                const isCurrentMonth = isSameMonth(day, currentDate);
-                const isAvailable = dateHasAvailability(day);
-                const isSelected =
-                  selectedBlocks.length > 0
-                    ? isSameDay(new Date(selectedBlocks[0].start_date), day)
-                    : false;
+      <View className="flex-wrap w-full">
+        {chunkArray(calendarDays, 7).map((week, weekIndex) => (
+          <View key={weekIndex} className="flex-row pt-4 w-full justify-between">
+            {week.map((day) => {
+              const isSelected =
+                (selectedDay == day.day && day.isCurrentMonth) ||
+                (onSelect == null && day.isAvailable);
 
-                return (
+              return (
+                <View key={day.day}>
                   <TouchableOpacity
-                    key={day.toISOString()}
                     className={`w-10 h-7 items-center justify-center rounded-md 
-                      ${isCurrentMonth && !(isAvailable || isSelected) ? 'border-2 border-background-alt' : ' '}
-                      ${isAvailable ? (isSelected ? 'bg-primary' : 'bg-background-alt') : ' '} 
-                    `}
-                    onPress={() => isAvailable && handleDayPress(day)}
-                    disabled={!isAvailable}
+                    ${day.isCurrentMonth && !(day.isAvailable || isSelected) ? 'border-2 border-background-alt' : ' '}
+                    ${day.isAvailable ? (isSelected ? 'bg-primary' : 'bg-background-alt') : ' '} 
+                  `}
+                    onPress={() => day.isAvailable && handleDayPress(day)}
+                    disabled={!day.isAvailable}
                   >
                     <Text
                       className={`text-lg/6 font-['Inter'] 
-                      ${isAvailable ? 'font-semibold' : ' '} 
-                      ${!isCurrentMonth ? 'text-text-medium' : 'font-medium'} 
-                      ${isSelected ? 'text-background' : ' '}
-                      `}
+                    ${day.isAvailable ? 'font-semibold' : ' '} 
+                    ${!day.isCurrentMonth ? 'text-text-medium' : 'font-medium'} 
+                    ${isSelected ? 'text-background' : ' '}
+                    `}
                     >
-                      {day.getDate()}
+                      {day.day}
                     </Text>
                   </TouchableOpacity>
-                );
-              })}
-            </View>
-          ))}
-        </View>
-      )}
+                  {onSelect == null && day.isAvailable ? (
+                    <AvailabilityModal
+                      visible={day.day == selectedDay}
+                      onClose={() => setSelectedDay(0)}
+                      selectedDate={setDate(currentMonth, day.day)}
+                      dates={day.times}
+                      top={calendarTop}
+                    />
+                  ) : (
+                    <></>
+                  )}
+                </View>
+              );
+            })}
+          </View>
+        ))}
+      </View>
     </View>
   );
 };
