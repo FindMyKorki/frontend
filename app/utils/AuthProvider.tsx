@@ -45,7 +45,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
   const handleOAuthLogin = async (provider: 'google' | 'facebook') => {
     try {
-      const redirectUrl = `${BACKEND_URL}/auth/callback`;
+      const redirectUrl = `/auth/callback`;
       const parsedRedirectUrl = `/auth/sign-in/${provider}?redirect_to=${encodeURIComponent(redirectUrl)}`;
       const newResponse = await apiCall({ method: 'GET', url: parsedRedirectUrl });
 
