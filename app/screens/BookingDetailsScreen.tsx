@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, Alert, FlatList, Image } from 
 import LessonDetails from '../components/LessonDetails';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+import { apiCall } from '../utils/ApiHandler';
 
 type BookingLessonsScreenProps = {
   onBackPress?: () => void;
@@ -13,7 +14,19 @@ type BookingLessonsScreenProps = {
   startTime: Date;
   endTime: Date;
   description: string;
+  offer_id: number;
 };
+
+/*    <BookingLessonsScreen
+    offer_id={1}
+    teacher="Jan Kowalski"
+    subject="Matematyka"
+    level="Podstawowy"
+    price="100"
+    startTime={new Date("2025-05-19T13:00:00+00:00")}
+    endTime={new Date("2025-05-19T16:00:00+00:00")}
+    description="Opis lekcji"
+    /> */
 
 const BookingLessonsScreen: FC<BookingLessonsScreenProps> = ({
   onBackPress,
@@ -24,8 +37,10 @@ const BookingLessonsScreen: FC<BookingLessonsScreenProps> = ({
   startTime,
   endTime,
   description,
+  offer_id,
 }) => {
   const [images, setImages] = useState<string[]>([]);
+  const [text, setText] = useState('');
 
   const pickImage = async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -65,6 +80,21 @@ const BookingLessonsScreen: FC<BookingLessonsScreenProps> = ({
       const newUri = result.assets[0].uri;
       setImages((prev) => [...prev, newUri]);
     }
+  };
+
+  const handleBooking = async () => {
+    const response = await apiCall({
+      method: 'POST',
+      url: '/bookings:propose',
+      data: JSON.stringify({
+        notes: text,
+        offer_id: offer_id,
+        start_date: startTime,
+        end_date: endTime,
+      }),
+    });
+
+    console.log(response);
   };
 
   return (
@@ -107,8 +137,11 @@ const BookingLessonsScreen: FC<BookingLessonsScreenProps> = ({
               <Text className="text-base text-text-dark font-bold mb-2.5 font-[Inter]">
                 Temat zajęć
               </Text>
-
-              <TextInput className="border border-border-gray rounded-xl" />
+              <TextInput
+                className="border border-border-gray rounded-xl"
+                value={text}
+                onChangeText={setText}
+              />
             </View>
 
             {/* Attachments */}
@@ -144,14 +177,20 @@ const BookingLessonsScreen: FC<BookingLessonsScreenProps> = ({
       />
 
       {/* Buttons */}
-      <View className="flex-row justify-between px-4 py-3 absolute bottom-0 left-0 right-0 bg-background">
+      <View
+        className="flex-row justify-between px-4 py-3 absolute bottom-0 left-0 right-0 bg-background shadow-xl/70"
+        style={{ elevation: 10 }}
+      >
         <TouchableOpacity
           className="flex-1 bg-background border border-primary rounded-lg py-2.5 px-11 mr-2"
           onPress={onBackPress}
         >
           <Text className="text-center font-bold font-[Inter] text-text-dark">Wróć</Text>
         </TouchableOpacity>
-        <TouchableOpacity className="flex-1 bg-primary rounded-lg py-2.5 px-11 ml-2">
+        <TouchableOpacity
+          className="flex-1 bg-primary rounded-lg py-2.5 px-11 ml-2"
+          onPress={handleBooking}
+        >
           <Text className="text-center font-bold font-[Inter] text-background">Umów</Text>
         </TouchableOpacity>
       </View>
