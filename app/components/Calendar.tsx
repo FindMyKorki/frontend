@@ -17,6 +17,7 @@ import {
 import { pl } from 'date-fns/locale';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import AvailabilityModal from './AvailabilityModal';
+import { apiCall } from '../utils/ApiHandler';
 
 type TimeBlock = {
   start_date: string;
@@ -38,7 +39,6 @@ type CalendarType = {
 
 const WEEK = ['PON', 'WT', 'ŚR', 'CZW', 'PT', 'SOB', 'ND'];
 const earliestDate = addHours(new Date(), 2);
-const apiBaseUrl = process.env.EXPO_PUBLIC_API_BASE_URL;
 
 const Calendar: FC<CalendarType> = ({ tutor_id, className = '', onSelect }) => {
   {
@@ -53,31 +53,28 @@ const Calendar: FC<CalendarType> = ({ tutor_id, className = '', onSelect }) => {
   const [calendarDays, setCalendarDays] = useState<CalendarDay[]>([]);
 
   const fetchAvailableBlocks = async () => {
-    try {
-      setIsloading(true);
+    setIsloading(true);
 
-      const response = await fetch(
-        `${apiBaseUrl}/tutors/${tutor_id}/available-hours?start_date=${format(currentMonth, 'yyyy-MM-dd')}T${format(currentMonth, 'HH:mm:ss')}`,
-      );
-      const data = await response.json();
-      const blocks: TimeBlock[] = data.available_blocks;
-      const calendar = daysInCalendar();
+    const data = (await apiCall({
+      method: 'GET',
+      url: `/tutors/${tutor_id}/available-hours?start_date=${format(currentMonth, 'yyyy-MM-dd')}T${format(currentMonth, 'HH:mm:ss')}`,
+    })) as { available_blocks: TimeBlock[] };
 
-      let monthStart = startOfMonth(currentMonth).getDay();
-      monthStart = monthStart == 0 ? 6 : monthStart - 1;
+    const blocks: TimeBlock[] = data.available_blocks;
+    const calendar = daysInCalendar();
 
-      for (let i = 0; i < blocks.length; i++) {
-        let day = parseInt(blocks[i].start_date.substring(8, 10)) - 1;
-        let idx = day + monthStart;
-        calendar[idx].isAvailable = true;
-        calendar[idx].times.push(blocks[i]);
-      }
-      setCalendarDays(calendar);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsloading(false);
+    let monthStart = startOfMonth(currentMonth).getDay();
+    monthStart = monthStart == 0 ? 6 : monthStart - 1;
+
+    for (let i = 0; i < blocks.length; i++) {
+      let day = parseInt(blocks[i].start_date.substring(8, 10)) - 1;
+      let idx = day + monthStart;
+      calendar[idx].isAvailable = true;
+      calendar[idx].times.push(blocks[i]);
     }
+
+    setCalendarDays(calendar);
+    setIsloading(false);
   };
 
   useEffect(() => {
