@@ -46,7 +46,7 @@ export const updateTutorInfo = async (
       data: { bio: bio, bio_long: bioLong, contact_email: contactEmail, phone_number: phoneNumber },
     });
   } catch (e) {
-    console.error('PUT /tutors', e);
+    console.error('POST /tutors', e);
     return null;
   }
 };
