@@ -4,7 +4,6 @@ import { RadioButton } from 'react-native-paper';
 import Role from '../../../assets/role.svg';
 import AppButton from '../../components/AppButton';
 import { createProfile } from '../../hooks/useApi';
-import { useAuth } from '../../utils/AuthProvider';
 
 type RoleScreenProps = {
   getSession: () => Promise<void>;

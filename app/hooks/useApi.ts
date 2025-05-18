@@ -2,10 +2,14 @@ import { apiCall } from '../utils/ApiHandler';
 
 export const updateUserProfile = async (fullName: string, removeAvatar: boolean) => {
   try {
+    const formData = new FormData();
+    formData.append('full_name', fullName);
+    formData.append('remove_avatar', `${removeAvatar}`);
+
     return await apiCall({
       method: 'PUT',
       url: '/profiles',
-      data: { full_name: fullName, remove_avatar: removeAvatar },
+      data: formData,
     });
   } catch (e) {
     console.error('PUT /profiles', e);
@@ -21,7 +25,7 @@ export const updateTutorInfo = async (
 ) => {
   try {
     return await apiCall({
-      method: 'PUT',
+      method: 'POST',
       url: '/tutors',
       data: { bio: bio, bio_long: bioLong, contact_email: contactEmail, phone_number: phoneNumber },
     });

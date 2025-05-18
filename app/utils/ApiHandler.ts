@@ -50,11 +50,13 @@ export const apiCall = async <T>(
   options: { method: string; url: string; data?: object | string | FormData },
   refreshed: boolean = false,
 ): Promise<T> => {
-  console.log('APICall', options);
+  console.log('APICall', baseURL, options);
 
   const headers: Record<string, string> = {};
 
-  if (!(options.data instanceof FormData)) {
+  if (options.data instanceof FormData) {
+    headers['Content-Type'] = 'multipart/form-data';
+  } else {
     headers['Content-Type'] = 'application/json';
   }
 

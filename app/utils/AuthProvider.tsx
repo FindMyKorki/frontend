@@ -14,8 +14,6 @@ interface AuthContextType {
   signOut: () => Promise<void>;
 }
 
-const BACKEND_URL = process.env.EXPO_PUBLIC_API_BASE_URL!;
-
 export const AuthContext = createContext<AuthContextType | null>(null);
 
 const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -135,7 +133,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         <LoginScreen login={handleOAuthLogin} loading={loading} authError={authError} />
       ) : user.profile?.is_tutor == undefined ? (
         <RoleScreen getSession={getSession} />
-      ) : user.profile?.full_name || (user.profile?.is_tutor && !user.tutor_profile?.bio) ? (
+      ) : !user.profile?.full_name || (user.profile?.is_tutor && !user.tutor_profile?.bio) ? (
         <CompleteProfileScreen />
       ) : (
         children

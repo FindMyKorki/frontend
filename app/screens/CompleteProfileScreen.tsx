@@ -31,6 +31,7 @@ const CompleteProfileScreen = () => {
       await updateTutorInfo(shortBio, bio, email, phone);
     }
 
+    await auth.getSession();
     setLoading(false);
   };
 
@@ -71,6 +72,7 @@ const CompleteProfileScreen = () => {
             className={'w-full mb-4'}
             editable={!loading}
             value={phone}
+            keyboardType={'phone-pad'}
             onChangeText={setPhone}
             textContentType={'telephoneNumber'}
           />
@@ -81,6 +83,7 @@ const CompleteProfileScreen = () => {
             value={shortBio}
             onChangeText={setShortBio}
             numberOfLines={2}
+            multiline={true}
           />
           <LabeledTextInput
             label={'Długi opis'}
@@ -89,6 +92,8 @@ const CompleteProfileScreen = () => {
             value={bio}
             onChangeText={setBio}
             numberOfLines={10}
+            multiline={true}
+            style={{ height: 10 * 20, textAlignVertical: 'top' }}
           />
         </>
       )}
