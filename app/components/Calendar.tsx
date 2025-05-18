@@ -86,6 +86,7 @@ const Calendar: FC<CalendarType> = ({ tutor_id, className = '', onSelect }) => {
 
     if (isSameMonth(currentMonth, earliestDate)) return;
     setSelectedDay(0);
+    onSelect?.([]);
 
     const prevMonth = subMonths(currentMonth, 1);
 
@@ -103,6 +104,7 @@ const Calendar: FC<CalendarType> = ({ tutor_id, className = '', onSelect }) => {
 
     const nextMonth = addMonths(currentMonth, 1);
     setSelectedDay(0);
+    onSelect?.([]);
     setCurrentMonth(setDate(nextMonth, 1));
   };
 

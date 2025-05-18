@@ -1,46 +1,50 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, FlatList, Image } from 'react-native';
 import LessonDetails from '../components/LessonDetails';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { apiCall } from '../utils/ApiHandler';
 
-type BookingLessonsScreenProps = {
-  onBackPress?: () => void;
-  teacher: string;
-  subject: string;
-  level: string;
-  price: string;
-  startTime: Date;
-  endTime: Date;
+type Offer = {
+  price: number;
+  subject_name: string;
   description: string;
-  offer_id: number;
+  level: string;
+  tutor_full_name: string;
 };
 
-/*    <BookingLessonsScreen
-    offer_id={1}
-    teacher="Jan Kowalski"
-    subject="Matematyka"
-    level="Podstawowy"
-    price="100"
-    startTime={new Date("2025-05-19T13:00:00+00:00")}
-    endTime={new Date("2025-05-19T16:00:00+00:00")}
-    description="Opis lekcji"
-    /> */
+type ParamTypes = {
+  offer_id: number;
+  startTime: string;
+  endTime: string;
+};
 
-const BookingLessonsScreen: FC<BookingLessonsScreenProps> = ({
-  onBackPress,
-  teacher,
-  subject,
-  level,
-  price,
-  startTime,
-  endTime,
-  description,
-  offer_id,
-}) => {
+const BookingDetailsScreen = () => {
+  const nav = useNavigation();
+  const route = useRoute();
   const [images, setImages] = useState<string[]>([]);
   const [text, setText] = useState('');
+
+  const [offer, setOffer] = useState<Offer | null>(null);
+  const params = route.params as ParamTypes;
+
+  const offer_id = params.offer_id;
+  const startTime = new Date(params.startTime);
+  const endTime = new Date(params.endTime);
+
+  useEffect(() => {
+    const getOffer = async () => {
+      setOffer(
+        await apiCall({
+          method: 'GET',
+          url: `/offers/${offer_id}`,
+        }),
+      );
+    };
+
+    getOffer();
+  }, []);
 
   const pickImage = async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -101,24 +105,22 @@ const BookingLessonsScreen: FC<BookingLessonsScreenProps> = ({
     <View className="bg-background flex-1">
       {/* Header */}
       <View className="flex-row px-4 py-3">
-        <TouchableOpacity onPress={onBackPress} className="pr-3">
-          <MaterialIcons name="arrow-back" size={24} color="#1A5100" />
+        <TouchableOpacity onPress={() => nav.goBack()} className="pr-3">
+          <MaterialIcons name="arrow-back" size={24} color="#000000" />
         </TouchableOpacity>
 
         <Text className="text-lg text-text-dark font-[Inter]">Podaj szczegóły lekcji</Text>
       </View>
 
       {/* Lesson Card */}
-      <LessonDetails
-        teacher={teacher}
-        subject={subject}
-        level={level}
-        price={price}
-        startTime={startTime}
-        endTime={endTime}
-        description={description}
-        className="px-4 py-3"
-      />
+      {offer !== null && (
+        <LessonDetails
+          offer={offer}
+          startTime={startTime}
+          endTime={endTime}
+          className="px-4 py-3"
+        />
+      )}
 
       {/* Attachments List */}
       <FlatList
@@ -183,7 +185,7 @@ const BookingLessonsScreen: FC<BookingLessonsScreenProps> = ({
       >
         <TouchableOpacity
           className="flex-1 bg-background border border-primary rounded-lg py-2.5 px-11 mr-2"
-          onPress={onBackPress}
+          onPress={() => nav.goBack()}
         >
           <Text className="text-center font-bold font-[Inter] text-text-dark">Wróć</Text>
         </TouchableOpacity>
@@ -198,4 +200,4 @@ const BookingLessonsScreen: FC<BookingLessonsScreenProps> = ({
   );
 };
 
-export default BookingLessonsScreen;
+export default BookingDetailsScreen;
