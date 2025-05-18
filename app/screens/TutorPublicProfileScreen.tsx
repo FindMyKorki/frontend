@@ -1,7 +1,8 @@
-import { ScrollView, View, Text, Pressable } from 'react-native';
+import React, { useState } from 'react';
+import { ScrollView, View, Text, Pressable, Linking } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useState } from 'react';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+
 import TopPanel from '../components/TopPanel';
 import Review from '../components/Review';
 import TutorOffer from '../components/TutorOffer';
@@ -10,13 +11,23 @@ import BottomPanelButtons from '../components/BottomPanelButtons';
 import SortDropdown from '../components/SortDropdown';
 import BottomModal from '../components/BottomModal';
 import Button from '../components/AppButton';
-import React from 'react';
 import { Colors } from '../../src/colors';
 
 const TutorPublicProfile = () => {
-  const [activeTab, setActiveTab] = useState('Oferty');
+  const [activeTab, setActiveTab] = useState<'Oferty' | 'Informacje' | 'Opinie'>('Oferty');
   const [bottomModalVisible, setBottomModalVisible] = useState(false);
   const navigation = useNavigation();
+
+  //tu musze dodac z bazy nr telefonu
+  const selectedPhoneNumber = '505844336';
+
+  const callNumber = (phoneNumber: string) => {
+    Linking.openURL(`tel:${phoneNumber}`);
+  };
+
+  const sendSMS = (phoneNumber: string) => {
+    Linking.openURL(`sms:${phoneNumber}`);
+  };
 
   const reviewSortOptions = [
     'Po ocenie malejąco',
@@ -25,9 +36,24 @@ const TutorPublicProfile = () => {
     'Po dacie rosnąco',
   ];
 
-  const handleTabPress = (tab: string) => {
+  const handleTabPress = (tab: 'Oferty' | 'Informacje' | 'Opinie') => {
     setActiveTab(tab);
   };
+
+  const offers = [
+    {
+      subject: 'Matematyka',
+      educationLevel: 'Szkoła średnia',
+      price: '50 zł',
+      description: 'Pomagam przygotować się do matury z matematyki.',
+    },
+    {
+      subject: 'Fizyka',
+      educationLevel: 'Studia',
+      price: '80 zł',
+      description: 'Wyjaśnię trudne zagadnienia z mechaniki i termodynamiki.',
+    },
+  ];
 
   return (
     <View className="flex-1">
@@ -40,7 +66,6 @@ const TutorPublicProfile = () => {
           centerContentClassName="ml-3"
         />
 
-        {/* Profil tutora */}
         <View className="px-2 pt-2">
           <TutorProfile
             tutorName="Jan Kowalski"
@@ -52,7 +77,6 @@ const TutorPublicProfile = () => {
           />
         </View>
 
-        {/* Wyróżniona opinia */}
         <Text className="text-xs font-bold text-primary px-4 pt-4 ml-2">WYRÓŻNIONA OPINIA</Text>
         <View className="px-4 pt-2">
           <Review
@@ -63,24 +87,19 @@ const TutorPublicProfile = () => {
           />
         </View>
 
-        {/* Pasek Oferty | Informacje | Opinie */}
         <View className="flex-row mt-2 mb-2">
           {['Oferty', 'Informacje', 'Opinie'].map((tab, index) => (
             <View key={tab} className="flex-1 relative items-center justify-center">
               <Pressable
-                onPress={() => handleTabPress(tab)}
+                onPress={() => handleTabPress(tab as any)}
                 className="py-3 items-center justify-center"
               >
                 <Text
-                  className={`text-base font-bold ${
-                    activeTab === tab ? 'text-primary' : 'text-text-light'
-                  }`}
+                  className={`text-base font-bold ${activeTab === tab ? 'text-primary' : 'text-text-light'}`}
                 >
                   {tab}
                 </Text>
               </Pressable>
-
-              {/* Szary separator tylko dla Oferty i Informacje */}
               {index < 2 && (
                 <View className="bg-border-gray absolute right-0 top-1.5 bottom-1.5 w-[1px]" />
               )}
@@ -88,141 +107,51 @@ const TutorPublicProfile = () => {
           ))}
         </View>
 
-        {/* Informacja o cenie */}
         {activeTab === 'Oferty' && (
-          <View className="flex-row items-center justify-end px-4 mt-4">
-            <MaterialIcons name="info" size={11} color="#1A5100" />
-            <Text className="text-primary text-[0.5rem] font-semibold ml-1">
-              Cena za 60 min. zajęć
-            </Text>
+          <>
+            <View className="flex-row items-center justify-end px-4 mt-4">
+              <MaterialIcons name="info" size={11} color="#1A5100" />
+              <Text className="text-primary text-[0.5rem] font-semibold ml-1">
+                Cena za 60 min. zajęć
+              </Text>
+            </View>
+            <View className="px-4 pb-10 mt-2 gap-y-2">
+              {offers.map((offer, idx) => (
+                <TutorOffer
+                  key={idx}
+                  subject={offer.subject}
+                  educationLevel={offer.educationLevel}
+                  price={offer.price}
+                  description={offer.description}
+                  userType="student"
+                />
+              ))}
+            </View>
+          </>
+        )}
+
+        {activeTab === 'Informacje' && (
+          <View className="px-4">
+            <Text className="text-lg font-bold">Tutaj będą informacje</Text>
           </View>
         )}
 
-        {/* Oferty korepetytora - z odstępem pomiędzy ofertami */}
-        <View className="px-4 pb-10 mt-2 gap-y-2">
-          {/* W zależności od aktywnej zakładki pokazujemy odpowiednią zawartość */}
-          {activeTab === 'Oferty' && (
-            <>
-              <TutorOffer
-                subject="Matematyka"
-                educationLevel="Szkoła średnia"
-                price="50 zł"
-                description="Pomagam przygotować się do matury z matematyki."
-                userType="student"
-              />
-              <TutorOffer
-                subject="Fizyka"
-                educationLevel="Studia"
-                price="80 zł"
-                description="Wyjaśnię trudne zagadnienia z mechaniki i termodynamiki."
-                userType="student"
-              />
-              <TutorOffer
-                subject="Matematyka"
-                educationLevel="Szkoła średnia"
-                price="50 zł"
-                description="Pomagam przygotować się do matury z matematyki."
-                userType="student"
-              />
-              <TutorOffer
-                subject="Fizyka"
-                educationLevel="Studia"
-                price="80 zł"
-                description="Wyjaśnię trudne zagadnienia z mechaniki i termodynamiki."
-                userType="student"
-              />
-              <TutorOffer
-                subject="Matematyka"
-                educationLevel="Szkoła średnia"
-                price="50 zł"
-                description="Pomagam przygotować się do matury z matematyki."
-                userType="student"
-              />
-              <TutorOffer
-                subject="Fizyka"
-                educationLevel="Studia"
-                price="80 zł"
-                description="Wyjaśnię trudne zagadnienia z mechaniki i termodynamiki."
-                userType="student"
-              />
-              <TutorOffer
-                subject="Matematyka"
-                educationLevel="Szkoła średnia"
-                price="50 zł"
-                description="Pomagam przygotować się do matury z matematyki."
-                userType="student"
-              />
-              <TutorOffer
-                subject="Fizyka"
-                educationLevel="Studia"
-                price="80 zł"
-                description="Wyjaśnię trudne zagadnienia z mechaniki i termodynamiki."
-                userType="student"
-              />
-              <TutorOffer
-                subject="Matematyka"
-                educationLevel="Szkoła średnia"
-                price="50 zł"
-                description="Pomagam przygotować się do matury z matematyki."
-                userType="student"
-              />
-              <TutorOffer
-                subject="Fizyka"
-                educationLevel="Studia"
-                price="80 zł"
-                description="Wyjaśnię trudne zagadnienia z mechaniki i termodynamiki."
-                userType="student"
-              />
-            </>
-          )}
-
-          {activeTab === 'Informacje' && (
-            <View className="px-4">
-              <Text className="text-lg font-bold">Tutaj będą informacje</Text>
-            </View>
-          )}
-
-          {activeTab === 'Opinie' && (
-            <>
-              <SortDropdown
-                options={reviewSortOptions}
-                onSelect={(option) => console.log(option)}
-              />
-
+        {activeTab === 'Opinie' && (
+          <View className="px-4 gap-y-2">
+            <SortDropdown options={reviewSortOptions} onSelect={(option) => console.log(option)} />
+            {[1, 2, 3, 4, 5].map((n) => (
               <Review
+                key={n}
                 fullName="Jan Kowalski"
-                avatarUrl="https://avatar.iran.liara.run/public/1"
-                comment="Zajęcia z panią Anną to czysta przyjemność! Tłumaczy w sposób jasny i cierpliwy, a jej pasja do nauczania naprawdę motywuje do pracy. Polecam każdemu, kto chce solidnie przygotować się do egzaminów!"
-                rating={3}
+                avatarUrl={`https://avatar.iran.liara.run/public/${n}`}
+                comment="Bardzo dobre zajęcia i świetne tłumaczenie materiału."
+                rating={2 + n * 0.5}
               />
-              <Review
-                fullName="Jan Kowalski"
-                avatarUrl="https://avatar.iran.liara.run/public/3"
-                comment="Pani Katarzyna to bardzo kompetentna i zaangażowana nauczycielka. Dzięki niej moja córka poprawiła oceny z matematyki i odzyskała pewność siebie. Świetny kontakt i bardzo miła atmosfera na zajęciach."
-                rating={3.5}
-              />
-              <Review
-                fullName="Jan Kowalski"
-                avatarUrl="https://avatar.iran.liara.run/public/2"
-                comment="Pan Michał świetnie radzi sobie z indywidualnym podejściem do ucznia. Pomógł mi zrozumieć zagadnienia, które wcześniej wydawały się nie do opanowania. Zdecydowanie jeden z najlepszych tutorów, z jakimi miałem okazję pracować."
-                rating={4}
-              />
-              <Review
-                fullName="Jan Kowalski"
-                avatarUrl="https://avatar.iran.liara.run/public/4"
-                comment="Pan Tomasz ma ogromną wiedzę i potrafi ją w przystępny sposób przekazać. Zawsze dobrze przygotowany do zajęć, punktualny i cierpliwy. Serdecznie polecam!"
-                rating={5}
-              />
-              <Review
-                fullName="Jan Kowalski"
-                avatarUrl="https://avatar.iran.liara.run/public/5"
-                comment="Dzięki lekcjom z panią Magdą zdałam maturę z języka angielskiego na bardzo dobrym poziomie. Zajęcia były ciekawe, dynamiczne i dopasowane do moich potrzeb."
-                rating={2.5}
-              />
-            </>
-          )}
-        </View>
+            ))}
+          </View>
+        )}
       </ScrollView>
+
       <BottomPanelButtons
         leftButtonProps={{
           label: 'Wyślij wiadomość',
@@ -234,9 +163,7 @@ const TutorPublicProfile = () => {
         }}
         rightButtonProps={{
           label: 'Zadzwoń / SMS',
-          onPress: () => {
-            setBottomModalVisible(true);
-          },
+          onPress: () => setBottomModalVisible(true),
           appearance: 'outlined',
           icon: <MaterialIcons name="phone" size={20} color={Colors.primary} />,
         }}
@@ -249,7 +176,8 @@ const TutorPublicProfile = () => {
               label="Zadzwoń"
               appearance="transparent"
               onPress={() => {
-                console.log('Zadzwoń');
+                callNumber(selectedPhoneNumber);
+                setBottomModalVisible(false);
               }}
               icon={<MaterialIcons name="phone" size={20} color={Colors.primary} />}
             />
@@ -257,7 +185,8 @@ const TutorPublicProfile = () => {
               label="Wyślij SMS"
               appearance="transparent"
               onPress={() => {
-                console.log('Wyślij SMS');
+                sendSMS(selectedPhoneNumber);
+                setBottomModalVisible(false);
               }}
               icon={<MaterialIcons name="chat-bubble" size={20} color={Colors.primary} />}
             />
