@@ -12,10 +12,13 @@ import BottomModal from '../components/BottomModal';
 import Button from '../components/AppButton';
 import React from 'react';
 import { Colors } from '../../src/colors';
+//import { apiCall } from '../utils/ApiHandler';
 
 const TutorPublicProfile = () => {
   const [activeTab, setActiveTab] = useState('Oferty');
   const [bottomModalVisible, setBottomModalVisible] = useState(false);
+  const [userType, setUserType] = useState('tutor'); // 'student' lub 'tutor'
+  const [dropdownVisible, setDropdownVisible] = useState(false);
   const navigation = useNavigation();
 
   const reviewSortOptions = [
@@ -29,15 +32,20 @@ const TutorPublicProfile = () => {
     setActiveTab(tab);
   };
 
+  const handleSettingsPress = () => {
+    console.log('Przycisk ustawień kliknięty');
+    setDropdownVisible(!dropdownVisible);
+  };
+
   return (
     <View className="flex-1">
       <ScrollView showsVerticalScrollIndicator={false} className="bg-background pb-10">
         <TopPanel
-          onBackPress={() => console.log('Back')}
-          onSettingsPress={() => console.log('Settings')}
+          onBackPress={() => navigation.goBack()}
           name="Jan Kowalski"
           image="https://randomuser.me/api/portraits/men/32.jpg"
           centerContentClassName="ml-3"
+          onSettingsPress={userType === 'tutor' ? handleSettingsPress : undefined}
         />
 
         {/* Profil tutora */}
@@ -49,6 +57,7 @@ const TutorPublicProfile = () => {
             reviewCount={15}
             description="Jestem doświadczonym korepetytorem matematyki i fizyki. Pomagam uczniom zrozumieć trudne tematy oraz przygotowuję ich do egzaminów."
             onPressReviews={() => handleTabPress('Opinie')}
+            isEditable={userType === 'tutor'}
           />
         </View>
 
