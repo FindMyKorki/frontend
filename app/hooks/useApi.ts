@@ -1,10 +1,26 @@
 import { apiCall } from '../utils/ApiHandler';
 
-export const updateUserProfile = async (fullName: string, removeAvatar: boolean) => {
+export const updateUserProfile = async (
+  fullName: string,
+  removeAvatar: boolean,
+  avatar: string | null,
+) => {
   try {
     const formData = new FormData();
     formData.append('full_name', fullName);
     formData.append('remove_avatar', `${removeAvatar}`);
+
+    if (avatar) {
+      const filename = avatar.split('/').pop() || 'avatar.jpg';
+      const match = /\.(\w+)$/.exec(filename);
+      const type = match ? `image/${match[1].toLowerCase()}` : 'image/jpeg';
+
+      formData.append('avatar', {
+        uri: avatar,
+        name: filename,
+        type,
+      } as any);
+    }
 
     return await apiCall({
       method: 'PUT',
