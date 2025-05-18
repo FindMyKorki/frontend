@@ -12,7 +12,6 @@ interface AuthContextType {
   isAuthenticated: boolean;
   signOut: () => Promise<void>;
 }
-
 const BACKEND_URL = process.env.EXPO_PUBLIC_API_BASE_URL!;
 
 export const AuthContext = createContext<AuthContextType | null>(null);

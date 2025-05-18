@@ -5,6 +5,7 @@ let accessToken: string | null = null;
 let refreshToken: string | null = null;
 
 const baseURL = process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+export const baseWS = process.env.EXPO_PUBLIC_WS_BASE_URL || 'ws://192.168.0.12:8000';
 
 export const setAccessToken = async (token: string): Promise<void> => {
   accessToken = token;
