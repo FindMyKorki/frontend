@@ -11,7 +11,7 @@ import MuteOptionsModal from './MuteOptionsModal';
 export type ChatPreviewProps = {
   id: string;
   name: string;
-  avatarUrl: string;
+  avatarUrl?: string;
   lastMessage: string;
   timestamp: string;
   unreadCount?: number;
@@ -42,13 +42,19 @@ const ChatPreview = ({
     navigation.navigate('ReportChat' as never, { chatId, name: chatName } as never);
   };
 
+  const displayAvatar = avatarUrl || 'https://via.placeholder.com/150';
+
   return (
     <>
       <Pressable
         onPress={onPress}
         className="flex-row items-center p-4 bg-white border-b border-border-gray"
       >
-        <Image source={{ uri: avatarUrl }} className="w-12 h-12 rounded-full" />
+        <Image
+          source={{ uri: displayAvatar }}
+          className="w-12 h-12 rounded-full bg-gray-200"
+          resizeMode="cover"
+        />
 
         <View className="flex-1 ml-4">
           <ChatHeader name={name} timestamp={timestamp} />

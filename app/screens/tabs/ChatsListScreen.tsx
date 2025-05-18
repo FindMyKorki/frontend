@@ -75,9 +75,9 @@ const ChatsListScreen = () => {
         <ScrollView showsVerticalScrollIndicator={false}>
           {chats
             .filter((chat) => !archivedChatIds.includes(chat.id))
-            .map((chat) => (
+            .map((chat, index) => (
               <ChatPreview
-                key={chat.id}
+                key={`${chat.id}-${index}`}
                 id={String(chat.id)}
                 name={chat.name}
                 avatarUrl={chat.avatarUrl || undefined}
