@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Image } from 'react-native';
 import AppButton from './AppButton';
 
-type TutorListCardProps = {
+type OfferListCardProps = {
   name: string;
   price: number;
   description: string;
@@ -10,7 +10,7 @@ type TutorListCardProps = {
   avatarUri?: string;
 };
 
-function TutorListCard(props: TutorListCardProps) {
+function OfferListCard(props: OfferListCardProps) {
   const { name, price, description, onPress, avatarUri } = props;
 
   return (
@@ -30,4 +30,4 @@ function TutorListCard(props: TutorListCardProps) {
   );
 }
 
-export default TutorListCard;
+export default OfferListCard;
