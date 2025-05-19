@@ -14,11 +14,23 @@ interface AuthContextType {
   signOut: () => Promise<void>;
 }
 
+interface OAuthResponse {
+  oauth_response: { url: string };
+  code_verifier: string;
+}
+
+interface ExchangeCodeResponse {
+  tokens: {
+    access_token: string;
+    refresh_token: string;
+  };
+}
+
 export const AuthContext = createContext<AuthContextType | null>(null);
 
 const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [loading, setLoading] = useState<false | 'google' | 'facebook'>(false);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
 
@@ -29,7 +41,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const getSession = async () => {
     try {
       await loadTokens();
-      const res = await apiCall({ method: 'GET', url: '/user' });
+      const res = await apiCall<User>({ method: 'GET', url: '/user' });
       if (res?.id) {
         setUser(res);
         setIsAuthenticated(true);
@@ -48,10 +60,10 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       setLoading(provider);
       const redirectUrl = `/auth/callback`;
       const parsedRedirectUrl = `/auth/sign-in/${provider}?redirect_to=${encodeURIComponent(redirectUrl)}`;
-      const newResponse = await apiCall({ method: 'GET', url: parsedRedirectUrl });
+      const newResponse = await apiCall<OAuthResponse>({ method: 'GET', url: parsedRedirectUrl });
 
       await WebBrowser.openBrowserAsync(newResponse?.oauth_response.url);
-      saveCodeVerifier(newResponse?.code_verifier);
+      await saveCodeVerifier(newResponse?.code_verifier);
     } catch (error) {
       setLoading(false);
       setAuthError('Błąd logowania, ' + error);
@@ -66,7 +78,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
       if (code) {
         const codeVerifier = await SecureStore.getItemAsync('code_verifier');
-        const response = await apiCall({
+        const response = await apiCall<ExchangeCodeResponse>({
           method: 'GET',
           url: `/auth/exchange-code-for-session/${code}/${codeVerifier}`,
         });

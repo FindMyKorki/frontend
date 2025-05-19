@@ -6,6 +6,10 @@ let refreshToken: string | null = null;
 
 const baseURL = process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:8000';
 
+interface RefreshTokenResponse {
+  access_token: string;
+}
+
 export const setAccessToken = async (token: string): Promise<void> => {
   accessToken = token;
   await SecureStore.setItemAsync('accessToken', token);
@@ -18,7 +22,7 @@ export const setRefreshToken = async (token: string): Promise<void> => {
 
 export const loadTokens = async (): Promise<void> => {
   const aToken = await SecureStore.getItemAsync('accessToken');
-  const rToken = await SecureStore.getItemAsync('accessToken');
+  const rToken = await SecureStore.getItemAsync('refreshToken');
 
   if (aToken) {
     accessToken = aToken;
@@ -35,7 +39,10 @@ const refreshAccessToken = async (options: any) => {
   }
 
   try {
-    const response = await apiCall({ method: 'GET', url: '/auth/refresh_token' });
+    const response = await apiCall<RefreshTokenResponse>({
+      method: 'GET',
+      url: '/auth/refresh_token',
+    });
     if (response?.access_token) {
       await setAccessToken(response?.access_token);
       await apiCall(options);
