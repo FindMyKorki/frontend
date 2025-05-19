@@ -124,7 +124,7 @@ const BookingLessonScreen = () => {
   const handleNext = () => {
     if (startTime == null) return;
     const endTime = addMinutes(startTime, selectedDuration).toISOString();
-    nav.navigate('BookingDetailsScreen', {
+    (nav.navigate as any)('BookingDetails', {
       offer_id: offer_id,
       startTime: startTime.toISOString(),
       endTime: endTime,

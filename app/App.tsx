@@ -96,12 +96,12 @@ export default function App() {
                   options={{ headerShown: false }}
                 />
                 <Stack.Screen
-                  name="BookingLessonScreen"
+                  name="BookingLesson"
                   component={BookingLessonScreen}
                   options={{ headerShown: false }}
                 />
                 <Stack.Screen
-                  name="BookingDetailsScreen"
+                  name="BookingDetails"
                   component={BookingDetailsScreen}
                   options={{ headerShown: false }}
                 />
