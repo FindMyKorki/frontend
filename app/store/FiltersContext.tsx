@@ -1,75 +1,50 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { fetchLevels, fetchSubjects } from '../services/filtersService';
+import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react';
 
 export type Filters = {
-  subject?: string;
-  level?: string;
+  subject?: number;
+  level?: number;
   minPrice?: number;
   maxPrice?: number;
   fromDate?: string;
   toDate?: string;
-  selectedDate?: string;
 };
+
+type SetFiltersType = (newFilters: Filters | ((prevFilters: Filters) => Filters)) => void;
 
 type FiltersContextType = {
   filters: Filters;
-  setFilters: (newFilters: Filters) => void;
+  setFilters: SetFiltersType;
   clearFilters: () => void;
   setDateRange: (fromDate?: string, toDate?: string) => void;
-  setSingleDate: (date?: string) => void;
 };
 
 const FiltersContext = createContext<FiltersContextType | undefined>(undefined);
 
 export const FiltersProvider = ({ children }: { children: ReactNode }) => {
   const [filters, setFiltersState] = useState<Filters>({});
-  const [initialized, setInitialized] = useState(false);
 
-  useEffect(() => {
-    const initializeDefaults = async () => {
-      try {
-        const [subjects, levels] = await Promise.all([fetchSubjects(), fetchLevels()]);
-        if (!initialized && subjects.length > 0 && levels.length > 0) {
-          setFiltersState({
-            subject: subjects[0].name,
-            level: levels[0].level,
-          });
-          setInitialized(true);
-        }
-      } catch (error) {
-        console.error('Błąd podczas inicjalizacji filtrów:', error);
-      }
-    };
+  const setFilters: SetFiltersType = useCallback((newFilters) => {
+    if (typeof newFilters === 'function') {
+      setFiltersState(newFilters);
+    } else {
+      setFiltersState((prev) => ({ ...prev, ...newFilters }));
+    }
+  }, []);
 
-    initializeDefaults();
-  }, [initialized]);
-
-  const setFilters = (newFilters: Filters) => {
-    setFiltersState(newFilters);
-  };
-
-  const clearFilters = () => {
-    setInitialized(false);
+  const clearFilters = useCallback(() => {
     setFiltersState({});
-  };
+  }, []);
 
-  const setDateRange = (fromDate?: string, toDate?: string) => {
-    setFiltersState((prev) => ({
-      ...prev,
-      fromDate,
-      toDate,
-      selectedDate: undefined,
-    }));
-  };
-
-  const setSingleDate = (date?: string) => {
-    setFiltersState((prev) => ({
-      ...prev,
-      selectedDate: date,
-      fromDate: undefined,
-      toDate: undefined,
-    }));
-  };
+  const setDateRange = useCallback(
+    (fromDate?: string, toDate?: string) => {
+      setFilters((prev) => ({
+        ...prev,
+        ...(fromDate !== undefined && { fromDate }),
+        ...(toDate !== undefined && { toDate }),
+      }));
+    },
+    [setFilters],
+  );
 
   return (
     <FiltersContext.Provider
@@ -78,7 +53,6 @@ export const FiltersProvider = ({ children }: { children: ReactNode }) => {
         setFilters,
         clearFilters,
         setDateRange,
-        setSingleDate,
       }}
     >
       {children}

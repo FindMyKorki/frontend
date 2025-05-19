@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { View, ScrollView, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+
 import TopPanel from '../components/TopPanel';
 import SubjectSelector from '../components/filters_screen/SubjectSelector';
 import LevelSelector from '../components/filters_screen/LevelSelector';
@@ -8,40 +9,48 @@ import PriceSelector from '../components/filters_screen/PriceSelector';
 import DateSelector from '../components/filters_screen/DateSelector';
 import CalendarModal from '../components/filters_screen/CalendarModal';
 import AppButton from '../components/AppButton';
+
+import { fetchLevels, fetchSubjects } from '../services/filtersService';
 import { Filters, useFilters } from '../store/FiltersContext';
 import dayjs from 'dayjs';
-import { fetchLevels, fetchSubjects } from '../services/filtersService';
+import { Level } from '../types/Level';
+import { Subject } from '../types/Subject';
 
 const FiltersScreen = () => {
   const nav = useNavigation();
   const { filters, setFilters } = useFilters();
+  const [tempFilters, setTempFilters] = useState<Filters>(filters);
+
   const [calendarVisible, setCalendarVisible] = useState(false);
   const [activeInput, setActiveInput] = useState<'start' | 'end'>('start');
 
-  const [levelOptions, setLevelOptions] = useState<string[]>([]);
-  const [subjectOptions, setSubjectOptions] = useState<string[]>([]);
-  const [recommendedSubjects, setRecommendedSubjects] = useState<string[]>([]);
+  const [levels, setLevels] = useState<Level[]>([]);
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+
+  const [recommendedSubjects, setRecommendedSubjects] = useState<Subject[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const [tempFilters, setTempFilters] = useState<Filters>(filters);
+  useEffect(() => {
+    setTempFilters(filters);
+  }, []);
 
   useEffect(() => {
     const loadData = async () => {
       try {
         setIsLoading(true);
-        const levels = await fetchLevels();
-        const subjects = await fetchSubjects();
+        const levelsData = await fetchLevels();
+        const subjectsData = await fetchSubjects();
 
-        setLevelOptions(levels.map((l) => l.level));
+        setLevels(levelsData);
+        setSubjects(subjectsData);
 
-        const subjectNames = subjects.map((s) => s.name);
-        setSubjectOptions(subjectNames);
-
-        let recommended = subjectNames.slice(0, 6);
-        if (tempFilters.subject && !recommended.includes(tempFilters.subject)) {
-          recommended.push(tempFilters.subject);
+        const recommended = subjectsData.slice(0, 6);
+        if (tempFilters.subject) {
+          const selected = subjectsData.find((s) => s.id === tempFilters.subject);
+          if (selected && !recommended.find((s) => s.id === selected.id)) {
+            recommended.push(selected);
+          }
         }
-
         setRecommendedSubjects(recommended);
       } catch (err) {
         console.error('Błąd ładowania danych filtrów:', err);
@@ -89,63 +98,63 @@ const FiltersScreen = () => {
           <Text className="text-base text-gray-700">Ładowanie danych filtrów...</Text>
         </View>
       ) : (
-        <ScrollView
-          className={`flex-1 px-[14px] ${calendarVisible ? 'opacity-50' : 'opacity-100'}`}
-        >
-          {subjectOptions.length > 0 && recommendedSubjects.length > 0 && (
-            <SubjectSelector
-              subjectOptions={subjectOptions}
-              recommendedSubjects={recommendedSubjects}
-              selectedSubject={tempFilters.subject}
-              selectSubject={(s) =>
-                setTempFilters({
-                  ...tempFilters,
-                  subject: s === tempFilters.subject ? undefined : s,
-                })
+        <>
+          <ScrollView
+            className={`flex-1 px-[14px] ${calendarVisible ? 'opacity-50' : 'opacity-100'}`}
+          >
+            {subjects.length > 0 && recommendedSubjects.length > 0 && (
+              <SubjectSelector
+                subjects={subjects}
+                recommendedSubjects={recommendedSubjects}
+                selectedSubjectId={tempFilters.subject ?? undefined}
+                selectSubject={(id: number | undefined) =>
+                  setTempFilters({
+                    ...tempFilters,
+                    subject: id === tempFilters.subject ? undefined : id,
+                  })
+                }
+              />
+            )}
+
+            <LevelSelector
+              levels={levels}
+              selectedLevelId={tempFilters.level ?? undefined}
+              onSelect={(id) =>
+                setTempFilters({ ...tempFilters, level: id === tempFilters.level ? undefined : id })
               }
             />
-          )}
 
-          <LevelSelector
-            levelOptions={levelOptions}
-            selectedLevel={tempFilters.level ?? null}
-            selectLevel={(l) =>
-              setTempFilters({ ...tempFilters, level: l === tempFilters.level ? undefined : l })
-            }
-          />
+            <DateSelector
+              startDate={tempFilters.fromDate ? new Date(tempFilters.fromDate) : undefined}
+              endDate={tempFilters.toDate ? new Date(tempFilters.toDate) : undefined}
+              onChangeStartDate={(date) =>
+                setTempFilters({ ...tempFilters, fromDate: date.toISOString() })
+              }
+              onChangeEndDate={(date) =>
+                setTempFilters({ ...tempFilters, toDate: date.toISOString() })
+              }
+              showCalendar={calendarVisible}
+              setShowCalendar={setCalendarVisible}
+              activeInput={activeInput}
+              setActiveInput={setActiveInput}
+            />
 
-          <DateSelector
-            startDate={tempFilters.fromDate ? new Date(tempFilters.fromDate) : undefined}
-            endDate={tempFilters.toDate ? new Date(tempFilters.toDate) : undefined}
-            onChangeStartDate={(date) =>
-              setTempFilters({ ...tempFilters, fromDate: date.toISOString() })
-            }
-            onChangeEndDate={(date) =>
-              setTempFilters({ ...tempFilters, toDate: date.toISOString() })
-            }
-            showCalendar={calendarVisible}
-            setShowCalendar={setCalendarVisible}
-            activeInput={activeInput}
-            setActiveInput={setActiveInput}
-          />
+            <PriceSelector
+              minPrice={tempFilters.minPrice?.toString() || ''}
+              maxPrice={tempFilters.maxPrice?.toString() || ''}
+              onChangeMin={(value) =>
+                setTempFilters({ ...tempFilters, minPrice: value ? parseFloat(value) : undefined })
+              }
+              onChangeMax={(value) =>
+                setTempFilters({ ...tempFilters, maxPrice: value ? parseFloat(value) : undefined })
+              }
+            />
+          </ScrollView>
 
-          <PriceSelector
-            minPrice={tempFilters.minPrice?.toString() || ''}
-            maxPrice={tempFilters.maxPrice?.toString() || ''}
-            onChangeMin={(value) =>
-              setTempFilters({ ...tempFilters, minPrice: value ? parseFloat(value) : undefined })
-            }
-            onChangeMax={(value) =>
-              setTempFilters({ ...tempFilters, maxPrice: value ? parseFloat(value) : undefined })
-            }
-          />
-        </ScrollView>
-      )}
-
-      {!isLoading && (
-        <View className="absolute bottom-0 left-0 right-0 bg-white px-[14px] py-3">
-          <AppButton label="Zapisz filtry" size="full" onPress={handleSaveFilters} />
-        </View>
+          <View className="bg-white px-[14px] py-3">
+            <AppButton label="Zapisz filtry" size="full" onPress={handleSaveFilters} />
+          </View>
+        </>
       )}
 
       <CalendarModal

@@ -2,36 +2,37 @@ import { useState, useMemo } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Pressable } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import SearchBar from '../SearchBar';
+import { Subject } from '../../types/Subject';
 
 type Props = {
-  subjectOptions: string[];
-  recommendedSubjects: string[];
-  selectedSubject?: string;
-  selectSubject: (subject: string) => void;
+  subjects: Subject[];
+  recommendedSubjects: Subject[];
+  selectedSubjectId?: number;
+  selectSubject: (subjectId: number) => void;
 };
 
 const SubjectSelector = ({
-  subjectOptions,
+  subjects,
   recommendedSubjects,
-  selectedSubject,
+  selectedSubjectId,
   selectSubject,
 }: Props) => {
   const [searchText, setSearchText] = useState('');
-  const [tags, setTags] = useState<string[]>(recommendedSubjects);
+  const [tags, setTags] = useState<Subject[]>(recommendedSubjects);
 
   const filteredSubjects = useMemo(() => {
     if (!searchText) return [];
-    return subjectOptions.filter((subject) =>
-      subject.toLowerCase().includes(searchText.toLowerCase()),
+    return subjects.filter((subject) =>
+      subject.name.toLowerCase().includes(searchText.toLowerCase()),
     );
-  }, [searchText, subjectOptions]);
+  }, [searchText, subjects]);
 
-  const handleSelect = (subject: string) => {
-    if (!tags.includes(subject)) {
+  const handleSelect = (subject: Subject) => {
+    if (!tags.some((s) => s.id === subject.id)) {
       setTags((prev) => [...prev, subject]);
     }
 
-    selectSubject(subject);
+    selectSubject(subject.id);
     setSearchText('');
   };
 
@@ -49,30 +50,30 @@ const SubjectSelector = ({
         <ScrollView className="max-h-60 mt-2">
           {filteredSubjects.map((item) => (
             <TouchableOpacity
-              key={item}
+              key={item.id}
               className="py-2 px-3 bg-background-alt rounded mb-1"
               onPress={() => handleSelect(item)}
             >
-              <Text>{item}</Text>
+              <Text>{item.name}</Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
       ) : (
         <View className="flex-row flex-wrap gap-2 mt-3 font-medium">
           {tags.map((subject) => {
-            const isSelected = selectedSubject === subject;
+            const isSelected = selectedSubjectId === subject.id;
             return (
               <Pressable
-                key={subject}
+                key={subject.id}
                 className={`flex flex-row items-center px-2.5 py-2 rounded border-2 ${
                   isSelected ? 'bg-primary border-primary' : 'border-background-alt'
                 }`}
                 onPress={() => handleSelect(subject)}
               >
                 {isSelected && (
-                  <MaterialIcons name="done" size={13} color="#FFFFFF" className="mr-2" />
+                  <MaterialIcons name="done" size={13} color="#FFFFFF" style={{ marginRight: 6 }} />
                 )}
-                <Text className={isSelected ? 'text-white' : 'text-black'}>{subject}</Text>
+                <Text className={isSelected ? 'text-white' : 'text-black'}>{subject.name}</Text>
               </Pressable>
             );
           })}
