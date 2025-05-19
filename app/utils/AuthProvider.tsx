@@ -1,10 +1,11 @@
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import * as Linking from 'expo-linking';
 import { apiCall, loadTokens, setAccessToken, setRefreshToken } from './ApiHandler';
-import LoginScreen from '../screens//LoginScreen';
 import * as SecureStore from 'expo-secure-store';
 import * as WebBrowser from 'expo-web-browser';
 import { User } from '../types/User';
+import { ActivityIndicator, View } from 'react-native';
+import { CompleteProfileScreen, LoginScreen, RoleScreen } from '../index';
 
 interface AuthContextType {
   user: User | null;
@@ -13,12 +14,23 @@ interface AuthContextType {
   signOut: () => Promise<void>;
 }
 
-const BACKEND_URL = process.env.EXPO_PUBLIC_API_BASE_URL!;
+interface OAuthResponse {
+  oauth_response: { url: string };
+  code_verifier: string;
+}
+
+interface ExchangeCodeResponse {
+  tokens: {
+    access_token: string;
+    refresh_token: string;
+  };
+}
 
 export const AuthContext = createContext<AuthContextType | null>(null);
 
 const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState<false | 'google' | 'facebook'>(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
 
@@ -29,7 +41,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const getSession = async () => {
     try {
       await loadTokens();
-      const res = await apiCall({ method: 'GET', url: '/user' });
+      const res = await apiCall<User>({ method: 'GET', url: '/user' });
       if (res?.id) {
         setUser(res);
         setIsAuthenticated(true);
@@ -45,13 +57,15 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
   const handleOAuthLogin = async (provider: 'google' | 'facebook') => {
     try {
+      setLoading(provider);
       const redirectUrl = `/auth/callback`;
       const parsedRedirectUrl = `/auth/sign-in/${provider}?redirect_to=${encodeURIComponent(redirectUrl)}`;
-      const newResponse = await apiCall({ method: 'GET', url: parsedRedirectUrl });
+      const newResponse = await apiCall<OAuthResponse>({ method: 'GET', url: parsedRedirectUrl });
 
       await WebBrowser.openBrowserAsync(newResponse?.oauth_response.url);
-      saveCodeVerifier(newResponse?.code_verifier);
+      await saveCodeVerifier(newResponse?.code_verifier);
     } catch (error) {
+      setLoading(false);
       setAuthError('Błąd logowania, ' + error);
       console.error(error);
     }
@@ -64,7 +78,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
       if (code) {
         const codeVerifier = await SecureStore.getItemAsync('code_verifier');
-        const response = await apiCall({
+        const response = await apiCall<ExchangeCodeResponse>({
           method: 'GET',
           url: `/auth/exchange-code-for-session/${code}/${codeVerifier}`,
         });
@@ -72,11 +86,13 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         if (response?.tokens?.access_token) {
           await setAccessToken(response.tokens.access_token);
           await setRefreshToken(response.tokens.refresh_token);
-          setIsAuthenticated(true);
+          await getSession();
         } else {
           setAuthError('Nie udało się pobrać tokenów logowania.');
         }
       }
+
+      setLoading(false);
     };
 
     const checkInitialURL = async () => {
@@ -115,9 +131,25 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     signOut,
   };
 
+  if (isAuthenticated == null) {
+    return (
+      <View className="flex-1 justify-center items-center">
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
   return (
     <AuthContext.Provider value={contextValue}>
-      {isAuthenticated ? children : <LoginScreen login={handleOAuthLogin} authError={authError} />}
+      {!user ? (
+        <LoginScreen login={handleOAuthLogin} loading={loading} authError={authError} />
+      ) : user.profile?.is_tutor == undefined ? (
+        <RoleScreen getSession={getSession} />
+      ) : !user.profile?.full_name || (user.profile?.is_tutor && !user.tutor_profile?.bio) ? (
+        <CompleteProfileScreen />
+      ) : (
+        children
+      )}
     </AuthContext.Provider>
   );
 };

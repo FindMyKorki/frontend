@@ -17,16 +17,19 @@ import {
   SearchScreen,
   SortOptionsScreen,
   UserDetailsScreen,
+  LoginScreen,
+  RoleScreen,
   TutorPublicProfile,
+  CompleteProfileScreen,
 } from './index';
-import AuthProvider from "./utils/AuthProvider";
+import AuthProvider from './utils/AuthProvider';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <>
-      <StatusBar/>
+      <StatusBar />
       <SafeAreaProvider testID={'App:SafeAreaProvider:AppContainer'}>
         <SafeAreaView className={`flex-1 bg-white justify-center align-center`}>
           <AuthProvider>
@@ -37,7 +40,7 @@ export default function App() {
                   component={TabsNavigator}
                   options={{ headerShown: false }}
                 />
-                <Stack.Screen name="Chat" component={ChatScreen} options={{ headerShown: false }}/>
+                <Stack.Screen name="Chat" component={ChatScreen} options={{ headerShown: false }} />
                 <Stack.Screen
                   name="Filters"
                   component={FiltersScreen}
@@ -93,6 +96,12 @@ export default function App() {
                   component={ReportScreen}
                   options={{ headerShown: false }}
                 />
+                <Stack.Screen
+                  name="Login"
+                  component={LoginScreen}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen name="Role" component={RoleScreen} options={{ headerShown: false }} />
               </Stack.Navigator>
             </NavigationContainer>
           </AuthProvider>
