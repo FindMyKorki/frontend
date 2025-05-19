@@ -82,7 +82,7 @@ const BookingLessonScreen = () => {
 
   function manageLessonsStartTimes() {
     const newStartTimes: Date[] = [];
-    // console.log(dateBlocks);
+
     for (let i = 0; i < dateBlocks.length; i++) {
       if (dateBlocks[i].difference >= selectedDuration) {
         newStartTimes.push(dateBlocks[i].start_date);
@@ -95,7 +95,7 @@ const BookingLessonScreen = () => {
         date = addMinutes(date, timeDIFF);
       }
     }
-    // console.log(newStartTimes);
+
     setLessonStartTimes(newStartTimes);
   }
 
