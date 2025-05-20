@@ -35,15 +35,18 @@ const BookingDetailsScreen = () => {
 
   useEffect(() => {
     const getOffer = async () => {
-      setOffer(
-        await apiCall({
-          method: 'GET',
-          url: `/offers/${offer_id}`,
-        }),
-      );
+      const offer: Offer = await apiCall({
+        method: 'GET',
+        url: `/offers/${offer_id}`,
+      });
+      setOffer(offer);
     };
 
-    getOffer();
+    try {
+      getOffer();
+    } catch (e) {
+      console.error('GET /offers/${offer_id}', e);
+    }
   }, []);
 
   const pickImage = async () => {
@@ -77,7 +80,9 @@ const BookingDetailsScreen = () => {
 
     const result = await ImagePicker.launchCameraAsync({
       mediaTypes: ['images'],
+      allowsEditing: true,
       quality: 1,
+      cameraType: ImagePicker.CameraType.back,
     });
 
     if (!result.canceled) {
@@ -87,18 +92,33 @@ const BookingDetailsScreen = () => {
   };
 
   const handleBooking = async () => {
-    const response = await apiCall({
-      method: 'POST',
-      url: '/bookings:propose',
-      data: JSON.stringify({
-        notes: text,
-        offer_id: offer_id,
-        start_date: startTime,
-        end_date: endTime,
-      }),
+    const formData = new FormData();
+    if (text.length !== 0) formData.append('notes', text);
+    formData.append('offer_id', offer_id.toString());
+    formData.append('start_date', startTime.toISOString());
+    formData.append('end_date', endTime.toISOString());
+    images.forEach((photo, idx) => {
+      const filename = photo.split('/').pop() || `attachment_${idx}.jpg`;
+      const match = /\.(\w+)$/.exec(filename);
+      const type = match ? `image/${match[1].toLowerCase()}` : 'image/jpeg';
+
+      formData.append('files', {
+        uri: photo,
+        name: filename,
+        type,
+      } as any);
     });
 
-    console.log(response);
+    try {
+      const response = await apiCall({
+        method: 'POST',
+        url: '/bookings:propose',
+        data: formData,
+      });
+      console.log(response);
+    } catch (e) {
+      console.error('POST /bookings:propose', e);
+    }
   };
 
   return (

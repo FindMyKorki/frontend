@@ -50,15 +50,18 @@ const BookingLessonScreen = () => {
 
   useEffect(() => {
     const getOffer = async () => {
-      setOffer(
-        await apiCall({
-          method: 'GET',
-          url: `/offers/${offer_id}`,
-        }),
-      );
+      const offer: Offer = await apiCall({
+        method: 'GET',
+        url: `/offers/${offer_id}`,
+      });
+      setOffer(offer);
     };
 
-    getOffer();
+    try {
+      getOffer();
+    } catch (e) {
+      console.error('GET /offers/${offer_id}', e);
+    }
   }, []);
 
   useEffect(() => {

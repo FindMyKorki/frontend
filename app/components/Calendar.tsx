@@ -78,7 +78,11 @@ const Calendar: FC<CalendarType> = ({ tutor_id, className = '', onSelect }) => {
   };
 
   useEffect(() => {
-    fetchAvailableBlocks();
+    try {
+      fetchAvailableBlocks();
+    } catch (e) {
+      console.error('GET /tutors/${tutor_id}/available-hours?start_date=${start_date}');
+    }
   }, [currentMonth, tutor_id]);
 
   const handlePrevMonth = () => {
