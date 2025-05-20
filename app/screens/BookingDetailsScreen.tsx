@@ -20,6 +20,8 @@ type ParamTypes = {
   endTime: string;
 };
 
+const MAXIMAGES = 10;
+
 const BookingDetailsScreen = () => {
   const nav = useNavigation();
   const route = useRoute();
@@ -50,6 +52,8 @@ const BookingDetailsScreen = () => {
   }, []);
 
   const pickImage = async () => {
+    if (images.length >= MAXIMAGES) return;
+
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permission.granted) {
       Alert.alert('Permission denied to access media library');
@@ -59,19 +63,24 @@ const BookingDetailsScreen = () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
       allowsMultipleSelection: true,
-      quality: 1,
+      quality: 0.8,
     });
 
     if (!result.canceled && result.assets.length > 0) {
       const assets = result.assets;
+      const remainSpace = MAXIMAGES - images.length;
+      const assetslenght = remainSpace > assets.length ? assets.length : remainSpace;
 
-      for (let i = 0; i < assets.length; i++) {
+      for (let i = 0; i < assetslenght; i++) {
+        if (images.length >= MAXIMAGES) return;
         setImages((prev) => [...prev, assets[i].uri]);
       }
     }
   };
 
   const takePhoto = async () => {
+    if (images.length >= MAXIMAGES) return;
+
     const permission = await ImagePicker.requestCameraPermissionsAsync();
     if (!permission.granted) {
       Alert.alert('Permission denied to access camera');
@@ -81,7 +90,7 @@ const BookingDetailsScreen = () => {
     const result = await ImagePicker.launchCameraAsync({
       mediaTypes: ['images'],
       allowsEditing: true,
-      quality: 1,
+      quality: 0.8,
       cameraType: ImagePicker.CameraType.back,
     });
 
