@@ -17,7 +17,10 @@ import {
   SearchScreen,
   SortOptionsScreen,
   UserDetailsScreen,
+  LoginScreen,
+  RoleScreen,
   TutorPublicProfile,
+  CompleteProfileScreen,
   BookingLessonScreen,
   BookingDetailsScreen,
 } from './index';
@@ -95,6 +98,12 @@ export default function App() {
                   component={ReportScreen}
                   options={{ headerShown: false }}
                 />
+                <Stack.Screen
+                  name="Login"
+                  component={LoginScreen}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen name="Role" component={RoleScreen} options={{ headerShown: false }} />
                 <Stack.Screen
                   name="BookingLesson"
                   component={BookingLessonScreen}
