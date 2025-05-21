@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Pressable, Image } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import ProfileSettingsDropdown from './ProfileSettingsDropdown';
+import ModalAtButton from './ModalAtButton';
 
 export type TopPanelProps = {
   onBackPress: () => void;
@@ -23,15 +23,11 @@ const TopPanel = ({
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const settingsOptions = ['PROFIL', 'Edytuj', 'Regulamin', 'Zgłoś problem', 'Wyloguj'];
 
-  // Funkcja otwierająca dropdown
-  const handleSettingsPress = () => {
-    setDropdownVisible(true);
-  };
-
-  // Funkcja zamykająca dropdown
-  const handleCloseDropdown = () => {
-    setDropdownVisible(false);
-  };
+  const settingsButton = (
+    <Pressable className="p-1">
+      <MaterialIcons name="more-vert" size={24} color="black" />
+    </Pressable>
+  );
 
   return (
     <View
@@ -55,21 +51,26 @@ const TopPanel = ({
       )}
 
       {onSettingsPress && (
-        <Pressable onPress={handleSettingsPress} className="p-1">
-          <MaterialIcons name="more-vert" size={24} color="black" />
-        </Pressable>
-      )}
-
-      {/* Wyświetlanie dropdowna przy kliknięciu w ikonkę ustawień */}
-      {dropdownVisible && (
-        <ProfileSettingsDropdown
-          options={settingsOptions}
-          onSelect={(option) => {
-            console.log('Wybrano opcję:', option);
-            handleCloseDropdown(); // Zamknięcie dropdown po wybraniu opcji
-          }}
-          onClose={handleCloseDropdown} // Zamknięcie dropdown po kliknięciu w overlay
-        />
+        <ModalAtButton
+          spaceBetween={4}
+          button={settingsButton}
+          visible={dropdownVisible}
+          setVisible={setDropdownVisible}
+        >
+          <View className="py-4 px-5 gap-y-2">
+            {settingsOptions.map((option) => (
+              <Pressable
+                key={option}
+                onPress={() => {
+                  setDropdownVisible(false);
+                  console.log('Wybrano opcję:', option);
+                }}
+              >
+                <Text className="text-text-dark text-right">{option}</Text>
+              </Pressable>
+            ))}
+          </View>
+        </ModalAtButton>
       )}
     </View>
   );

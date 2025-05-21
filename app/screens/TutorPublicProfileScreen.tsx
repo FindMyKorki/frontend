@@ -236,8 +236,8 @@ const TutorPublicProfile = () => {
         leftButtonProps={{
           label: 'Wyślij wiadomość',
           onPress: () => {
-            console.log('Wyślij wiadomość');
-            // navigation.navigate('Chat');
+            //@ts-expect-error
+            navigation.navigate('Chat');
           },
           icon: <MaterialIcons name="chat-bubble" size={20} color="white" />,
         }}
