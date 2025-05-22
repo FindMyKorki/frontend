@@ -21,6 +21,8 @@ import {
   RoleScreen,
   TutorPublicProfile,
   CompleteProfileScreen,
+  BookingLessonScreen,
+  BookingDetailsScreen,
 } from './index';
 import AuthProvider from './utils/AuthProvider';
 
@@ -102,6 +104,16 @@ export default function App() {
                   options={{ headerShown: false }}
                 />
                 <Stack.Screen name="Role" component={RoleScreen} options={{ headerShown: false }} />
+                <Stack.Screen
+                  name="BookingLesson"
+                  component={BookingLessonScreen}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="BookingDetails"
+                  component={BookingDetailsScreen}
+                  options={{ headerShown: false }}
+                />
               </Stack.Navigator>
             </NavigationContainer>
           </AuthProvider>
