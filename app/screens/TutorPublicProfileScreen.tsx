@@ -18,7 +18,6 @@ const TutorPublicProfile = () => {
   const [activeTab, setActiveTab] = useState('Oferty');
   const [bottomModalVisible, setBottomModalVisible] = useState(false);
   const [userType, setUserType] = useState('tutor'); // 'student' lub 'tutor'
-  const [dropdownVisible, setDropdownVisible] = useState(false);
   const navigation = useNavigation();
 
   const reviewSortOptions = [
@@ -32,22 +31,16 @@ const TutorPublicProfile = () => {
     setActiveTab(tab);
   };
 
-  const handleSettingsPress = () => {
-    console.log('Przycisk ustawień kliknięty');
-    setDropdownVisible(!dropdownVisible);
-  };
-
   return (
     <View className="flex-1">
+      <TopPanel
+        onBackPress={() => navigation.goBack()}
+        name="Jan Kowalski"
+        image="https://randomuser.me/api/portraits/men/32.jpg"
+        centerContentClassName="ml-3"
+        showSettings={userType === 'tutor'}
+      />
       <ScrollView showsVerticalScrollIndicator={false} className="bg-background pb-10">
-        <TopPanel
-          onBackPress={() => navigation.goBack()}
-          name="Jan Kowalski"
-          image="https://randomuser.me/api/portraits/men/32.jpg"
-          centerContentClassName="ml-3"
-          onSettingsPress={userType === 'tutor' ? handleSettingsPress : undefined}
-        />
-
         {/* Profil tutora */}
         <View className="px-2 pt-2">
           <TutorProfile

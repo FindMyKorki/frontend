@@ -5,7 +5,7 @@ import ModalAtButton from './ModalAtButton';
 
 export type TopPanelProps = {
   onBackPress: () => void;
-  onSettingsPress?: () => void;
+  showSettings?: boolean;
   name?: string;
   image?: string;
   className?: string;
@@ -14,7 +14,7 @@ export type TopPanelProps = {
 
 const TopPanel = ({
   onBackPress,
-  onSettingsPress,
+  showSettings = false,
   name,
   image,
   className = '',
@@ -50,7 +50,7 @@ const TopPanel = ({
         </View>
       )}
 
-      {onSettingsPress && (
+      {showSettings && (
         <ModalAtButton
           spaceBetween={4}
           button={settingsButton}

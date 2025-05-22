@@ -1,13 +1,12 @@
 import React from 'react';
 import { Pressable, Text, View, ActivityIndicator } from 'react-native';
 import { tv } from 'tailwind-variants';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const button = tv({
   base: 'flex-row items-center justify-center box-border',
   variants: {
     size: {
-      auto: 'self-start px-2.5 py-[5px] rounded',
+      auto: 'px-2.5 py-[5px] rounded',
       full: 'flex-1 px-5 py-2.5 rounded-lg',
     },
     appearance: {
@@ -71,7 +70,7 @@ const Button = ({
         <ActivityIndicator color={'#FFFFFF'} size={'small'} />
       ) : (
         <>
-          {icon && <MaterialCommunityIcons className="mr-1" name={icon} color={'#FFFFFF'} />}
+          {icon && <View className="mr-1">{icon}</View>}
           <Text className={finalTextClass.trim()}>{label}</Text>
         </>
       )}
