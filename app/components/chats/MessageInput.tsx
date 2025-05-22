@@ -31,16 +31,10 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSend }) => {
     }
   };
 
-  const handleGalleryPress = () => {
-    console.log('Gallery icon pressed');
-    // TODO: implement image picker or gallery feature
-  };
-
   return (
     <View className="flex-row items-center border border-gray-300 rounded-full px-4 py-2 mx-4 mb-4 bg-white">
       <Pressable
-        onPress={handleGalleryPress}
-        accessibilityLabel="Otwórz galerię"
+        onPress={handleSend}
         style={{
           paddingVertical: 0,
           paddingHorizontal: 0,
@@ -48,9 +42,9 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSend }) => {
           height: 23,
         }}
       >
+        {' '}
         <GalleryIcon />
       </Pressable>
-
       <TextInput
         placeholder="Napisz wiadomość..."
         value={text}
