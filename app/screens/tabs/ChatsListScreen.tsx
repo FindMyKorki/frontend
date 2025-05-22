@@ -1,6 +1,10 @@
+import React, { useEffect, useState } from 'react';
 import { ScrollView, Text, View, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import ChatPreview from '../../components/chats/ChatPreview';
+import SearchBar from '../../components/chats/SerchBar';
+import { apiCall } from '../../utils/ApiHandler';
 
 type RootStackParamList = {
   Chat: {
@@ -12,15 +16,12 @@ type RootStackParamList = {
       timestamp: string;
       unreadCount?: number;
       userId: string | null;
+      isTutor: boolean;
     };
   };
 };
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
-import React, { useEffect, useState } from 'react';
-import ChatPreview from '../../components/chats/ChatPreview';
-import SearchBar from '../../components/chats/SerchBar';
-import { apiCall } from '../../utils/ApiHandler';
 
 type Chat = {
   id: number;
@@ -33,9 +34,11 @@ type Chat = {
 
 const ChatsListScreen = () => {
   const navigation = useNavigation<NavigationProp>();
+
   const [archivedChatIds, setArchivedChatIds] = useState<number[]>([]);
   const [chats, setChats] = useState<Chat[]>([]);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [isTutor, setIsTutor] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -44,8 +47,8 @@ const ChatsListScreen = () => {
   const fetchChats = async () => {
     setLoading(true);
     setError(null);
+
     try {
-      // Pobierz dane użytkownika
       const user = await apiCall<{
         id: string;
         profile: {
@@ -58,18 +61,20 @@ const ChatsListScreen = () => {
         url: '/user',
       });
 
-      const isTutor = user.profile.is_tutor;
-      const endpoint = isTutor ? '/chats/tutor' : '/chats/student';
-      setCurrentUserId(user.id);
+      const tutorFlag = user.profile.is_tutor;
+      const endpoint = tutorFlag ? '/chats/tutor' : '/chats/student';
 
-      // Pobierz czaty
+      setCurrentUserId(user.id);
+      setIsTutor(tutorFlag);
+
       const fetchedChatsRaw = await apiCall<any[]>({
         method: 'GET',
         url: endpoint,
       });
+      console.log('🛠️ Odebrane dane z backendu:', fetchedChatsRaw);
 
       const mappedChats: Chat[] = fetchedChatsRaw.map((chat) => ({
-        id: chat.id,
+        id: chat.id || chat.chat_id,
         name:
           chat.student?.full_name ||
           chat.tutor?.full_name ||
@@ -119,26 +124,38 @@ const ChatsListScreen = () => {
               </Text>
             </View>
           ) : (
-            visibleChats.map((chat, index) => (
-              <ChatPreview
-                key={`${chat.id}-${index}`}
-                id={String(chat.id)}
-                name={chat.name}
-                avatarUrl={chat.avatarUrl}
-                lastMessage={chat.lastMessage}
-                timestamp={chat.timestamp}
-                unreadCount={chat.unreadCount}
-                onPress={() =>
-                  navigation.navigate('Chat', {
-                    user: {
-                      ...chat,
-                      userId: currentUserId,
-                    },
-                  })
-                }
-                onArchive={() => handleArchiveChat(chat.id)}
-              />
-            ))
+            visibleChats.map((chat, index) => {
+              console.log('Przygotowywany chat:', chat);
+              console.log('Aktualny userId:', currentUserId);
+              console.log('Czy tutor:', isTutor);
+
+              return (
+                <ChatPreview
+                  key={`${chat.id}-${index}`}
+                  id={String(chat.id)}
+                  name={chat.name}
+                  avatarUrl={chat.avatarUrl}
+                  lastMessage={chat.lastMessage}
+                  timestamp={chat.timestamp}
+                  unreadCount={chat.unreadCount}
+                  onPress={() => {
+                    if (!chat.id || !currentUserId) {
+                      console.warn('⛔ Nie można otworzyć chatu — brak ID');
+                      return;
+                    }
+
+                    navigation.navigate('Chat', {
+                      user: {
+                        ...chat,
+                        userId: currentUserId,
+                        isTutor,
+                      },
+                    });
+                  }}
+                  onArchive={() => handleArchiveChat(chat.id)}
+                />
+              );
+            })
           )}
         </ScrollView>
       )}
