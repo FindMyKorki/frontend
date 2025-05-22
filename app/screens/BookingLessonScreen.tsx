@@ -222,6 +222,7 @@ const BookingLessonScreen = () => {
             />
           )}
         </View>
+        <View className="h-15 mt-10 pt-5" />
       </ScrollView>
 
       {/* Footer buttons */}

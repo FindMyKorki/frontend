@@ -77,7 +77,7 @@ export const apiCall = async <T>(
       url: `${baseURL}${options.url}`,
       headers,
       data: options.data,
-      timeout: 60000,
+      timeout: 10000,
     });
 
     return response.data;

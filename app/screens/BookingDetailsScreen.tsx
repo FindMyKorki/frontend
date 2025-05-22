@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, FlatList, Image } from 'react-native';
 import LessonDetails from '../components/LessonDetails';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -158,8 +158,18 @@ const BookingDetailsScreen = () => {
         numColumns={2}
         className="px-4"
         columnWrapperStyle={{ justifyContent: 'space-between' }}
-        renderItem={({ item }) => (
-          <Image source={{ uri: item }} className="items-center w-48 h-80 mb-3.5" />
+        renderItem={({ item, index }) => (
+          <View className="items-center w-48 h-80 mb-3.5">
+            <Image source={{ uri: item }} className="w-full h-full" />
+            <TouchableOpacity
+              className="absolute top-1 right-1 bg-black/70 rounded-full p-1"
+              onPress={() => {
+                setImages((prev) => prev.filter((_, i) => i !== index));
+              }}
+            >
+              <MaterialIcons name="close" size={18} color="white" />
+            </TouchableOpacity>
+          </View>
         )}
         ListHeaderComponent={
           <View>
