@@ -12,6 +12,8 @@ import BottomModal from '../components/BottomModal';
 import Button from '../components/AppButton';
 import React from 'react';
 import { Colors } from '../../src/colors';
+import Calendar from '../components/Calendar';
+import TutorDescription from '../components/TutorDescription';
 //import { apiCall } from '../utils/ApiHandler';
 
 const TutorPublicProfile = () => {
@@ -89,6 +91,30 @@ const TutorPublicProfile = () => {
             </View>
           ))}
         </View>
+
+        {/* Sekcja Informacje */}
+        {activeTab === 'Informacje' && (
+          <View className="px-4">
+            {/* Kontakt */}
+            <View className="flex-row justify-between items-center py-2 mt-5">
+              <Text className="font-medium text-lg">E-mail:</Text>
+              <Text className="font-medium text-lg text-right">example@asd.com</Text>
+            </View>
+            <View style={{ borderTopWidth: 4, borderColor: '#f1f1f1' }} />
+            <View className="flex-row justify-between items-center py-2 mt-2">
+              <Text className="font-medium text-lg">Telefon:</Text>
+              <Text className="font-medium text-lg text-right">123 456 789</Text>
+            </View>
+            <View style={{ borderTopWidth: 4, borderColor: '#f1f1f1' }} />
+            <Text className="font-inter font-bold text-xl text-primary mt-6 mb-5">DOSTĘPNOŚĆ</Text>
+            <Calendar className="mt-2" tutor_id="1" />
+            <Text className="font-inter font-bold text-xl text-primary mt-12">O MNIE</Text>
+            <TutorDescription
+              className="mt-4"
+              description="Jestem doświadczonym korepetytorem matematyki i fizyki. Pomagam uczniom zrozumieć trudne tematy oraz przygotowuję ich do egzaminów."
+            />
+          </View>
+        )}
 
         {/* Informacja o cenie */}
         {activeTab === 'Oferty' && (
@@ -176,12 +202,6 @@ const TutorPublicProfile = () => {
                 userType="student"
               />
             </>
-          )}
-
-          {activeTab === 'Informacje' && (
-            <View className="px-4">
-              <Text className="text-lg font-bold">Tutaj będą informacje</Text>
-            </View>
           )}
 
           {activeTab === 'Opinie' && (
