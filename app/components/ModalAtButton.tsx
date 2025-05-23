@@ -21,8 +21,8 @@ const ModalAtButton: FC<ModalAtButtonProps> = ({
   const buttonRef = useRef<View>(null);
 
   const showModal = () => {
-    buttonRef.current?.measure((_x, _y, _w, _h, pageX, pageY) => {
-      setButtonCoords({ x: pageX, y: pageY, width: _w, height: _h });
+    buttonRef.current?.measureInWindow((x, y, width, height) => {
+      setButtonCoords({ x, y, width, height });
       setVisible(true);
     });
   };

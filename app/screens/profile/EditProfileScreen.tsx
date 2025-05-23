@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Image, ScrollView, Pressable } from 'react-native';
+import { View, ScrollView } from 'react-native';
 import AppTextInput from '../../components/AppTextInput';
 import TopPanel from '../../components/TopPanel';
 import BottomPanelButtons from '../../components/BottomPanelButtons';
@@ -8,8 +8,11 @@ import Button from '../../components/AppButton';
 import { useNavigation } from '@react-navigation/native';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Colors } from '../../../src/colors';
+import ImageInput from '../../components/ImageInput';
+import { selectImageFromGallery, takePhoto } from '../../utils/ImageHandler';
 
 const EditProfileScreen = () => {
+  const [image, setImage] = useState<string | null>(null);
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [bioShort, setBioShort] = useState('');
@@ -20,7 +23,7 @@ const EditProfileScreen = () => {
   const nav = useNavigation();
 
   const saveChanges = () => {
-    console.log('Zapisz zmiany');
+    console.log('Zapisz zmiany', image, email, phoneNumber, bioShort, bioLong);
   };
 
   return (
@@ -29,17 +32,7 @@ const EditProfileScreen = () => {
       <ScrollView showsVerticalScrollIndicator={false} className="bg-background">
         <View className="px-4 pb-10 gap-y-6 pt-2">
           <View className="flex-row justify-center items-center">
-            <Pressable onPress={() => setBottomModalVisible(true)} className="relative">
-              <Image
-                source={{ uri: 'https://randomuser.me/api/portraits/men/32.jpg' }}
-                className="w-28 h-28 rounded-full"
-                resizeMode="cover"
-              />
-
-              <View className="absolute top-0 right-0 bg-background-alt rounded-full p-1.5">
-                <MaterialIcons name="edit" size={20} color={Colors.primary} />
-              </View>
-            </Pressable>
+            <ImageInput image={image} onImagePress={() => setBottomModalVisible(true)} />
           </View>
 
           <AppTextInput
@@ -96,6 +89,8 @@ const EditProfileScreen = () => {
               appearance="transparent"
               onPress={() => {
                 console.log('Dodaj zdjęcie z aparatu');
+                takePhoto(setImage);
+                setBottomModalVisible(false);
               }}
               icon={<MaterialIcons name="photo-camera" size={20} color={Colors.primary} />}
             />
@@ -104,6 +99,8 @@ const EditProfileScreen = () => {
               appearance="transparent"
               onPress={() => {
                 console.log('Dodaj zdjęcie z galerii');
+                selectImageFromGallery(setImage);
+                setBottomModalVisible(false);
               }}
               icon={<MaterialIcons name="photo-library" size={20} color={Colors.primary} />}
             />
@@ -112,6 +109,8 @@ const EditProfileScreen = () => {
               appearance="transparent"
               onPress={() => {
                 console.log('Usuń zdjęcie');
+                setImage(null);
+                setBottomModalVisible(false);
               }}
               icon={<MaterialIcons name="delete" size={20} color={Colors.primary} />}
             />
