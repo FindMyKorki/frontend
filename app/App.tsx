@@ -21,6 +21,8 @@ import {
   RoleScreen,
   TutorPublicProfile,
   CompleteProfileScreen,
+  ProfileEditAvailabilityScreen,
+  EditAvailabilityScreen,
 } from './index';
 import AuthProvider from './utils/AuthProvider';
 
@@ -96,8 +98,18 @@ export default function App() {
                 component={ReportScreen}
                 options={{ headerShown: false }}
               />
-              <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-              <Stack.Screen name="Role" component={RoleScreen} options={{ headerShown: false }} />
+              <Stack.Screen
+                name="ProfileEditAvailability"
+                component={ProfileEditAvailabilityScreen}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="EditAvailabilityScreen"
+                component={EditAvailabilityScreen}
+                options={{ headerShown: false }}
+              />
+              {/* <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+              <Stack.Screen name="Role" component={RoleScreen} options={{ headerShown: false }} /> */}
             </Stack.Navigator>
           </NavigationContainer>
           {/* </AuthProvider> */}

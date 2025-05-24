@@ -30,6 +30,10 @@ const HomeScreen = () => {
       <Button title={'Przejdź do ReportScreen'} onPress={() => nav.navigate('Report')} />
       <Button title={'Przejdź do LoginScreen'} onPress={() => nav.navigate('Login')} />
       <Button title={'Przejdź do RoleScreen'} onPress={() => nav.navigate('Role')} />
+      <Button
+        title={'Przejdź do ProfileEditAvailabilityScreen'}
+        onPress={() => nav.navigate('ProfileEditAvailability')}
+      />
     </ScrollView>
   );
 };
