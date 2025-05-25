@@ -82,13 +82,7 @@ const Calendar: FC<CalendarType> = ({ tutor_id, className = '', onSelect }) => {
     setIsloading(true);
 
     // Przykładowe dane zamiast fetchowania z API
-    const blocks = [
-      { start_date: '2025-05-05T10:00:00', end_date: '2025-05-05T11:00:00' },
-      { start_date: '2025-05-05T12:00:00', end_date: '2025-05-05T13:00:00' },
-      { start_date: '2025-05-06T14:00:00', end_date: '2025-05-06T15:00:00' },
-      { start_date: '2025-05-07T09:00:00', end_date: '2025-05-07T10:00:00' },
-      { start_date: '2025-05-09T13:00:00', end_date: '2025-05-09T14:00:00' },
-    ];
+    const blocks = [{ start_date: '2025-05-05T10:00:00', end_date: '2025-05-05T11:00:00' }];
 
     const calendar = daysInCalendar();
 

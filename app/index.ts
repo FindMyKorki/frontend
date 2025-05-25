@@ -14,6 +14,7 @@ export { default as TutorPublicProfile } from './screens/TutorPublicProfileScree
 export { default as CompleteProfileScreen } from './screens/CompleteProfileScreen';
 export { default as ProfileEditAvailabilityScreen } from './screens/ProfileEditAvailabilityScreen';
 export { default as EditAvailabilityScreen } from './screens/EditAvailabilityScreen';
+export { default as AvailabilityRepetitionScreen } from './screens/AvailabilityRepetitionScreen';
 
 export { default as LoginScreen } from './screens/auth/LoginScreen';
 export { default as RoleScreen } from './screens/auth/RoleScreen';

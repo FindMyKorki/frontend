@@ -34,6 +34,10 @@ const HomeScreen = () => {
         title={'Przejdź do ProfileEditAvailabilityScreen'}
         onPress={() => nav.navigate('ProfileEditAvailability')}
       />
+      <Button
+        title={'Przejdź do ProfileEditAvailabilityScreen'}
+        onPress={() => nav.navigate('AvailabilityRepetitionScreen')}
+      />
     </ScrollView>
   );
 };

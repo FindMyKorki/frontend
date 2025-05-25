@@ -23,6 +23,7 @@ import {
   CompleteProfileScreen,
   ProfileEditAvailabilityScreen,
   EditAvailabilityScreen,
+  AvailabilityRepetitionScreen,
 } from './index';
 import AuthProvider from './utils/AuthProvider';
 
@@ -106,6 +107,11 @@ export default function App() {
               <Stack.Screen
                 name="EditAvailabilityScreen"
                 component={EditAvailabilityScreen}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="AvailabilityRepetitionScreen"
+                component={AvailabilityRepetitionScreen}
                 options={{ headerShown: false }}
               />
               {/* <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
