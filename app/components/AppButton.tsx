@@ -6,8 +6,8 @@ const button = tv({
   base: 'flex-row items-center justify-center box-border',
   variants: {
     size: {
-      auto: 'self-start px-2.5 py-[5px] rounded',
-      full: 'w-full px-5 py-2.5 rounded-lg',
+      auto: 'px-2.5 py-[5px] rounded',
+      full: 'flex-1 px-5 py-2.5 rounded-lg',
     },
     appearance: {
       filled: 'border border-transparent bg-primary',

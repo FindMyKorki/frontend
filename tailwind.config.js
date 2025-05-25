@@ -17,6 +17,7 @@ module.exports = {
         'text-medium': '#3d3d3d',
         'text-light': '#424242',
         'border-gray': '#D9D9D9',
+        'empty-image': '#999999',
       },
       fontSize: {
         '0.5rem': '0.5rem',

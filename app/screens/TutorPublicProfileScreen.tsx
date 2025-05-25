@@ -33,6 +33,15 @@ const TutorPublicProfile = () => {
     setActiveTab(tab);
   };
 
+  const handleSort = (option: string) => {
+    if (option === reviewSortOptions[0]) {
+    } else if (option === reviewSortOptions[1]) {
+    } else if (option === reviewSortOptions[2]) {
+    } else if (option === reviewSortOptions[3]) {
+    }
+    console.log('Sortowanie', option);
+  };
+
   return (
     <View className="flex-1">
       <TopPanel
@@ -206,10 +215,7 @@ const TutorPublicProfile = () => {
 
           {activeTab === 'Opinie' && (
             <>
-              <SortDropdown
-                options={reviewSortOptions}
-                onSelect={(option) => console.log(option)}
-              />
+              <SortDropdown options={reviewSortOptions} onSelect={handleSort} />
 
               <Review
                 fullName="Jan Kowalski"
@@ -249,8 +255,7 @@ const TutorPublicProfile = () => {
         leftButtonProps={{
           label: 'Wyślij wiadomość',
           onPress: () => {
-            //@ts-expect-error
-            navigation.navigate('Chat');
+            navigation.navigate('Chat' as never);
           },
           icon: <MaterialIcons name="chat-bubble" size={20} color="white" />,
         }}
