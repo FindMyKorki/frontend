@@ -1,4 +1,6 @@
 import { apiCall } from '../utils/ApiHandler';
+import { TutorReviewList } from '../types/Review';
+import { TutorOfferList } from '../types/Offer';
 
 export const updateUserProfile = async (
   fullName: string,
@@ -60,6 +62,37 @@ export const createProfile = async (isTutor: boolean) => {
     });
   } catch (e) {
     console.error('POST /profiles', e);
+    return null;
+  }
+};
+
+export const getTutorReviews = async (
+  tutorId: string,
+  sortBy: 'rating' | 'date',
+  orderBy: 'increasing' | 'decreasing',
+): Promise<TutorReviewList | null> => {
+  const query = new URLSearchParams({ sort_by: sortBy, order: orderBy }).toString();
+  const url = `/tutor-reviews/${tutorId}?${query}`;
+  try {
+    return await apiCall({
+      method: 'GET',
+      url: url,
+    });
+  } catch (e) {
+    console.error('GET', url, e);
+    return null;
+  }
+};
+
+export const getActiveTutorOffers = async (tutorId: string): Promise<TutorOfferList | null> => {
+  const url = `/active-offers/${tutorId}`;
+  try {
+    return await apiCall({
+      method: 'GET',
+      url: url,
+    });
+  } catch (e) {
+    console.error('GET', url, e);
     return null;
   }
 };
