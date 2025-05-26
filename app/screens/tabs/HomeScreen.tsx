@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -14,35 +14,13 @@ import AppButton from '../../components/AppButton';
 import { Level } from '../../types/Level';
 import { Subject } from '../../types/Subject';
 import { Filters } from '../../store/FiltersContext';
+import { ActiveOfferResponse } from '../../types/Offer';
 
 import { useFilters } from '../../store/FiltersContext';
 import { fetchSubjects, fetchLevels } from '../../services/filtersService';
+import { OffersService } from '../../services/offersService';
 
 const reviewSortOptions = ['Po cenie malejąco', 'Po cenie rosnąco'];
-
-// soon will be fetched (waiting for backend team)
-const activeOffers = [
-  {
-    id: 1,
-    price: 100,
-    subject_name: 'Matematyka',
-    icon_url: 'https://example.com/math.png',
-    level: 'Studia',
-    tutor_full_name: 'Marek Sarmacki',
-    tutor_avatar_url: 'https://randomuser.me/api/portraits/men/10.jpg',
-    tutor_description: 'Profesor matematyki z wieloletnim doświadczeniem akademickim',
-  },
-  {
-    id: 2,
-    price: 120,
-    subject_name: 'Fizyka',
-    icon_url: 'https://example.com/physics.png',
-    level: 'Szkoła podstawowa',
-    tutor_full_name: 'Stan Getz',
-    tutor_avatar_url: 'https://randomuser.me/api/portraits/men/15.jpg',
-    tutor_description: 'Specjalistka od równań różniczkowych i analizy matematycznej',
-  },
-];
 
 type Filter = {
   id: string;
@@ -60,8 +38,11 @@ export default function HomeScreen() {
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [levels, setLevels] = useState<Level[]>([]);
 
+  const [offers, setOffers] = useState<ActiveOfferResponse[]>([]);
+  const [isLoadingOffers, setIsLoadingOffers] = useState(false);
+  const [offersError, setOffersError] = useState<string | null>(null);
+
   const [isLoading, setIsLoading] = useState(true);
-  // const [error, setError] = useState(null);
 
   useEffect(() => {
     const loadData = async () => {
@@ -71,10 +52,6 @@ export default function HomeScreen() {
         setSubjects(subjectsData);
         setLevels(levelsData);
       } finally {
-        // catch (err) {
-        //   setError(err.message);
-        //   console.error('Failed to load filters data:', err);
-        // }
         setIsLoading(false);
       }
     };
@@ -97,6 +74,62 @@ export default function HomeScreen() {
 
   const getLevelName = (id?: number) => levels?.find((l) => l.id === id)?.level || '';
 
+  const fetchActiveOffers = async () => {
+    if (!filters.subject || !filters.level) return;
+
+    try {
+      setIsLoadingOffers(true);
+      setOffersError(null);
+
+      const data = await OffersService.getActiveOffers(
+        filters.level,
+        filters.subject,
+        filters.fromDate,
+        filters.toDate,
+        filters.minPrice,
+        filters.maxPrice,
+        sortOption === 'Po cenie rosnąco' ? 'ASC' : 'DESC',
+        visibleOffersCount,
+      );
+
+      setOffers(data);
+    } catch (error) {
+      console.error('Error fetching offers:', error);
+      setOffersError('Nie udało się załadować ofert. Spróbuj ponownie.');
+    } finally {
+      setIsLoadingOffers(false);
+    }
+  };
+
+  useEffect(() => {
+    if (filters.subject && filters.level) {
+      fetchActiveOffers();
+    }
+  }, [
+    filters.subject,
+    filters.level,
+    filters.minPrice,
+    filters.maxPrice,
+    filters.fromDate,
+    filters.toDate,
+    sortOption,
+    visibleOffersCount,
+  ]);
+
+  // Zmodyfikowana funkcja do ładowania więcej ofert
+  const loadMoreOffers = () => {
+    setVisibleOffersCount((prev) => prev + 5);
+    // Nie trzeba wywoływać fetchActiveOffers, bo zrobi to efekt
+  };
+
+  // Zmodyfikowana funkcja do filtrowania
+  const getFilteredOffers = () => {
+    return offers.filter((offer) => {
+      const matchesSearch = offer.tutor_full_name.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesSearch;
+    });
+  };
+
   const removeFilter = (filterKeyToRemove: keyof Filters) => {
     setFilters((prevFilters) => {
       const newFilters = { ...prevFilters };
@@ -105,7 +138,6 @@ export default function HomeScreen() {
     });
   };
 
-  // filtered offers will be fetched with API
   const getActiveFilters = () => {
     const activeFilters: Filter[] = [];
 
@@ -160,32 +192,8 @@ export default function HomeScreen() {
     return activeFilters;
   };
 
-  const getFilteredOffers = () => {
-    return activeOffers
-      .filter((offer) => {
-        const matchesSubject =
-          !filters.subject || offer.subject_name === getSubjectName(filters.subject);
-        const matchesLevel = !filters.level || offer.level === getLevelName(filters.level);
-        const matchesSearch = offer.tutor_full_name
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase());
-
-        return matchesSubject && matchesLevel && matchesSearch;
-      })
-      .sort((a, b) => {
-        if (sortOption === 'Po cenie rosnąco') return a.price - b.price;
-        if (sortOption === 'Po cenie malejąco') return b.price - a.price;
-        return 0;
-      });
-  };
-
-  const loadMoreOffers = () => {
-    setVisibleOffersCount((prev) => prev + 5);
-  };
-
   const filteredOffers = getFilteredOffers();
-  const visibleOffers = filteredOffers.slice(0, visibleOffersCount);
-  const hasMoreOffers = filteredOffers.length > visibleOffersCount;
+  const hasMoreOffers = offers.length >= visibleOffersCount;
 
   const activeFilters = getActiveFilters();
   const hasRequiredFilters = filters.subject && filters.level;
@@ -197,14 +205,6 @@ export default function HomeScreen() {
       </View>
     );
   }
-
-  // if (error) {
-  //   return (
-  //     <View className="flex-1 justify-center items-center">
-  //       <Text className="text-red-500">Błąd: {error}</Text>
-  //     </View>
-  //   );
-  // }
 
   return (
     <View className="flex-1 bg-white px-4 pt-4">
@@ -263,28 +263,47 @@ export default function HomeScreen() {
             <Text className="text-xs font-semibold text-primary">Cena za 60 min zajęć</Text>
           </View>
 
-          <FlatList
-            data={visibleOffers}
-            keyExtractor={(item) => item.id.toString()}
-            contentContainerStyle={{ paddingBottom: 20 }}
-            renderItem={({ item }) => (
-              <OfferListCard
-                name={item.tutor_full_name}
-                price={item.price}
-                description={item.tutor_description}
-                // onPress={() => nav.navigate('BookingLesson', { offer_id: item.id })}
-                onPress={() => nav.navigate('TutorProfile')}
-                avatarUri={item.tutor_avatar_url}
-              />
-            )}
-            ListFooterComponent={
-              hasMoreOffers ? (
-                <View className="items-center mt-4 mb-8">
-                  <AppButton onPress={loadMoreOffers} label="Pokaż więcej" appearance="outlined" />
-                </View>
-              ) : null
-            }
-          />
+          {isLoadingOffers ? (
+            <View className="flex-1 justify-center items-center py-10">
+              <ActivityIndicator size="large" />
+            </View>
+          ) : offersError ? (
+            <View className="flex-1 justify-center items-center py-10">
+              <Text className="text-red-500 mb-4">{offersError}</Text>
+              <AppButton onPress={fetchActiveOffers} label="Spróbuj ponownie" />
+            </View>
+          ) : filteredOffers.length === 0 ? (
+            <View className="flex-1 justify-center items-center py-10">
+              <Text className="text-gray-500">Brak ofert spełniających kryteria</Text>
+            </View>
+          ) : (
+            <FlatList
+              data={filteredOffers.slice(0, visibleOffersCount)}
+              keyExtractor={(item) => item.id.toString()}
+              contentContainerStyle={{ paddingBottom: 20 }}
+              renderItem={({ item }) => (
+                <OfferListCard
+                  name={item.tutor_full_name}
+                  price={item.price}
+                  description={item.title}
+                  onProfilePress={() => nav.navigate('TutorProfile', { tutorId: item.tutor_id })}
+                  onBookPress={() => nav.navigate('Booking', { offerId: item.id })}
+                  avatarUri={item.tutor_avatar_url}
+                />
+              )}
+              ListFooterComponent={
+                hasMoreOffers ? (
+                  <View className="items-center mt-4 mb-8">
+                    <AppButton
+                      onPress={loadMoreOffers}
+                      label="Pokaż więcej"
+                      appearance="outlined"
+                    />
+                  </View>
+                ) : null
+              }
+            />
+          )}
         </>
       )}
     </View>
