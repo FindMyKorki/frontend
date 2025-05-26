@@ -49,6 +49,7 @@ const ChatsListScreen = () => {
     setError(null);
 
     try {
+      // Pobranie informacji o użytkowniku
       const user = await apiCall<{
         id: string;
         profile: {
@@ -67,25 +68,35 @@ const ChatsListScreen = () => {
       setCurrentUserId(user.id);
       setIsTutor(tutorFlag);
 
+      // Pobranie czatów na podstawie roli użytkownika
       const fetchedChatsRaw = await apiCall<any[]>({
         method: 'GET',
         url: endpoint,
       });
       console.log('🛠️ Odebrane dane z backendu:', fetchedChatsRaw);
 
-      const mappedChats: Chat[] = fetchedChatsRaw.map((chat) => ({
-        id: chat.id || chat.chat_id,
-        name:
-          chat.student?.full_name ||
-          chat.tutor?.full_name ||
-          chat.student_name ||
-          chat.tutor_name ||
-          'Nieznany użytkownik',
-        avatarUrl: chat.student?.avatar_url || chat.tutor?.avatar_url || chat.avatar_url,
-        lastMessage: chat.last_message?.content || chat.last_message || 'Brak wiadomości',
-        timestamp: chat.last_message?.sent_at || chat.sent_at || '',
-        unreadCount: chat.unread_count || 0,
-      }));
+      // Mapowanie danych różni się w zależności od roli
+      const mappedChats: Chat[] = tutorFlag
+        ? fetchedChatsRaw.map((chat) => ({
+            id: chat.chat_id, // Używamy "chat_id" dla tutora
+            name: chat.their_full_name,
+            avatarUrl: chat.their_avatar_url || null,
+            lastMessage: chat.last_message_content || 'Brak wiadomości',
+            timestamp: chat.last_message_sent_at || '', // Czas ostatniej wiadomości
+            unreadCount: chat.last_message_is_read ? 0 : 1, // Jeśli wiadomość nieprzeczytana
+          }))
+        : fetchedChatsRaw.map((chatString) => {
+            // Jeśli dane to string, przekształcamy je w odpowiedni obiekt lub logujemy błąd
+            const chat = JSON.parse(chatString); // Jeśli to JSON w stringu, parsujemy
+            return {
+              id: chat.chat_id || Date.now(), // Losowe ID w razie błędów
+              name: chat.their_full_name || 'Nieznany użytkownik',
+              avatarUrl: chat.their_avatar_url || null,
+              lastMessage: chat.last_message_content || 'Brak wiadomości',
+              timestamp: chat.last_message_sent_at || '',
+              unreadCount: 0, // Brak informacji o liczniku
+            };
+          });
 
       setChats(mappedChats);
     } catch (err: any) {
@@ -106,7 +117,7 @@ const ChatsListScreen = () => {
 
   return (
     <View className="flex-1 bg-background">
-      <SearchBar />
+      <SearchBar currentUserId={currentUserId} isTutor={isTutor} />
 
       {loading ? (
         <ActivityIndicator size="large" className="mt-4" />

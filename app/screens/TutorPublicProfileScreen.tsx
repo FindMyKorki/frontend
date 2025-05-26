@@ -12,11 +12,26 @@ import BottomModal from '../components/BottomModal';
 import Button from '../components/AppButton';
 import React from 'react';
 import { Colors } from '../../src/colors';
+import { apiCall } from '../utils/ApiHandler';
 
 const TutorPublicProfile = () => {
   const [activeTab, setActiveTab] = useState('Oferty');
   const [bottomModalVisible, setBottomModalVisible] = useState(false);
   const navigation = useNavigation();
+
+  const createChat = async (tutorId: string, studentId: string): Promise<any> => {
+    try {
+      const response = await apiCall({
+        method: 'POST',
+        url: '/chats',
+        data: { tutor_id: tutorId, student_id: studentId },
+      });
+      return response.chat;
+    } catch (error) {
+      console.error('Błąd tworzenia czatu:', error);
+      throw error;
+    }
+  };
 
   const reviewSortOptions = [
     'Po ocenie malejąco',
@@ -226,10 +241,27 @@ const TutorPublicProfile = () => {
       <BottomPanelButtons
         leftButtonProps={{
           label: 'Wyślij wiadomość',
-          onPress: () => {
-            console.log('Wyślij wiadomość');
-            // navigation.navigate('Chat');
+          onPress: async () => {
+            try {
+              const loggedUserId = '<ID_zalogowanego_użytkownika>';
+              const tutorId = '123';
+              const chat = await createChat(tutorId, loggedUserId);
+
+              if (chat && chat.id) {
+                navigation.navigate('ChatScreen', {
+                  user: {
+                    id: chat.id,
+                    userId: loggedUserId,
+                  },
+                });
+              } else {
+                console.error('Nie udało się utworzyć czatu');
+              }
+            } catch (error) {
+              console.error('Wystąpił błąd przy tworzeniu czatu:', error);
+            }
           },
+
           icon: <MaterialIcons name="chat-bubble" size={20} color="white" />,
         }}
         rightButtonProps={{

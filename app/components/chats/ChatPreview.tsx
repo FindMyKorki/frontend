@@ -39,7 +39,8 @@ const ChatPreview = ({
   };
 
   const reportChat = (chatId: string, chatName: string) => {
-    navigation.navigate('ReportChat' as never, { chatId, name: chatName } as never);
+    // @ts-ignore
+    navigation.navigate('ReportChat', { chatId, name: chatName });
   };
 
   const displayAvatar = avatarUrl || 'https://via.placeholder.com/150';

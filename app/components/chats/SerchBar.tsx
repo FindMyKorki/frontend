@@ -1,20 +1,38 @@
 import React from 'react';
 import { View, TextInput, Pressable } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
-const SearchBar = () => {
+type SearchBarProps = {
+  placeholderValue: string;
+  onSearch: (query: string) => void;
+  value: string;
+  className?: string;
+};
+
+const SearchBar = ({ placeholderValue, onSearch, value, className = '' }: SearchBarProps) => {
+  const handleClear = () => {
+    onSearch('');
+  };
+
   return (
-    <View className="flex-row items-center bg-gray-100 rounded-full mx-4 mt-4 mb-2 px-4 py-2">
-      <Feather name="search" size={20} color="#888" />
-      <TextInput
-        placeholder="Wyszukaj konwersacje"
-        placeholderTextColor="#888"
-        editable={true}
-        className="flex-1 ml-2 text-base text-text-dark"
-      />
-      <Pressable>
-        <Feather name="x" size={20} color="#888" />
-      </Pressable>
+    <View className={`flex-row text-sm rounded-lg bg-background-alt ${className}`}>
+      <View
+        className={`flex-1 flex-row items-center rounded-lg border px-3 border-background-alt bg-background-alt`}
+      >
+        <MaterialIcons name="search" size={20} className="mr-2" />
+        <TextInput
+          className="flex-1"
+          placeholder={placeholderValue}
+          value={value}
+          onChangeText={onSearch}
+          returnKeyType="done"
+        />
+        {value ? (
+          <Pressable onPress={handleClear} className="p-1">
+            <MaterialIcons name="close" size={20} />
+          </Pressable>
+        ) : null}
+      </View>
     </View>
   );
 };
