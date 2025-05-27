@@ -73,13 +73,14 @@ const ChatScreen = ({ route }: any) => {
 
     socket.onclose = () => {
       console.log('🔌 WebSocket rozłączony');
-      socket.send(JSON.stringify({ action: 'mark_as_read', chatId }));
+      // Usuń tę linię:
+      // socket.send(JSON.stringify({ action: 'mark_as_read', chatId }));
     };
 
     return () => {
       console.log('Zamykanie WebSocketu');
-      socket.close();
-      socket.send(JSON.stringify({ action: 'mark_as_read', chatId }));
+      // Zastąp socket.close bez niepotrzebnych komend:
+      ws.current?.close();
     };
   }, [chatId, userId]);
 
