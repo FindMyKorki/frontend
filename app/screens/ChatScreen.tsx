@@ -29,7 +29,7 @@ const ChatScreen = ({ route }: any) => {
 
   useEffect(() => {
     if (!chatId || !userId) {
-      console.warn('❌ Brakuje chatId lub userId – WebSocket nie został uruchomiony');
+      console.warn('Brakuje chatId lub userId – WebSocket nie został uruchomiony');
       return;
     }
 
@@ -40,7 +40,7 @@ const ChatScreen = ({ route }: any) => {
     console.log('🔗 Łączenie z WebSocketem:', { chatId, userId, wsUrl });
 
     socket.onopen = () => {
-      console.log('✅ WebSocket połączony');
+      console.log('WebSocket połączony');
     };
 
     socket.onmessage = (event) => {
@@ -67,16 +67,18 @@ const ChatScreen = ({ route }: any) => {
     };
 
     socket.onerror = (err) => {
-      console.error('❌ WebSocket błąd:', err);
+      console.error('WebSocket błąd:', err);
     };
 
     socket.onclose = () => {
       console.log('🔌 WebSocket rozłączony');
+      socket.send(JSON.stringify({ action: 'mark_as_read', chatId }));
     };
 
     return () => {
-      console.log('🧹 Zamykanie WebSocketu');
+      console.log('Zamykanie WebSocketu');
       socket.close();
+      socket.send(JSON.stringify({ action: 'mark_as_read', chatId }));
     };
   }, [chatId, userId]);
 
@@ -88,8 +90,18 @@ const ChatScreen = ({ route }: any) => {
           is_media: false,
         }),
       );
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now(),
+          message: text,
+          timestamp: new Date().toLocaleTimeString().slice(0, 5),
+          isSender: true,
+        },
+      ]);
     } else {
-      console.warn('⚠️ WebSocket nie jest połączony');
+      console.warn('WebSocket nie jest połączony');
     }
   };
 

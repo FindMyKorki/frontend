@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Image, Pressable } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import BellOffIcon from './BellOffIcon';
+import dayjs from 'dayjs'; // Import biblioteki dayjs
 import ChatHeader from './ChatHeader';
 import ChatMessagePreview from './ChatMessagePreview';
 import ChatMenuModal from './ChatMenuModal';
@@ -45,6 +45,9 @@ const ChatPreview = ({
 
   const displayAvatar = avatarUrl || 'https://via.placeholder.com/150';
 
+  // Formatowanie daty – tutaj możesz dostosować format
+  const formattedTimestamp = dayjs(timestamp).format('DD.MM.YYYY HH:mm');
+
   return (
     <>
       <Pressable
@@ -58,7 +61,7 @@ const ChatPreview = ({
         />
 
         <View className="flex-1 ml-4">
-          <ChatHeader name={name} timestamp={timestamp} />
+          <ChatHeader name={name} timestamp={formattedTimestamp} />
           <ChatMessagePreview lastMessage={lastMessage} unreadCount={unreadCount} />
         </View>
 
