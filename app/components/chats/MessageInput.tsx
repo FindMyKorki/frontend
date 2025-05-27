@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, Pressable } from 'react-native';
+import { View, TextInput, Text, Pressable } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
 type MessageInputProps = {
@@ -34,17 +34,18 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSend }) => {
   return (
     <View className="flex-row items-center border border-gray-300 rounded-full px-4 py-2 mx-4 mb-4 bg-white">
       <Pressable
-        onPress={handleSend}
+        onPress={() => console.log('Otwórz galerię')}
         style={{
           paddingVertical: 0,
           paddingHorizontal: 0,
           width: 24,
           height: 23,
         }}
+        accessibilityLabel="Otwórz galerię"
       >
-        {' '}
         <GalleryIcon />
       </Pressable>
+
       <TextInput
         placeholder="Napisz wiadomość..."
         value={text}
@@ -55,6 +56,7 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSend }) => {
         accessibilityLabel="Pole wiadomości"
       />
 
+      {/* Przycisk wysyłania */}
       <Pressable
         onPress={handleSend}
         disabled={!text.trim()}
@@ -65,6 +67,8 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSend }) => {
           width: 24,
           height: 23,
           opacity: text.trim() ? 1 : 0.5,
+          justifyContent: 'center',
+          alignItems: 'center',
         }}
       >
         <SendIcon width={24} height={24} />

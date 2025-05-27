@@ -58,7 +58,8 @@ const ChatScreen = ({ route }: any) => {
       } else {
         const newMsg: Message = {
           id: data.id || Date.now().toString(),
-          message: data.content,
+          message:
+            typeof data.content === 'string' ? data.content : '[Nieprawidłowy format wiadomości]',
           timestamp: new Date(data.sent_at).toLocaleTimeString().slice(0, 5),
           isSender: data.sender_id === userId,
         };
@@ -110,7 +111,7 @@ const ChatScreen = ({ route }: any) => {
       <TopPanel
         onBackPress={() => navigation.goBack()}
         onSettingsPress={() => console.log('Opcje konwersacji')}
-        name={String(user.name)}
+        name={user.name ? String(user.name) : 'Nieznany użytkownik'}
         image={user.avatarUrl}
       />
 

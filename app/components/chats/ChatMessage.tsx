@@ -11,8 +11,6 @@ type ChatMessageProps = {
 const ChatMessage = ({ message, timestamp, isSender, avatarUrl }: ChatMessageProps) => {
   return (
     <View className={`flex-row items-end mb-2 ${isSender ? 'justify-end' : 'justify-start'}`}>
-      {/* Avatar usunięty całkowicie dla !isSender */}
-
       <View
         className={`
           max-w-[75%] px-4 py-2 rounded-2xl
