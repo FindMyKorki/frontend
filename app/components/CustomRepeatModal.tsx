@@ -3,7 +3,7 @@ import { Modal, View, Text, TouchableOpacity, TextInput, Pressable } from 'react
 import TopPanel from './TopPanel';
 import AppButton from '../components/AppButton';
 import { Entypo } from '@expo/vector-icons';
-import { format } from 'date-fns';
+import { format, setHours, subDays } from 'date-fns';
 import { pl } from 'date-fns/locale';
 // import DateTimePicker from '@react-native-community/datetimepicker';
 // import { Platform } from 'react-native';
@@ -13,18 +13,18 @@ const frequencyEn = ['DAILY', 'WEEKLY', 'MONTHLY'];
 const days = ['P', 'W', 'Ś', 'C', 'P', 'S', 'N'];
 const daysEn = ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'];
 const monthMap: { [key: string]: number } = {
-  styczeń: 0,
-  luty: 1,
-  marzec: 2,
-  kwiecień: 3,
-  maj: 4,
-  czerwiec: 5,
-  lipiec: 6,
-  sierpień: 7,
-  wrzesień: 8,
-  październik: 9,
-  listopad: 10,
-  grudzień: 11,
+  stycznia: 0,
+  lutego: 1,
+  marca: 2,
+  kwietnia: 3,
+  maja: 4,
+  czerwca: 5,
+  lipca: 6,
+  sierpnia: 7,
+  września: 8,
+  października: 9,
+  listopada: 10,
+  grudnia: 11,
 };
 
 type Props = {
@@ -39,10 +39,10 @@ const CustomRepeatModal = ({ visible, initialRule, onClose, onSelect }: Props) =
   const [frequency, setFrequency] = useState(1);
   const [frequencyDropDown, setFrequencyDropDown] = useState(false);
   const [selectedDays, setSelectedDays] = useState<number[]>([0]);
-  const [showPicker, setShowPicker] = useState(false);
-  const [date, setDate] = useState(new Date());
+  //   const [showPicker, setShowPicker] = useState(false);
+  //   const [date, setDate] = useState(new Date());
   const [ends, setEnds] = useState<'never' | 'onDate'>('never');
-  const [endDate, setEndDate] = useState(format(new Date(), 'dd MMM yyyy', { locale: pl }));
+  const [endDate, setEndDate] = useState(format(new Date(), 'dd MMMM yyyy', { locale: pl }));
 
   useEffect(() => {
     if (!initialRule) return;
@@ -59,11 +59,12 @@ const CustomRepeatModal = ({ visible, initialRule, onClose, onSelect }: Props) =
       );
     if (parts[3]) {
       setEnds('onDate');
-      const isoStr = parts[3].replace(
-        /(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z/,
-        '$1-$2-$3T$4:$5:$6Z',
-      );
-      setEndDate(format(new Date(isoStr), 'dd MMM yyyy', { locale: pl }));
+      const isoStr = parts[3]
+        .split('=')[1]
+        .split('T')[0]
+        .replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
+      const ndate = new Date(isoStr);
+      setEndDate(format(ndate, 'dd MMMM yyyy', { locale: pl }));
     }
   }, []);
 
@@ -79,10 +80,8 @@ const CustomRepeatModal = ({ visible, initialRule, onClose, onSelect }: Props) =
     if (ends === 'onDate') {
       try {
         const [dayStr, monthName, yearStr] = endDate.split(/\s+/);
-        if (monthMap[monthName]) {
-          const date = new Date(Number(yearStr), monthMap[monthName], Number(dayStr), 23, 59, 59);
-          rule += `;UNTIL=${format(date, 'yyyyMMdd', { locale: pl })}T${format(date, 'HHmmss', { locale: pl })}Z`;
-        }
+        const date = new Date(Number(yearStr), monthMap[monthName], Number(dayStr), 23, 59, 59);
+        rule += `;UNTIL=${format(date, 'yyyyMMdd', { locale: pl })}T${format(date, 'HHmmss', { locale: pl })}Z`;
       } catch (error) {
         console.error('Źle wpisana data zakończenia: ', error);
         return;
