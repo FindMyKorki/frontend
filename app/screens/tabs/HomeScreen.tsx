@@ -267,11 +267,7 @@ export default function HomeScreen() {
 
   // Loading state
   if (loadingStates.isLoading) {
-    return (
-      <View className="flex-1 justify-center items-center">
-        <Text>Ładowanie danych...</Text>
-      </View>
-    );
+    return <LoadingView />;
   }
 
   // Main render
@@ -315,7 +311,8 @@ export default function HomeScreen() {
 
 // Sub-components for better readability
 const LoadingView = () => (
-  <View className="flex-1 justify-center items-center py-10">
+  <View className="flex-1 justify-center items-center py-10 gap-4">
+    <Text>Ładowanie danych...</Text>
     <ActivityIndicator size="large" />
   </View>
 );
@@ -323,7 +320,12 @@ const LoadingView = () => (
 const ErrorView = ({ error, onRetry }: { error: string; onRetry: () => void }) => (
   <View className="flex-1 justify-center items-center py-10">
     <Text className="text-red-500 mb-4">{error}</Text>
-    <AppButton onPress={onRetry} label="Spróbuj ponownie" />
+    <AppButton
+      onPress={onRetry}
+      label="Spróbuj ponownie"
+      appearance="outlined"
+      className="self-center"
+    />
   </View>
 );
 
