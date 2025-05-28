@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native'; // Importuj hook
+
 import { ScrollView, Text, View, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -107,9 +109,11 @@ const ChatsListScreen = () => {
     }
   };
 
-  useEffect(() => {
-    fetchChats();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchChats(); // Odśwież listę czatów za każdym razem, gdy ekran staje się aktywny
+    }, []),
+  );
 
   const handleArchiveChat = (chatId: number) => {
     setArchivedChatIds((prev) => [...prev, chatId]);
