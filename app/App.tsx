@@ -16,6 +16,8 @@ import {
   SearchScreen,
   SortOptionsScreen,
   UserDetailsScreen,
+  TutorPublicProfile,
+  BookingLessonScreen,
 } from './index';
 import { FiltersProvider } from './store/FiltersContext';
 
@@ -82,8 +84,18 @@ export default function App() {
                   options={{ headerShown: false }}
                 />
                 <Stack.Screen
+                  name="TutorPublicProfile"
+                  component={TutorPublicProfile}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
                   name="Report"
                   component={ReportScreen}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="BookingLesson"
+                  component={BookingLessonScreen}
                   options={{ headerShown: false }}
                 />
               </Stack.Navigator>
