@@ -19,10 +19,10 @@ import {
   UserDetailsScreen,
   LoginScreen,
   RoleScreen,
-  TutorPublicProfile,
   CompleteProfileScreen,
   BookingLessonScreen,
   BookingDetailsScreen,
+  TutorPublicProfile,
 } from './index';
 import AuthProvider from './utils/AuthProvider';
 import { FiltersProvider } from './store/FiltersContext';

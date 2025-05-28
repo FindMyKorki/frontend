@@ -200,17 +200,15 @@ export default function HomeScreen() {
   }, [navigation]);
 
   const navigateToTutorProfile = useCallback(
-    (tutorId: number) => {
-      console.log('TutorProfile');
-      navigation.navigate('TutorProfile', { tutorId });
+    (tutor_id: number) => {
+      navigation.navigate('TutorPublicProfile', { tutor_id });
     },
     [navigation],
   );
 
   const navigateToBooking = useCallback(
-    (offerId: number) => {
-      console.log('Booking');
-      navigation.navigate('BookingLesson', { offerId });
+    (offer_id: number) => {
+      navigation.navigate('BookingLesson', { offer_id });
     },
     [navigation],
   );
