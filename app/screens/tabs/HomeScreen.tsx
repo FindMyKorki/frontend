@@ -1,66 +1,76 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { View, Text, FlatList, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import dayjs from 'dayjs';
 
 import SearchBar from '../../components/SearchBar';
-import OfferListCard from '../../components/OfferListCard';
+import OfferListCard from '../../components/filters_screen/OfferListCard';
 import SortDropdown from '../../components/SortDropdown';
-import FilterTag from '../../components/FilterTag';
+import FilterTag from '../../components/home_screen/FilterTag';
 import AppButton from '../../components/AppButton';
+
+import PriceInfo from '../../components/home_screen/PriceInfo';
+import NoFiltersView from '../../components/home_screen/NoFitersView';
 
 import { Level } from '../../types/Level';
 import { Subject } from '../../types/Subject';
-import { Filters } from '../../store/FiltersContext';
+import { ActiveFilter } from '../../types/ActiveFilter';
 import { ActiveOfferResponse } from '../../types/Offer';
 
 import { useFilters } from '../../store/FiltersContext';
+import { Filters } from '../../store/FiltersContext';
+
 import { fetchSubjects, fetchLevels } from '../../services/filtersService';
 import { OffersService } from '../../services/offersService';
 
-const reviewSortOptions = ['Po cenie malejąco', 'Po cenie rosnąco'];
-
-type Filter = {
-  id: string;
-  text: string;
-  removable?: boolean;
-};
+const SORT_OPTIONS = ['Po cenie malejąco', 'Po cenie rosnąco'];
+const INITIAL_OFFERS_COUNT = 5;
+const LOAD_MORE_INCREMENT = 5;
 
 export default function HomeScreen() {
-  const nav = useNavigation();
-  const [sortOption, setSortOption] = useState(reviewSortOptions[0]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [visibleOffersCount, setVisibleOffersCount] = useState(5);
-
+  const navigation = useNavigation();
   const { filters, setFilters } = useFilters();
+
+  // States
+  const [sortOption, setSortOption] = useState(SORT_OPTIONS[0]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [visibleOffersCount, setVisibleOffersCount] = useState(INITIAL_OFFERS_COUNT);
+
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [levels, setLevels] = useState<Level[]>([]);
 
   const [offers, setOffers] = useState<ActiveOfferResponse[]>([]);
-  const [isLoadingOffers, setIsLoadingOffers] = useState(false);
+  const [loadingStates, setLoadingStates] = useState({
+    isLoading: true,
+    isLoadingOffers: false,
+  });
   const [offersError, setOffersError] = useState<string | null>(null);
 
-  const [isLoading, setIsLoading] = useState(true);
+  // Derived values
+  const hasRequiredFilters = Boolean(filters.subject && filters.level);
+  const activeFilters = useMemo(getActiveFilters, [filters, subjects, levels]);
+  const filteredOffers = useMemo(getFilteredOffers, [offers, searchQuery]);
+  const hasMoreOffers = offers.length >= visibleOffersCount;
+  const displayedOffers = filteredOffers.slice(0, visibleOffersCount);
 
+  // Data fetching
   useEffect(() => {
-    const loadData = async () => {
+    const loadInitialData = async () => {
       try {
-        setIsLoading(true);
         const [subjectsData, levelsData] = await Promise.all([fetchSubjects(), fetchLevels()]);
         setSubjects(subjectsData);
         setLevels(levelsData);
       } finally {
-        setIsLoading(false);
+        setLoadingStates((prev) => ({ ...prev, isLoading: false }));
       }
     };
 
-    loadData();
+    loadInitialData();
   }, []);
 
   useEffect(() => {
-    setVisibleOffersCount(5);
+    setVisibleOffersCount(INITIAL_OFFERS_COUNT);
   }, [
     filters.subject,
     filters.level,
@@ -70,20 +80,29 @@ export default function HomeScreen() {
     filters.toDate,
   ]);
 
-  const getSubjectName = (id?: number) => subjects?.find((s) => s.id === id)?.name || '';
+  useEffect(() => {
+    if (hasRequiredFilters) {
+      fetchActiveOffers();
+    }
+  }, [filters, sortOption, visibleOffersCount]);
 
-  const getLevelName = (id?: number) => levels?.find((l) => l.id === id)?.level || '';
+  // Functions
+  function getSubjectName(id?: number) {
+    return subjects.find((s) => s.id === id)?.name || '';
+  }
 
-  const fetchActiveOffers = async () => {
-    if (!filters.subject || !filters.level) return;
+  function getLevelName(id?: number) {
+    return levels.find((l) => l.id === id)?.level || '';
+  }
 
+  const fetchActiveOffers = useCallback(async () => {
     try {
-      setIsLoadingOffers(true);
+      setLoadingStates((prev) => ({ ...prev, isLoadingOffers: true }));
       setOffersError(null);
 
       const data = await OffersService.getActiveOffers(
-        filters.level,
-        filters.subject,
+        filters.level!,
+        filters.subject!,
         filters.fromDate,
         filters.toDate,
         filters.minPrice,
@@ -97,52 +116,21 @@ export default function HomeScreen() {
       console.error('Error fetching offers:', error);
       setOffersError('Nie udało się załadować ofert. Spróbuj ponownie.');
     } finally {
-      setIsLoadingOffers(false);
+      setLoadingStates((prev) => ({ ...prev, isLoadingOffers: false }));
     }
-  };
+  }, [filters, sortOption, visibleOffersCount]);
 
-  useEffect(() => {
-    if (filters.subject && filters.level) {
-      fetchActiveOffers();
-    }
-  }, [
-    filters.subject,
-    filters.level,
-    filters.minPrice,
-    filters.maxPrice,
-    filters.fromDate,
-    filters.toDate,
-    sortOption,
-    visibleOffersCount,
-  ]);
+  function getFilteredOffers() {
+    return offers.filter((offer) =>
+      offer.tutor_full_name.toLowerCase().includes(searchQuery.toLowerCase()),
+    );
+  }
 
-  // Zmodyfikowana funkcja do ładowania więcej ofert
-  const loadMoreOffers = () => {
-    setVisibleOffersCount((prev) => prev + 5);
-    // Nie trzeba wywoływać fetchActiveOffers, bo zrobi to efekt
-  };
-
-  // Zmodyfikowana funkcja do filtrowania
-  const getFilteredOffers = () => {
-    return offers.filter((offer) => {
-      const matchesSearch = offer.tutor_full_name.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesSearch;
-    });
-  };
-
-  const removeFilter = (filterKeyToRemove: keyof Filters) => {
-    setFilters((prevFilters) => {
-      const newFilters = { ...prevFilters };
-      delete newFilters[filterKeyToRemove];
-      return newFilters;
-    });
-  };
-
-  const getActiveFilters = () => {
-    const activeFilters: Filter[] = [];
+  function getActiveFilters(): ActiveFilter[] {
+    const result: ActiveFilter[] = [];
 
     if (filters.subject) {
-      activeFilters.push({
+      result.push({
         id: 'subject',
         text: getSubjectName(filters.subject),
         removable: false,
@@ -150,7 +138,7 @@ export default function HomeScreen() {
     }
 
     if (filters.level) {
-      activeFilters.push({
+      result.push({
         id: 'level',
         text: getLevelName(filters.level),
         removable: false,
@@ -158,7 +146,7 @@ export default function HomeScreen() {
     }
 
     if (filters.minPrice !== undefined) {
-      activeFilters.push({
+      result.push({
         id: 'minPrice',
         text: `Od ${filters.minPrice} zł`,
         removable: true,
@@ -166,7 +154,7 @@ export default function HomeScreen() {
     }
 
     if (filters.maxPrice !== undefined) {
-      activeFilters.push({
+      result.push({
         id: 'maxPrice',
         text: `Do ${filters.maxPrice} zł`,
         removable: true,
@@ -174,7 +162,7 @@ export default function HomeScreen() {
     }
 
     if (filters.fromDate) {
-      activeFilters.push({
+      result.push({
         id: 'fromDate',
         text: `Od ${dayjs(filters.fromDate).format('DD.MM.YYYY')}`,
         removable: true,
@@ -182,23 +170,103 @@ export default function HomeScreen() {
     }
 
     if (filters.toDate) {
-      activeFilters.push({
+      result.push({
         id: 'toDate',
         text: `Do ${dayjs(filters.toDate).format('DD.MM.YYYY')}`,
         removable: true,
       });
     }
 
-    return activeFilters;
-  };
+    return result;
+  }
 
-  const filteredOffers = getFilteredOffers();
-  const hasMoreOffers = offers.length >= visibleOffersCount;
+  const removeFilter = useCallback(
+    (filterKeyToRemove: keyof Filters) => {
+      setFilters((prevFilters) => {
+        const newFilters = { ...prevFilters };
+        delete newFilters[filterKeyToRemove];
+        return newFilters;
+      });
+    },
+    [setFilters],
+  );
 
-  const activeFilters = getActiveFilters();
-  const hasRequiredFilters = filters.subject && filters.level;
+  const loadMoreOffers = useCallback(() => {
+    setVisibleOffersCount((prev) => prev + LOAD_MORE_INCREMENT);
+  }, []);
 
-  if (isLoading) {
+  const navigateToFilters = useCallback(() => {
+    navigation.navigate('Filters');
+  }, [navigation]);
+
+  const navigateToTutorProfile = useCallback(
+    (tutorId: number) => {
+      console.log('TutorProfile');
+      navigation.navigate('TutorProfile', { tutorId });
+    },
+    [navigation],
+  );
+
+  const navigateToBooking = useCallback(
+    (offerId: number) => {
+      console.log('Booking');
+      navigation.navigate('BookingLesson', { offerId });
+    },
+    [navigation],
+  );
+
+  // Render functions
+  const renderFilterTags = () => (
+    <View className="flex-row flex-wrap items-center gap-2 my-2">
+      <Text className="text-primary font-semibold">Filtry:</Text>
+      {activeFilters.length > 0 ? (
+        activeFilters.map((filter) => (
+          <FilterTag
+            key={filter.id}
+            text={filter.text}
+            onRemove={filter.removable ? () => removeFilter(filter.id as keyof Filters) : undefined}
+          />
+        ))
+      ) : (
+        <Text className="text-gray-500">Brak aktywnych filtrów</Text>
+      )}
+      {hasRequiredFilters && (
+        <AppButton
+          onPress={navigateToFilters}
+          label="Edytuj"
+          appearance="outlined"
+          rightIcon={<MaterialIcons name="edit" size={16} color="#1A5100" />}
+        />
+      )}
+    </View>
+  );
+
+  const renderOfferItem = useCallback(
+    ({ item }: { item: ActiveOfferResponse }) => (
+      <OfferListCard
+        name={item.tutor_full_name}
+        price={item.price}
+        description={item.title}
+        onProfilePress={() => navigateToTutorProfile(item.tutor_id)}
+        onBookPress={() => navigateToBooking(item.id)}
+        avatarUri={item.tutor_avatar_url}
+      />
+    ),
+    [navigateToBooking, navigateToTutorProfile],
+  );
+
+  const renderFooter = useCallback(
+    () =>
+      hasMoreOffers ? (
+        <View className="items-center mt-4 mb-8">
+          <AppButton onPress={loadMoreOffers} label="Pokaż więcej" appearance="outlined" />
+        </View>
+      ) : null,
+    [hasMoreOffers, loadMoreOffers],
+  );
+
+  // Loading state
+  if (loadingStates.isLoading) {
     return (
       <View className="flex-1 justify-center items-center">
         <Text>Ładowanie danych...</Text>
@@ -206,6 +274,7 @@ export default function HomeScreen() {
     );
   }
 
+  // Main render
   return (
     <View className="flex-1 bg-white px-4 pt-4">
       <SearchBar
@@ -214,94 +283,28 @@ export default function HomeScreen() {
         onSearch={setSearchQuery}
       />
 
-      <View className="my-3 space-y-2">
-        <View className="flex-row flex-wrap items-center gap-2 my-2">
-          <Text className="text-primary font-semibold">Filtry:</Text>
-          {activeFilters.length > 0 ? (
-            activeFilters.map((filter) => (
-              <FilterTag
-                key={filter.id}
-                text={filter.text}
-                onRemove={
-                  filter.removable ? () => removeFilter(filter.id as keyof Filters) : undefined
-                }
-              />
-            ))
-          ) : (
-            <Text className="text-gray-500">Brak aktywnych filtrów</Text>
-          )}
-          {!hasRequiredFilters ? undefined : (
-            <AppButton
-              onPress={() => nav.navigate('Filters')}
-              label="Edytuj"
-              appearance="outlined"
-              rightIcon={<MaterialCommunityIcons name="pencil-outline" size={16} color="#1A5100" />}
-            />
-          )}
-        </View>
-      </View>
+      <View className="my-3 space-y-2">{renderFilterTags()}</View>
 
       {!hasRequiredFilters ? (
-        <View className="flex-1 justify-center py-5">
-          <View className="bg-background-alt p-6 rounded-lg items-center">
-            <MaterialIcons name="info" size={32} color="#424242" className="mb-3" />
-            <Text className="text-lg font-medium text-text-light text-center mb-2">
-              Wybierz filtry, aby znaleźć korepetytora
-            </Text>
-            <Text className="text-text-light text-center mb-4">
-              Aby wyświetlić listę dostępnych korepetytorów, wybierz poszukiwany przedmiot oraz
-              poziom nauczania.
-            </Text>
-            <AppButton onPress={() => nav.navigate('Filters')} label="Wybierz filtry" size="full" />
-          </View>
-        </View>
+        <NoFiltersView onNavigateToFilters={navigateToFilters} />
       ) : (
         <>
-          <SortDropdown options={reviewSortOptions} onSelect={setSortOption} />
-          <View className="flex-row items-center justify-end gap-1 mt-2">
-            <MaterialIcons name="info-outline" size={12} color="#1A5100" />
-            <Text className="text-xs font-semibold text-primary">Cena za 60 min zajęć</Text>
-          </View>
+          <SortDropdown options={SORT_OPTIONS} onSelect={setSortOption} />
+          <PriceInfo />
 
-          {isLoadingOffers ? (
-            <View className="flex-1 justify-center items-center py-10">
-              <ActivityIndicator size="large" />
-            </View>
+          {loadingStates.isLoadingOffers ? (
+            <LoadingView />
           ) : offersError ? (
-            <View className="flex-1 justify-center items-center py-10">
-              <Text className="text-red-500 mb-4">{offersError}</Text>
-              <AppButton onPress={fetchActiveOffers} label="Spróbuj ponownie" />
-            </View>
+            <ErrorView error={offersError} onRetry={fetchActiveOffers} />
           ) : filteredOffers.length === 0 ? (
-            <View className="flex-1 justify-center items-center py-10">
-              <Text className="text-gray-500">Brak ofert spełniających kryteria</Text>
-            </View>
+            <EmptyResultsView />
           ) : (
             <FlatList
-              data={filteredOffers.slice(0, visibleOffersCount)}
+              data={displayedOffers}
               keyExtractor={(item) => item.id.toString()}
               contentContainerStyle={{ paddingBottom: 20 }}
-              renderItem={({ item }) => (
-                <OfferListCard
-                  name={item.tutor_full_name}
-                  price={item.price}
-                  description={item.title}
-                  onProfilePress={() => nav.navigate('TutorProfile', { tutorId: item.tutor_id })}
-                  onBookPress={() => nav.navigate('Booking', { offerId: item.id })}
-                  avatarUri={item.tutor_avatar_url}
-                />
-              )}
-              ListFooterComponent={
-                hasMoreOffers ? (
-                  <View className="items-center mt-4 mb-8">
-                    <AppButton
-                      onPress={loadMoreOffers}
-                      label="Pokaż więcej"
-                      appearance="outlined"
-                    />
-                  </View>
-                ) : null
-              }
+              renderItem={renderOfferItem}
+              ListFooterComponent={renderFooter}
             />
           )}
         </>
@@ -309,3 +312,23 @@ export default function HomeScreen() {
     </View>
   );
 }
+
+// Sub-components for better readability
+const LoadingView = () => (
+  <View className="flex-1 justify-center items-center py-10">
+    <ActivityIndicator size="large" />
+  </View>
+);
+
+const ErrorView = ({ error, onRetry }: { error: string; onRetry: () => void }) => (
+  <View className="flex-1 justify-center items-center py-10">
+    <Text className="text-red-500 mb-4">{error}</Text>
+    <AppButton onPress={onRetry} label="Spróbuj ponownie" />
+  </View>
+);
+
+const EmptyResultsView = () => (
+  <View className="flex-1 justify-center items-center py-10">
+    <Text className="text-gray-500">Brak ofert spełniających kryteria</Text>
+  </View>
+);

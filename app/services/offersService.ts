@@ -6,7 +6,6 @@ const TUTOR_OFFERS_ENDPOINT = '/tutor-offers';
 const ACTIVE_OFFERS_ENDPOINT = '/active-offers';
 
 export const OffersService = {
-  // Pobierz pojedynczą ofertę
   async getOffer(offerId: number): Promise<ActiveOfferResponse> {
     try {
       return await apiCall<ActiveOfferResponse>({
@@ -19,7 +18,6 @@ export const OffersService = {
     }
   },
 
-  // Aktualizuj ofertę
   async updateOffer(offerId: number, request: UpdateOfferRequest, userId: string): Promise<string> {
     try {
       return await apiCall<string>({
@@ -33,7 +31,6 @@ export const OffersService = {
     }
   },
 
-  // Wyłącz ofertę
   async disableOffer(offerId: number, userId: string): Promise<string> {
     try {
       return await apiCall<string>({
@@ -46,7 +43,6 @@ export const OffersService = {
     }
   },
 
-  // Włącz ofertę
   async enableOffer(offerId: number, userId: string): Promise<string> {
     try {
       return await apiCall<string>({
@@ -59,7 +55,6 @@ export const OffersService = {
     }
   },
 
-  // Pobierz oferty danego tutora
   async getTutorOffers(userId: string): Promise<TutorOfferResponse[]> {
     try {
       return await apiCall<TutorOfferResponse[]>({
@@ -72,7 +67,6 @@ export const OffersService = {
     }
   },
 
-  // Pobierz szczegóły oferty tutora
   async getTutorOffer(offerId: number, userId: string): Promise<TutorOfferResponse> {
     try {
       return await apiCall<TutorOfferResponse>({
@@ -85,7 +79,6 @@ export const OffersService = {
     }
   },
 
-  // Pobierz aktywne oferty tutora
   async getTutorActiveOffers(tutorId: string): Promise<TutorOfferResponse[]> {
     try {
       return await apiCall<TutorOfferResponse[]>({
@@ -98,7 +91,6 @@ export const OffersService = {
     }
   },
 
-  // Pobierz aktywne oferty z filtrami
   async getActiveOffers(
     levelId: number,
     subjectId: number,
