@@ -121,7 +121,7 @@ const ChatsListScreen = () => {
 
   return (
     <View className="flex-1 bg-background">
-      <SearchBar currentUserId={currentUserId} isTutor={isTutor} />
+      {/*<SearchBar currentUserId={currentUserId} isTutor={isTutor} />*/}
 
       {loading ? (
         <ActivityIndicator size="large" className="mt-4" />
