@@ -70,33 +70,30 @@ const ChatsListScreen = () => {
       setCurrentUserId(user.id);
       setIsTutor(tutorFlag);
 
-      // Pobranie czatów na podstawie roli użytkownika
       const fetchedChatsRaw = await apiCall<any[]>({
         method: 'GET',
         url: endpoint,
       });
       console.log('🛠️ Odebrane dane z backendu:', fetchedChatsRaw);
 
-      // Mapowanie danych różni się w zależności od roli
       const mappedChats: Chat[] = tutorFlag
         ? fetchedChatsRaw.map((chat) => ({
-            id: chat.chat_id, // Używamy "chat_id" dla tutora
+            id: chat.chat_id,
             name: chat.their_full_name,
             avatarUrl: chat.their_avatar_url || null,
             lastMessage: chat.last_message_content || 'Brak wiadomości',
-            timestamp: chat.last_message_sent_at || '', // Czas ostatniej wiadomości
-            unreadCount: chat.last_message_is_read ? 0 : 1, // Jeśli wiadomość nieprzeczytana
+            timestamp: chat.last_message_sent_at || '',
+            //unreadCount: chat.last_message_is_read ? 0 : 1,
           }))
         : fetchedChatsRaw.map((chatString) => {
-            // Jeśli dane to string, przekształcamy je w odpowiedni obiekt lub logujemy błąd
-            const chat = JSON.parse(chatString); // Jeśli to JSON w stringu, parsujemy
+            const chat = JSON.parse(chatString);
             return {
-              id: chat.chat_id || Date.now(), // Losowe ID w razie błędów
+              id: chat.chat_id || Date.now(),
               name: chat.their_full_name || 'Nieznany użytkownik',
               avatarUrl: chat.their_avatar_url || null,
               lastMessage: chat.last_message_content || 'Brak wiadomości',
               timestamp: chat.last_message_sent_at || '',
-              unreadCount: 0, // Brak informacji o liczniku
+              unreadCount: 0,
             };
           });
 
@@ -111,7 +108,7 @@ const ChatsListScreen = () => {
 
   useFocusEffect(
     React.useCallback(() => {
-      fetchChats(); // Odśwież listę czatów za każdym razem, gdy ekran staje się aktywny
+      fetchChats();
     }, []),
   );
 
