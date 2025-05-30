@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, View, Text, TouchableOpacity, TextInput, Pressable } from 'react-native';
+import { Modal, View, Text, TouchableOpacity, TextInput, Pressable, Button } from 'react-native';
 import TopPanel from './TopPanel';
 import AppButton from '../components/AppButton';
 import { Entypo } from '@expo/vector-icons';
 import { format, setHours, subDays } from 'date-fns';
 import { pl } from 'date-fns/locale';
-// import DateTimePicker from '@react-native-community/datetimepicker';
-// import { Platform } from 'react-native';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 const frequencies = ['dzień', 'tydzień', 'miesiąc'];
 const frequencyEn = ['DAILY', 'WEEKLY', 'MONTHLY'];
@@ -39,10 +38,16 @@ const CustomRepeatModal = ({ visible, initialRule, onClose, onSelect }: Props) =
   const [frequency, setFrequency] = useState(1);
   const [frequencyDropDown, setFrequencyDropDown] = useState(false);
   const [selectedDays, setSelectedDays] = useState<number[]>([0]);
-  //   const [showPicker, setShowPicker] = useState(false);
-  //   const [date, setDate] = useState(new Date());
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [ends, setEnds] = useState<'never' | 'onDate'>('never');
-  const [endDate, setEndDate] = useState(format(new Date(), 'dd MMMM yyyy', { locale: pl }));
+  const [endDate, setEndDate] = useState<Date>(new Date());
+
+  const showDatePicker = () => setDatePickerVisibility(true);
+  const hideDatePicker = () => setDatePickerVisibility(false);
+  const handleConfirm = (selectedDate: Date) => {
+    setEndDate(selectedDate);
+    hideDatePicker();
+  };
 
   useEffect(() => {
     if (!initialRule) return;
@@ -64,7 +69,7 @@ const CustomRepeatModal = ({ visible, initialRule, onClose, onSelect }: Props) =
         .split('T')[0]
         .replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
       const ndate = new Date(isoStr);
-      setEndDate(format(ndate, 'dd MMMM yyyy', { locale: pl }));
+      setEndDate(ndate);
     }
   }, []);
 
@@ -78,14 +83,9 @@ const CustomRepeatModal = ({ visible, initialRule, onClose, onSelect }: Props) =
     if (selectedDays.length === 0 || repeatEvery === 0) return;
     let rule = `FREQ=${frequencyEn[frequency]};INTERVAL=${repeatEvery};BYDAY=${selectedDays.map((d) => daysEn[d]).join(',')}`;
     if (ends === 'onDate') {
-      try {
-        const [dayStr, monthName, yearStr] = endDate.split(/\s+/);
-        const date = new Date(Number(yearStr), monthMap[monthName], Number(dayStr), 23, 59, 59);
-        rule += `;UNTIL=${format(date, 'yyyyMMdd', { locale: pl })}T${format(date, 'HHmmss', { locale: pl })}Z`;
-      } catch (error) {
-        console.error('Źle wpisana data zakończenia: ', error);
-        return;
-      }
+      const date = endDate;
+      date.setHours(23, 59, 59);
+      rule += `;UNTIL=${format(date, 'yyyyMMdd', { locale: pl })}T${format(date, 'HHmmss', { locale: pl })}Z`;
     }
     onSelect(rule);
     onClose();
@@ -132,26 +132,30 @@ const CustomRepeatModal = ({ visible, initialRule, onClose, onSelect }: Props) =
         </View>
 
         {/* Dni tygodnia */}
-        <Text className="font-['Inter'] font-regular text-text-dark text-sm mb-3">
-          Powtarza się w
-        </Text>
-        <View className="flex-row mb-14">
-          {days.map((day, index) => (
-            <TouchableOpacity
-              key={index}
-              onPress={() => toggleDay(index)}
-              className={`w-8 h-8 rounded-full items-center justify-center mr-5
-                    ${selectedDays.includes(index) ? 'bg-primary' : 'border border-border-gray'}
-                `}
-            >
-              <Text
-                className={`${selectedDays.includes(index) ? 'text-background' : 'text-text-dark'}`}
-              >
-                {day}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+        {frequencies[frequency] == 'tydzień' && (
+          <>
+            <Text className="font-['Inter'] font-regular text-text-dark text-sm mb-3">
+              Powtarza się w
+            </Text>
+            <View className="flex-row mb-14">
+              {days.map((day, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => toggleDay(index)}
+                  className={`w-8 h-8 rounded-full items-center justify-center mr-5
+                      ${selectedDays.includes(index) ? 'bg-primary' : 'border border-border-gray'}
+                  `}
+                >
+                  <Text
+                    className={`${selectedDays.includes(index) ? 'text-background' : 'text-text-dark'}`}
+                  >
+                    {day}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </>
+        )}
 
         {/* Koniec */}
         <Text className="font-['Inter'] font-regular text-text-dark text-sm mb-3">Koniec</Text>
@@ -166,7 +170,7 @@ const CustomRepeatModal = ({ visible, initialRule, onClose, onSelect }: Props) =
           <Text className="font-['Inter'] font-regular text-text-dark text-base mb-3">Nigdy</Text>
         </View>
 
-        <View className="flex-row">
+        <View className="flex-row mt-3 items-center">
           <TouchableOpacity onPress={() => setEnds('onDate')}>
             <View
               className={`w-6 h-6 rounded-full mr-6 flex items-center justify-center ${ends == 'onDate' ? 'bg-primary' : 'border border-border-gray'}`}
@@ -174,25 +178,19 @@ const CustomRepeatModal = ({ visible, initialRule, onClose, onSelect }: Props) =
               {ends == 'onDate' && <View className="w-2 h-2 rounded-full bg-background" />}
             </View>
           </TouchableOpacity>
+
           <Text className="font-['Inter'] font-regular text-text-dark text-base mr-3">W dniu</Text>
-          {/* {showPicker && (
-                    <DateTimePicker
-                        value={date}
-                        mode="date"
-                        display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                        onChange={(event, selectedDate) => {
-                        if (selectedDate) {
-                            setDate(selectedDate);
-                        }
-                        setShowPicker(false);
-                        }}
-                    />
-                )} */}
-          <TextInput
-            value={endDate}
-            editable={ends === 'onDate'}
-            onChangeText={(text) => setEndDate(text)}
-            className="border border-border-gray px-2 py-1 rounded w-32"
+          <TouchableOpacity onPress={showDatePicker}>
+            <Text className="border border-border-gray px-2 py-1 rounded w-28 text-center">
+              {format(endDate, 'd MMM y', { locale: pl })}
+            </Text>
+          </TouchableOpacity>
+
+          <DateTimePickerModal
+            isVisible={isDatePickerVisible}
+            mode="date"
+            onConfirm={handleConfirm}
+            onCancel={hideDatePicker}
           />
         </View>
       </View>

@@ -8,15 +8,15 @@ import { FontAwesome } from '@expo/vector-icons';
 const MINLESSONTIME = 45;
 
 type TimeRange = {
-  from: Date;
-  to: Date;
-  rule: string;
+  start_time: Date;
+  end_time: Date;
+  recurrence_rule: string;
 };
 
 type TimeRangePickerType = {
   onAdd?: (range: TimeRange) => void;
   onDelete?: () => void;
-  isLast?: boolean;
+  isEditable?: boolean;
   availabilities?: TimeRange;
   date: Date;
 };
@@ -31,13 +31,13 @@ type OptionsModalType = {
 const TimeRangePicker: FC<TimeRangePickerType> = ({
   onAdd,
   onDelete,
-  isLast = false,
+  isEditable = false,
   availabilities,
   date,
 }) => {
-  const [from, setFrom] = useState<Date | null>(availabilities?.from || null);
-  const [to, setTo] = useState<Date | null>(availabilities?.to || null);
-  const [rule, setRule] = useState(availabilities?.rule || '');
+  const [from, setFrom] = useState<Date | null>(availabilities?.start_time || null);
+  const [to, setTo] = useState<Date | null>(availabilities?.end_time || null);
+  const [rule, setRule] = useState(availabilities?.recurrence_rule || '');
   const [fromVisible, setFromVisible] = useState(false);
   const [toVisible, setToVisible] = useState(false);
   const [optionsModal, setOptionsModal] = useState(false);
@@ -118,7 +118,7 @@ const TimeRangePicker: FC<TimeRangePickerType> = ({
               setFromVisible(true);
             }}
             ref={FromRef}
-            disabled={!isLast}
+            disabled={!isEditable}
             className="bg-background-alt px-3 py-2 rounded-md w-40 flex-row mr-3"
           >
             <Text className="font-['Inter'] font-bold text-base text-text-grey">Od</Text>
@@ -169,7 +169,7 @@ const TimeRangePicker: FC<TimeRangePickerType> = ({
             onPress={() => {
               setToVisible(true);
             }}
-            disabled={!isLast}
+            disabled={!isEditable}
             className="bg-background-alt px-3 py-2 rounded-md w-40 flex-row mr-2"
           >
             <Text className="font-['Inter'] font-bold text-base text-text-grey">Do</Text>
@@ -217,10 +217,12 @@ const TimeRangePicker: FC<TimeRangePickerType> = ({
       {/* PLUS BUTTON */}
       <View className="flex-1 flex-row items-center justify-between">
         <View>
-          {isLast ? (
+          {isEditable ? (
             <TouchableOpacity
               className="bg-primary w-9 h-9 rounded-full items-center justify-center"
-              onPress={() => to && from && onAdd?.({ from, to, rule })}
+              onPress={() =>
+                to && from && onAdd?.({ start_time: from, end_time: to, recurrence_rule: rule })
+              }
             >
               <Feather name="plus" size={27} color="#ffffff" />
             </TouchableOpacity>
@@ -233,7 +235,7 @@ const TimeRangePicker: FC<TimeRangePickerType> = ({
         <TouchableOpacity
           onPress={() => setOptionsModal(true)}
           className={to && from ? 'opacity-100' : 'opacity-0'}
-          disabled={!to || !from || !isLast}
+          disabled={!to || !from || !isEditable}
         >
           {rule.length === 0 ? (
             <Feather name="more-vertical" size={27} color="#000000" />
@@ -261,7 +263,6 @@ const TimeRangePicker: FC<TimeRangePickerType> = ({
 };
 
 const OptionsModal: FC<OptionsModalType> = ({ visible, rule, onExit, onSelect }) => {
-  const [selectedRule, setSelectedRule] = useState(rule);
   const options = [
     { rule: '', label: 'Nie powtarza się' },
     { rule: 'FREQ=DAILY;INTERVAL=1', label: 'Codziennie' },
@@ -292,15 +293,13 @@ const OptionsModal: FC<OptionsModalType> = ({ visible, rule, onExit, onSelect })
           <View className="bg-background-alt rounded-full self-center w-14 h-1" />
 
           {options.map((option) => {
-            let isSelected =
-              selectedRule === option.rule || (option.label === 'CUSTOM' && isCustom(selectedRule));
+            let isSelected = rule === option.rule || (option.label === 'CUSTOM' && isCustom(rule));
 
             return (
               <TouchableOpacity
                 key={option.rule}
                 className="flex-row items-center mt-6"
                 onPress={() => {
-                  setSelectedRule(option.rule);
                   onSelect(option.rule);
                 }}
               >

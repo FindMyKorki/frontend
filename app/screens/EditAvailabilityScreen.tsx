@@ -7,6 +7,7 @@ import AppButton from '../components/AppButton';
 import React from 'react';
 import TimeRangePicker from '../components/TimeRangePicker';
 import { isSameDay } from 'date-fns';
+import { apiCall } from '../utils/ApiHandler';
 
 type Availabilities = {
   date: Date;
@@ -14,34 +15,83 @@ type Availabilities = {
 };
 
 type Availability = {
-  from: Date;
-  to: Date;
-  rule: string;
+  id: Number;
+  start_time: Date;
+  end_time: Date;
+  recurrence_rule: string;
+};
+
+type AvailabilityHours = {
+  start_time: Date;
+  end_time: Date;
+  recurrence_rule: string;
 };
 
 const EditAvailabilityScreen = () => {
   const [availabilities, setAvailabilities] = useState<Availabilities[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedAvailability, setSelectedAvailability] = useState<number | null>(null);
-  const [inUse, setInUse] = useState<Date[]>([]); // Assuming inUse is an array of dates that are already booked
+  const [inUse, setInUse] = useState<Date[]>([]);
   const [key, setKey] = useState(0);
-
   const navigation = useNavigation();
+
+  useEffect(() => {
+    fetchAvailabilities();
+  }, []);
 
   useEffect(() => {
     setSelectedAvailability(getSelectedAvailabilityIDX());
     setKey((prevKey) => prevKey + 1);
-  }, [selectedDate]);
+  }, [selectedDate, availabilities]);
 
   useEffect(() => {
     const dates = availabilities.map((a) => a.date);
     setInUse(dates);
   }, [availabilities]);
 
-  const handleSaveFilters = () => {
-    console.log('Filters saved');
-    console.log(availabilities[0].availibility[0].rule);
-    // Logic for saving the filters
+  const fetchAvailabilities = async () => {
+    try {
+      const data = (await apiCall({
+        method: 'GET',
+        url: '/availabilities',
+      })) as [{ start_time: string; end_time: string; recurrence_rule: string; id: Number }];
+
+      const groupedByDay = data.reduce((groups, availableTime) => {
+        let isFound = false;
+        const tutorAvailability: Availability = {
+          start_time: new Date(availableTime.start_time),
+          end_time: new Date(availableTime.end_time),
+          recurrence_rule: availableTime.recurrence_rule,
+          id: availableTime.id,
+        };
+
+        for (let i = 0; i < groups.length; i++) {
+          if (isSameDay(groups[i].date, availableTime.start_time)) {
+            groups[i].availibility.push(tutorAvailability);
+            isFound = true;
+            break;
+          }
+        }
+
+        if (!isFound) {
+          groups.push({
+            date: tutorAvailability.start_time,
+            availibility: [tutorAvailability],
+          });
+        }
+
+        return groups;
+      }, [] as Availabilities[]);
+      if (groupedByDay) setAvailabilities(groupedByDay);
+    } catch (e) {
+      console.error('GET /availabilities ', e);
+    }
+  };
+
+  const handleSaveFilters = async () => {
+    console.log('Wybrane: ', selectedAvailability);
+    console.log('Avalabilities: ', availabilities);
+    console.log('DATA wybrana: ', selectedDate);
   };
 
   function getSelectedAvailabilityIDX() {
@@ -53,39 +103,36 @@ const EditAvailabilityScreen = () => {
     return idx > -1 ? idx : null;
   }
 
-  const onTimeSelect = (range: Availability) => {
-    setAvailabilities((prev) => {
-      const updated = [...prev];
-
-      if (selectedAvailability === null) {
-        if (selectedDate === null) return prev;
-        updated.push({ date: selectedDate, availibility: [range] });
-        setSelectedAvailability(updated.length - 1);
-      } else {
-        updated[selectedAvailability].availibility.push(range);
-      }
-
-      return updated;
-    });
-    setKey((prevKey) => prevKey + 1);
+  const onTimeSelect = async (range: AvailabilityHours) => {
+    try {
+      const response = await apiCall({
+        method: 'POST',
+        url: '/availabilities',
+        data: range,
+      });
+      console.log(response);
+      fetchAvailabilities();
+      setKey((prevKey) => prevKey + 1);
+    } catch (e) {
+      console.error('');
+    }
   };
 
-  const onDelete = (indexToRemove: number) => {
+  const onDelete = async (availability_id: number) => {
     if (selectedAvailability === null) return;
-
-    setAvailabilities((prev) => {
-      let updated = [...prev];
-
-      let ava = updated[selectedAvailability].availibility;
-
-      ava = ava.filter((_, index) => index != indexToRemove);
-      updated[selectedAvailability].availibility = ava;
-      if (updated[selectedAvailability].availibility.length === 0) {
-        updated = updated.filter((_, index) => index !== selectedAvailability);
+    const id = availabilities[selectedAvailability].availibility[availability_id].id;
+    try {
+      const response = await apiCall({
+        method: 'DELETE',
+        url: `/availabilities/${id}`,
+      });
+      console.log(response);
+      fetchAvailabilities();
+      if (availabilities[selectedAvailability].availibility.length === 1)
         setSelectedAvailability(null);
-      }
-      return updated;
-    });
+    } catch (e) {
+      console.error(`DELETE /availabilities/${id} `, e);
+    }
   };
 
   return (
@@ -110,7 +157,7 @@ const EditAvailabilityScreen = () => {
               availabilities[selectedAvailability] &&
               availabilities[selectedAvailability].availibility.map((availability, index) => {
                 return (
-                  <View className="mb-3" key={`${availability.from.toISOString()}-${index}`}>
+                  <View className="mb-3" key={`${availability.start_time.toISOString()}-${index}`}>
                     <TimeRangePicker
                       availabilities={availability}
                       onDelete={() => onDelete(index)}
@@ -122,7 +169,7 @@ const EditAvailabilityScreen = () => {
             <TimeRangePicker
               key={key}
               onAdd={(range) => onTimeSelect(range)}
-              isLast={true}
+              isEditable={true}
               date={selectedDate}
             />
           </>
