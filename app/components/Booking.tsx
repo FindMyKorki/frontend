@@ -135,14 +135,14 @@ const Booking: FC<OfferCardProps> = ({ booking, is_tutor }) => {
                       label="Szczegóły"
                       onPress={() => console.log('Szczegóły')}
                       size="auto"
-                      className="px-4 py-1 mb-1"
+                      className="min-w-28 px-4 py-1 mb-1"
                     />
                     <Button
                       label="Anuluj"
                       onPress={() => console.log('Anulowano')}
                       size="auto"
                       appearance="outlined"
-                      className="px-4 py-1"
+                      className="min-w-28 px-4 py-1"
                     />
                   </>
                 )}
@@ -151,7 +151,7 @@ const Booking: FC<OfferCardProps> = ({ booking, is_tutor }) => {
                     label="Szczegóły"
                     onPress={() => console.log('Szczegóły')}
                     size="auto"
-                    className="px-4 py-1"
+                    className="min-w-28 px-4 py-1"
                   />
                 )}
                 {displayStatus === '3' && (
@@ -160,14 +160,14 @@ const Booking: FC<OfferCardProps> = ({ booking, is_tutor }) => {
                       label="Szczegóły"
                       onPress={() => console.log('Szczegóły')}
                       size="auto"
-                      className="px-4 py-1 mb-1"
+                      className="min-w-28 px-4 py-1 mb-1"
                     />
                     <Button
                       label="Powtórz"
                       onPress={() => console.log('Powtórz')}
                       size="auto"
                       appearance="outlined"
-                      className="px-4 py-1"
+                      className="min-w-28 px-4 py-1"
                     />
                   </>
                 )}
@@ -180,14 +180,14 @@ const Booking: FC<OfferCardProps> = ({ booking, is_tutor }) => {
                       label="Zatwierdź"
                       onPress={() => console.log('Zatwierdzono')}
                       size="auto"
-                      className="px-4 py-1 mb-1"
+                      className="min-w-28 px-4 py-1 mb-1"
                     />
                     <Button
                       label="Anuluj"
                       onPress={() => console.log('Szczegóły')}
                       size="auto"
                       appearance="outlined"
-                      className="px-4 py-1"
+                      className="min-w-28 px-4 py-1"
                     />
                   </>
                 )}
@@ -196,7 +196,7 @@ const Booking: FC<OfferCardProps> = ({ booking, is_tutor }) => {
                     label="Szczegóły"
                     onPress={() => console.log('Szczegóły')}
                     size="auto"
-                    className="px-4 py-1"
+                    className="min-w-28 px-4 py-1"
                   />
                 )}
                 {displayStatus === '3' && (
@@ -205,14 +205,14 @@ const Booking: FC<OfferCardProps> = ({ booking, is_tutor }) => {
                       label="Szczegóły"
                       onPress={() => console.log('Szczegóły')}
                       size="auto"
-                      className="px-4 py-1 mb-1"
+                      className="min-w-28 px-4 py-1 mb-1"
                     />
                     <Button
                       label="Czat"
                       onPress={() => console.log('Czat')}
                       size="auto"
                       appearance="outlined"
-                      className="px-4 py-1"
+                      className="min-w-28 px-4 py-1"
                     />
                   </>
                 )}
