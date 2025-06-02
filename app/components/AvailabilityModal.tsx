@@ -28,7 +28,7 @@ const AvailabilityModal: FC<AvailabilityModalType> = ({
       <Pressable onPress={onClose} className="items-center bg-black/10 flex-1">
         <Pressable
           onPress={() => {}}
-          className="justify-start bg-white rounded-lg px-6 py-4 bg-background shadow-xl/70"
+          className="justify-start rounded-lg px-6 py-4 bg-background shadow-xl/70"
           style={{ elevation: 10, top }}
         >
           <Text className="text-left text-primary font-semibold font-['Inter'] text-lg mb-2.5">
