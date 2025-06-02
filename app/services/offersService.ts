@@ -1,5 +1,5 @@
-import { apiCall } from '../utils/ApiHandler'; // Zaimportuj istniejące apiCall
-import { ActiveOfferResponse, TutorOfferResponse, UpdateOfferRequest } from '../types/Offer'; // Zaimportuj odpowiednie typy
+import { apiCall } from '../utils/ApiHandler';
+import { ActiveOfferResponse, TutorOfferResponse, UpdateOfferRequest } from '../types/Offer';
 
 const OFFERS_ENDPOINT = '/offers';
 const TUTOR_OFFERS_ENDPOINT = '/tutor-offers';
@@ -111,9 +111,9 @@ export const OffersService = {
       if (endDate) params.append('end_date', endDate);
       if (minPrice) params.append('min_price', minPrice.toString());
       if (maxPrice) params.append('max_price', maxPrice.toString());
-      if (order) params.append('order', order);
-      if (limit) params.append('limit', limit.toString());
-      if (offset) params.append('offset', offset.toString());
+      params.append('order', order);
+      params.append('limit', limit.toString());
+      params.append('offset', offset.toString());
 
       return await apiCall<ActiveOfferResponse[]>({
         method: 'GET',
