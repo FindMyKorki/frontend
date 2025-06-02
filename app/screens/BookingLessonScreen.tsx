@@ -41,7 +41,7 @@ const BookingLessonScreen = () => {
   const nav = useNavigation();
   const route = useRoute();
   const [offer, setOffer] = useState<Offer | null>(null);
-  const [dateBlocks, setTimeBlocks] = useState<DateBlock[]>([]);
+  const [dateBlocks, setDateBlocks] = useState<DateBlock[]>([]);
   const [selectedDuration, setSelectedDuration] = useState(durations[0]);
   const [maxDuration, setMaxDuration] = useState(durations[durations.length - 1]);
   const [lessonStartTimes, setLessonStartTimes] = useState<Date[]>([]);
@@ -49,19 +49,15 @@ const BookingLessonScreen = () => {
   const offer_id = (route.params as { offer_id: number }).offer_id;
 
   useEffect(() => {
-    const getOffer = async () => {
-      const offer: Offer = await apiCall({
-        method: 'GET',
-        url: `/offers/${offer_id}`,
-      });
-      setOffer(offer);
+    const fetchOffer = async () => {
+      try {
+        const offer: Offer = await apiCall({ method: 'GET', url: `/offers/${offer_id}` });
+        setOffer(offer);
+      } catch (e) {
+        console.error(`GET /offers/${offer_id}`, e);
+      }
     };
-
-    try {
-      getOffer();
-    } catch (e) {
-      console.error('GET /offers/${offer_id}', e);
-    }
+    fetchOffer();
   }, []);
 
   useEffect(() => {
@@ -120,7 +116,7 @@ const BookingLessonScreen = () => {
       };
     });
 
-    setTimeBlocks(dates);
+    setDateBlocks(dates);
     setStartTime(null);
   };
 
@@ -187,6 +183,7 @@ const BookingLessonScreen = () => {
 
         {/* Time slots */}
         <FlatList
+          keyExtractor={(item) => item.toISOString()}
           data={lessonStartTimes}
           horizontal={true}
           showsHorizontalScrollIndicator={false}
@@ -198,11 +195,11 @@ const BookingLessonScreen = () => {
                 onPress={() => setStartTime(item)}
                 className={`px-3 py-1.5 rounded-md 
                   ${index == 0 ? '' : 'ml-3'}
-                  ${startTime === item ? 'bg-primary' : 'bg-background-alt'}
+                  ${startTime?.getTime() === item.getTime() ? 'bg-primary' : 'bg-background-alt'}
                 `}
               >
                 <Text
-                  className={`text-base font-semibold font-[Inter] ${startTime === item ? 'text-background-alt' : 'text-text-dark'}`}
+                  className={`text-base font-semibold font-[Inter] ${startTime?.getTime() === item.getTime() ? 'text-background-alt' : 'text-text-dark'}`}
                 >
                   {format(item, 'HH:mm')}
                 </Text>
