@@ -15,7 +15,7 @@ const BottomPanelButtons = ({
   return (
     <View className="flex-row gap-2 px-3.5 py-2.5 bg-white" {...rest}>
       {leftButtonProps && <AppButton size="full" {...leftButtonProps} />}
-      {rightButtonProps && <AppButton size="full" outlined {...rightButtonProps} />}
+      {rightButtonProps && <AppButton size="full" appearance="outlined" {...rightButtonProps} />}
     </View>
   );
 };

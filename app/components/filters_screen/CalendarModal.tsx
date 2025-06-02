@@ -19,7 +19,7 @@ const CalendarModal = ({ visible, selectedDate, onClose, onSelectDate }: Props) 
   }, [visible]);
 
   return (
-    <Modal visible={visible} transparent animationType="fade">
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View className="flex-1 justify-end bg-black/60">
         <View className="bg-white rounded-t-3xl p-6">
           <View className="flex-row justify-between items-center mb-4">
@@ -31,7 +31,7 @@ const CalendarModal = ({ visible, selectedDate, onClose, onSelectDate }: Props) 
 
           <CalendarPicker
             startFromMonday
-            selectedDate={tempDate}
+            selectedStartDate={tempDate}
             onDateChange={(date) => setTempDate(date)}
             minDate={new Date()}
             selectedDayColor="#1A5100"
