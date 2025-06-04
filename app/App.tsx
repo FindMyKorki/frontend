@@ -21,9 +21,9 @@ import {
   RoleScreen,
   TutorProfileScreen,
   CompleteProfileScreen,
+  BookingLessonScreen,
+  BookingDetailsScreen,
   ProfileEditAvailabilityScreen,
-  EditAvailabilityScreen,
-  AvailabilityRepetitionScreen,
 } from './index';
 import AuthProvider from './utils/AuthProvider';
 
@@ -84,11 +84,6 @@ export default function App() {
                   component={ClassDetailsScreen}
                   options={{ headerShown: false }}
                 />
-                {/* <Stack.Screen
-                  name="TutorProfile"
-                  component={ProfileScreen}
-                  options={{ headerShown: false }}
-                /> */}
                 <Stack.Screen
                   name="TutorProfileScreen"
                   component={TutorProfileScreen}
@@ -104,18 +99,17 @@ export default function App() {
                   component={ProfileEditAvailabilityScreen}
                   options={{ headerShown: false }}
                 />
+                <Stack.Screen name="Role" component={RoleScreen} options={{ headerShown: false }} />
                 <Stack.Screen
-                  name="EditAvailabilityScreen"
-                  component={EditAvailabilityScreen}
+                  name="BookingLesson"
+                  component={BookingLessonScreen}
                   options={{ headerShown: false }}
                 />
                 <Stack.Screen
-                  name="AvailabilityRepetitionScreen"
-                  component={AvailabilityRepetitionScreen}
+                  name="BookingDetails"
+                  component={BookingDetailsScreen}
                   options={{ headerShown: false }}
                 />
-                {/* <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-              <Stack.Screen name="Role" component={RoleScreen} options={{ headerShown: false }} /> */}
               </Stack.Navigator>
             </NavigationContainer>
           </AuthProvider>
