@@ -1,10 +1,9 @@
 import { ScrollView, View, Text, Pressable } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { useState, useEffect } from 'react';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { useState } from 'react';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import TopPanel from '../components/TopPanel';
 import Review from '../components/Review';
-import TutorOffer from '../components/TutorOffer';
 import TutorProfile from '../components/TutorProfile';
 import BottomPanelButtons from '../components/BottomPanelButtons';
 import SortDropdown from '../components/SortDropdown';
@@ -14,20 +13,35 @@ import React from 'react';
 import { Colors } from '../../src/colors';
 import Calendar from '../components/Calendar';
 import TutorDescription from '../components/TutorDescription';
-//import { apiCall } from '../utils/ApiHandler';
-import { getTutorReviews, getActiveTutorOffers } from '../hooks/useApi';
-import { TutorReviewList } from '../types/Review';
-import { TutorOfferList } from '../types/Offer';
+import {
+  getTutorReviews,
+  getActiveTutorOffers,
+  getAllTutorOffers,
+  getTutorProfile,
+} from '../hooks/useApi';
+import {
+  TutorProfile as TutorProfileType,
+  Review as ReviewType,
+  TutorOffer as TutorOfferType,
+} from '../types/Tutor';
+import { useAuth } from '../utils/AuthProvider';
+import TutorOffer from '../components/TutorOffer';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 
-const TutorPublicProfile = () => {
-  const tutorId = '75eca90f-fc98-426d-a46b-58f8ce4dd3f2';
+const TutorProfileScreen = () => {
+  const route = useRoute();
+  const { tutorId } = route.params as { tutorId: string };
 
-  const [reviews, setReviews] = useState<TutorReviewList | null>(null);
-  const [offers, setOffers] = useState<TutorOfferList | null>(null);
+  const { user } = useAuth();
+  const isOwner = user?.id === tutorId;
+
+  const [reviews, setReviews] = useState<ReviewType[] | null>(null);
+  const [offers, setOffers] = useState<TutorOfferType[] | null>(null);
+  const [tutorProfile, setTutorProfile] = useState<TutorProfileType | null>(null);
 
   const [activeTab, setActiveTab] = useState('Oferty');
   const [bottomModalVisible, setBottomModalVisible] = useState(false);
-  const [userType, setUserType] = useState('tutor'); // 'student' lub 'tutor'
   const navigation = useNavigation();
 
   const reviewSortOptions = [
@@ -55,51 +69,66 @@ const TutorPublicProfile = () => {
   };
 
   const handleGetActiveOffers = async () => {
-    const fetchedOffers = await getActiveTutorOffers(tutorId);
+    const fetchedOffers = isOwner ? await getAllTutorOffers() : await getActiveTutorOffers(tutorId);
 
     if (fetchedOffers) {
       setOffers(fetchedOffers);
     }
   };
 
-  useEffect(() => {
-    handleSort(reviewSortLabels[0]);
-    handleGetActiveOffers();
-  }, []);
+  const handleGetTutorProfile = async () => {
+    const fetchedProfile = await getTutorProfile(tutorId);
+
+    if (fetchedProfile) {
+      setTutorProfile(fetchedProfile);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      handleGetTutorProfile();
+      handleSort(reviewSortLabels[0]);
+      handleGetActiveOffers();
+    }, []),
+  );
 
   return (
     <View className="flex-1">
       <TopPanel
         onBackPress={() => navigation.goBack()}
-        name="Jan Kowalski"
-        image="https://randomuser.me/api/portraits/men/32.jpg"
+        name={tutorProfile?.full_name ?? ''}
+        image={tutorProfile?.avatar_url ?? ''}
         centerContentClassName="ml-3"
-        showSettings={userType === 'tutor'}
+        showSettings={isOwner}
       />
       <ScrollView showsVerticalScrollIndicator={false} className="bg-background pb-10">
         {/* Profil tutora */}
         <View className="px-2 pt-2">
           <TutorProfile
-            tutorName="Jan Kowalski"
-            avatarUrl="https://randomuser.me/api/portraits/men/32.jpg"
-            rating={4.5}
-            reviewCount={15}
-            description="Jestem doświadczonym korepetytorem matematyki i fizyki. Pomagam uczniom zrozumieć trudne tematy oraz przygotowuję ich do egzaminów."
+            tutorName={tutorProfile?.full_name ?? ''}
+            avatarUrl={tutorProfile?.avatar_url ?? ''}
+            rating={tutorProfile?.rating ?? 0}
+            reviewCount={tutorProfile?.reviews_count ?? 0}
+            description={tutorProfile?.bio ?? ''}
             onPressReviews={() => handleTabPress('Opinie')}
-            isEditable={userType === 'tutor'}
+            isEditable={isOwner}
           />
         </View>
 
         {/* Wyróżniona opinia */}
-        <Text className="text-xs font-bold text-primary px-4 pt-4 ml-2">WYRÓŻNIONA OPINIA</Text>
-        <View className="px-4 pt-2">
-          <Review
-            fullName="Anna Kowalska"
-            avatarUrl="https://randomuser.me/api/portraits/women/32.jpg"
-            comment="Świetny korepetytor, bardzo dobrze tłumaczy!"
-            rating={5}
-          />
-        </View>
+        {tutorProfile?.featured_review_id && (
+          <>
+            <Text className="text-xs font-bold text-primary px-4 pt-4 ml-2">WYRÓŻNIONA OPINIA</Text>
+            <View className="px-4 pt-2">
+              <Review
+                fullName={tutorProfile?.featured_review_student_fullname ?? ''}
+                avatarUrl={tutorProfile?.featured_review_student_avatar_url ?? ''}
+                comment={tutorProfile?.featured_review_comment ?? ''}
+                rating={tutorProfile?.featured_review_rating ?? 0}
+              />
+            </View>
+          </>
+        )}
 
         {/* Pasek Oferty | Informacje | Opinie */}
         <View className="flex-row mt-2 mb-2">
@@ -132,21 +161,18 @@ const TutorPublicProfile = () => {
             {/* Kontakt */}
             <View className="flex-row justify-between items-center py-2 mt-5">
               <Text className="font-medium text-lg">E-mail:</Text>
-              <Text className="font-medium text-lg text-right">example@asd.com</Text>
+              <Text className="font-medium text-lg text-right">{tutorProfile?.contact_email}</Text>
             </View>
             <View style={{ borderTopWidth: 4, borderColor: '#f1f1f1' }} />
             <View className="flex-row justify-between items-center py-2 mt-2">
               <Text className="font-medium text-lg">Telefon:</Text>
-              <Text className="font-medium text-lg text-right">123 456 789</Text>
+              <Text className="font-medium text-lg text-right">{tutorProfile?.phone_number}</Text>
             </View>
             <View style={{ borderTopWidth: 4, borderColor: '#f1f1f1' }} />
             <Text className="font-inter font-bold text-xl text-primary mt-6 mb-5">DOSTĘPNOŚĆ</Text>
-            <Calendar className="mt-2" tutor_id="1" />
+            <Calendar className="mt-2" tutor_id={tutorId} />
             <Text className="font-inter font-bold text-xl text-primary mt-12">O MNIE</Text>
-            <TutorDescription
-              className="mt-4"
-              description="Jestem doświadczonym korepetytorem matematyki i fizyki. Pomagam uczniom zrozumieć trudne tematy oraz przygotowuję ich do egzaminów."
-            />
+            <TutorDescription className="mt-4" description={tutorProfile?.bio_long ?? ''} />
           </View>
         )}
 
@@ -168,11 +194,12 @@ const TutorPublicProfile = () => {
               {offers?.length ? (
                 offers.map((o) => (
                   <TutorOffer
+                    key={o.id}
                     subject={o.subject_name || ''}
                     educationLevel={o.level || ''}
                     price={o.price?.toString() || ''}
                     description={o.description || ''}
-                    userType="student"
+                    userType={isOwner ? 'tutor' : 'student'}
                   />
                 ))
               ) : (
@@ -189,6 +216,7 @@ const TutorPublicProfile = () => {
               {reviews?.length ? (
                 reviews.map((r) => (
                   <Review
+                    key={r.id}
                     fullName={r.student_full_name}
                     avatarUrl={r.student_avatar_url || ''}
                     comment={r.comment}
@@ -229,7 +257,7 @@ const TutorPublicProfile = () => {
               label="Zadzwoń"
               appearance="transparent"
               onPress={() => {
-                console.log('Zadzwoń');
+                console.log(`Zadzwoń ${tutorProfile?.phone_number}`);
               }}
               icon={<MaterialIcons name="phone" size={20} color={Colors.primary} />}
             />
@@ -237,7 +265,7 @@ const TutorPublicProfile = () => {
               label="Wyślij SMS"
               appearance="transparent"
               onPress={() => {
-                console.log('Wyślij SMS');
+                console.log(`Wyślij SMS ${tutorProfile?.phone_number}`);
               }}
               icon={<MaterialIcons name="chat-bubble" size={20} color={Colors.primary} />}
             />
@@ -248,4 +276,4 @@ const TutorPublicProfile = () => {
   );
 };
 
-export default TutorPublicProfile;
+export default TutorProfileScreen;

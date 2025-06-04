@@ -19,7 +19,7 @@ import {
   UserDetailsScreen,
   LoginScreen,
   RoleScreen,
-  TutorPublicProfile,
+  TutorProfileScreen,
   CompleteProfileScreen,
   ProfileEditAvailabilityScreen,
   EditAvailabilityScreen,
@@ -84,14 +84,14 @@ export default function App() {
                   component={ClassDetailsScreen}
                   options={{ headerShown: false }}
                 />
-                <Stack.Screen
+                {/* <Stack.Screen
                   name="TutorProfile"
                   component={ProfileScreen}
                   options={{ headerShown: false }}
-                />
+                /> */}
                 <Stack.Screen
-                  name="TutorPublicProfile"
-                  component={TutorPublicProfile}
+                  name="TutorProfileScreen"
+                  component={TutorProfileScreen}
                   options={{ headerShown: false }}
                 />
                 <Stack.Screen

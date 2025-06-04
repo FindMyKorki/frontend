@@ -3,7 +3,7 @@ import React, { useState, useEffect, FC } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from '../utils/AuthProvider';
 import LabeledTextInput from './LabeledTextInput';
-import { updateTutorInfo, updateUserProfile } from '../hooks/useApi';
+import { updateTutorInfo, updateUserProfile, getUser } from '../hooks/useApi';
 import ImageInput from './ImageInput';
 import BottomModal from './BottomModal';
 import Button from './AppButton';
@@ -19,25 +19,46 @@ type ProfileFormProps = {
 };
 
 const ProfileForm: FC<ProfileFormProps> = ({ navigateTo, buttonLabel }) => {
+  // temp
+  // const id = '4eefa979-0bee-43c5-b765-7303ff80fe4b';
+  const id = '75eca90f-fc98-426d-a46b-58f8ce4dd3f2';
+
   const auth = useAuth();
   const nav = useNavigation();
 
   const [loading, setLoading] = useState(false);
   const [bottomModalVisible, setBottomModalVisible] = useState(false);
 
-  const [name, setName] = useState<string>('');
-  const [lastName, setLastName] = useState<string>('');
+  const [fullName, setFullName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [phone, setPhone] = useState<string>('');
+  const [bioLong, setBioLong] = useState<string>('');
   const [bio, setBio] = useState<string>('');
-  const [shortBio, setShortBio] = useState<string>('');
 
   const [avatar, setAvatar] = useState<string>('');
 
-  const userFormDisplayed = !auth.user?.profile?.full_name;
-  const tutorFormDisplayed = !!auth.user?.profile?.full_name && !!auth.user?.profile?.is_tutor;
-  // const userFormDisplayed = true
-  // const tutorFormDisplayed = true
+  // const userFormDisplayed = !auth.user?.profile?.full_name;
+  // const tutorFormDisplayed = !!auth.user?.profile?.full_name && !!auth.user?.profile?.is_tutor;
+  const userFormDisplayed = true;
+  const tutorFormDisplayed = !!auth.user?.profile?.is_tutor;
+
+  useEffect(() => {
+    if (userFormDisplayed) {
+    }
+    if (tutorFormDisplayed) {
+      (async () => {
+        const user = await getUser();
+        setFullName(user?.profile?.full_name ?? '');
+        setAvatar(user?.profile?.avatar_url ?? '');
+        if (user?.profile?.is_tutor) {
+          setEmail(user?.tutor_profile?.contact_email ?? '');
+          setPhone(user?.tutor_profile?.phone_number ?? '');
+          setBioLong(user?.tutor_profile?.bio_long ?? '');
+          setBio(user?.tutor_profile?.bio ?? '');
+        }
+      })();
+    }
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -92,11 +113,11 @@ const ProfileForm: FC<ProfileFormProps> = ({ navigateTo, buttonLabel }) => {
     setLoading(true);
 
     if (userFormDisplayed) {
-      await updateUserProfile(`${name} ${lastName}`, false, avatar);
+      await updateUserProfile(fullName, false, avatar);
     }
 
     if (tutorFormDisplayed) {
-      await updateTutorInfo(shortBio, bio, email, phone);
+      await updateTutorInfo(bio, bioLong, email, phone);
     }
 
     await auth.getSession();
@@ -122,15 +143,8 @@ const ProfileForm: FC<ProfileFormProps> = ({ navigateTo, buttonLabel }) => {
                 label={'Imię'}
                 className={'w-full'}
                 editable={!loading}
-                value={name}
-                onChangeText={setName}
-              />
-              <LabeledTextInput
-                label={'Nazwisko'}
-                className={'w-full'}
-                editable={!loading}
-                value={lastName}
-                onChangeText={setLastName}
+                value={fullName}
+                onChangeText={setFullName}
               />
             </>
           )}
@@ -158,8 +172,8 @@ const ProfileForm: FC<ProfileFormProps> = ({ navigateTo, buttonLabel }) => {
                 label={'Krótki opis'}
                 className={'w-full'}
                 editable={!loading}
-                value={shortBio}
-                onChangeText={setShortBio}
+                value={bio}
+                onChangeText={setBio}
                 multiline={true}
                 inputClassName="h-20"
                 textAlignVertical="top"
@@ -168,8 +182,8 @@ const ProfileForm: FC<ProfileFormProps> = ({ navigateTo, buttonLabel }) => {
                 label={'Długi opis'}
                 className={'w-full mb-4'}
                 editable={!loading}
-                value={bio}
-                onChangeText={setBio}
+                value={bioLong}
+                onChangeText={setBioLong}
                 numberOfLines={10}
                 multiline={true}
                 inputClassName="h-96"

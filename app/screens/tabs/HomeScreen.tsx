@@ -19,14 +19,11 @@ const HomeScreen = () => {
       <Button title={'Przejdź do FiltersScreen'} onPress={() => nav.navigate('Filters')} />
       <Button title={'Przejdź do SortOptionsScreen'} onPress={() => nav.navigate('SortOptions')} />
       <Button
-        title={'Przejdź do ProfileScreen (Tutor)'}
-        onPress={() => nav.navigate('TutorProfile')}
+        title={'Przejdź do TutorProfileScreen ( właściciel / student)'}
+        onPress={() =>
+          nav.navigate('TutorProfileScreen', { tutorId: '4eefa979-0bee-43c5-b765-7303ff80fe4b' })
+        }
       />
-      <Button
-        title={'Przejdź do TutorPublicProfile (Uczeń)'}
-        onPress={() => nav.navigate('TutorPublicProfile')}
-      />
-      <Button title={'Przejdź do EditProfileScreen'} onPress={() => nav.navigate('EditProfile')} />
       <Button title={'Przejdź do ReportScreen'} onPress={() => nav.navigate('Report')} />
       <Button title={'Przejdź do LoginScreen'} onPress={() => nav.navigate('Login')} />
       <Button title={'Przejdź do RoleScreen'} onPress={() => nav.navigate('Role')} />
