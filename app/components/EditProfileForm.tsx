@@ -19,10 +19,6 @@ type ProfileFormProps = {
 };
 
 const ProfileForm: FC<ProfileFormProps> = ({ navigateTo, buttonLabel }) => {
-  // temp
-  // const id = '4eefa979-0bee-43c5-b765-7303ff80fe4b';
-  const id = '75eca90f-fc98-426d-a46b-58f8ce4dd3f2';
-
   const auth = useAuth();
   const nav = useNavigation();
 
