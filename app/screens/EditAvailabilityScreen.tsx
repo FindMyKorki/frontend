@@ -8,6 +8,7 @@ import React from 'react';
 import TimeRangePicker from '../components/TimeRangePicker';
 import { isSameDay } from 'date-fns';
 import { apiCall } from '../utils/ApiHandler';
+import BottomPanelButtons from '../components/BottomPanelButtons';
 
 type Availabilities = {
   date: Date;
@@ -171,9 +172,13 @@ const EditAvailabilityScreen = () => {
       </ScrollView>
 
       {/* Dolny panel z przyciskiem Dalej */}
-      <View className="bg-background px-4 py-3 shadow-xl/70" style={{ elevation: 10 }}>
-        <AppButton label="Dalej" size="full" onPress={() => navigation.goBack()} />
-      </View>
+      <BottomPanelButtons
+        leftButtonProps={{
+          label: 'Dalej',
+          size: 'full',
+          onPress: () => navigation.goBack(),
+        }}
+      />
     </View>
   );
 };
