@@ -232,23 +232,25 @@ const TutorProfileScreen = () => {
           )}
         </View>
       </ScrollView>
-      <BottomPanelButtons
-        leftButtonProps={{
-          label: 'Wyślij wiadomość',
-          onPress: () => {
-            navigation.navigate('Chat' as never);
-          },
-          icon: <MaterialIcons name="chat-bubble" size={20} color="white" />,
-        }}
-        rightButtonProps={{
-          label: 'Zadzwoń / SMS',
-          onPress: () => {
-            setBottomModalVisible(true);
-          },
-          appearance: 'outlined',
-          icon: <MaterialIcons name="phone" size={20} color={Colors.primary} />,
-        }}
-      />
+      {isOwner || (
+        <BottomPanelButtons
+          leftButtonProps={{
+            label: 'Wyślij wiadomość',
+            onPress: () => {
+              navigation.navigate('Chat' as never);
+            },
+            icon: <MaterialIcons name="chat-bubble" size={20} color="white" />,
+          }}
+          rightButtonProps={{
+            label: 'Zadzwoń / SMS',
+            onPress: () => {
+              setBottomModalVisible(true);
+            },
+            appearance: 'outlined',
+            icon: <MaterialIcons name="phone" size={20} color={Colors.primary} />,
+          }}
+        />
+      )}
 
       <BottomModal visible={bottomModalVisible} setVisible={setBottomModalVisible}>
         <View className="w-full items-center justify-center">
