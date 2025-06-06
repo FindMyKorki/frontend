@@ -19,11 +19,11 @@ import {
   UserDetailsScreen,
   LoginScreen,
   RoleScreen,
-  TutorPublicProfile,
+  TutorProfileScreen,
   CompleteProfileScreen,
+  BookingLessonScreen,
+  BookingDetailsScreen,
   ProfileEditAvailabilityScreen,
-  EditAvailabilityScreen,
-  AvailabilityRepetitionScreen,
 } from './index';
 import AuthProvider from './utils/AuthProvider';
 
@@ -35,90 +35,84 @@ export default function App() {
       <StatusBar />
       <SafeAreaProvider testID={'App:SafeAreaProvider:AppContainer'}>
         <SafeAreaView className={`flex-1 bg-white justify-center align-center`}>
-          {/* <AuthProvider> */}
-          <NavigationContainer>
-            <Stack.Navigator screenOptions={{ navigationBarColor: 'white' }}>
-              <Stack.Screen
-                name="Tabs"
-                component={TabsNavigator}
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen name="Chat" component={ChatScreen} options={{ headerShown: false }} />
-              <Stack.Screen
-                name="Filters"
-                component={FiltersScreen}
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name="SortOptions"
-                component={SortOptionsScreen}
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name="Search"
-                component={SearchScreen}
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name="EditProfile"
-                component={EditProfileScreen}
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name="EditOffer"
-                component={EditOfferScreen}
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name="UserDetails"
-                component={UserDetailsScreen}
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name="ClassAppointment"
-                component={ClassAppointmentScreen}
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name="ClassDetails"
-                component={ClassDetailsScreen}
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name="TutorProfile"
-                component={ProfileScreen}
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name="TutorPublicProfile"
-                component={TutorPublicProfile}
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name="Report"
-                component={ReportScreen}
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name="ProfileEditAvailability"
-                component={ProfileEditAvailabilityScreen}
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name="EditAvailabilityScreen"
-                component={EditAvailabilityScreen}
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name="AvailabilityRepetitionScreen"
-                component={AvailabilityRepetitionScreen}
-                options={{ headerShown: false }}
-              />
-              {/* <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-              <Stack.Screen name="Role" component={RoleScreen} options={{ headerShown: false }} /> */}
-            </Stack.Navigator>
-          </NavigationContainer>
-          {/* </AuthProvider> */}
+          <AuthProvider>
+            <NavigationContainer>
+              <Stack.Navigator screenOptions={{ navigationBarColor: 'white' }}>
+                <Stack.Screen
+                  name="Tabs"
+                  component={TabsNavigator}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen name="Chat" component={ChatScreen} options={{ headerShown: false }} />
+                <Stack.Screen
+                  name="Filters"
+                  component={FiltersScreen}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="SortOptions"
+                  component={SortOptionsScreen}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="Search"
+                  component={SearchScreen}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="EditProfile"
+                  component={EditProfileScreen}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="EditOffer"
+                  component={EditOfferScreen}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="UserDetails"
+                  component={UserDetailsScreen}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="ClassAppointment"
+                  component={ClassAppointmentScreen}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="ClassDetails"
+                  component={ClassDetailsScreen}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="TutorProfileScreen"
+                  component={TutorProfileScreen}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="Report"
+                  component={ReportScreen}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="ProfileEditAvailability"
+                  component={ProfileEditAvailabilityScreen}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen name="Role" component={RoleScreen} options={{ headerShown: false }} />
+                <Stack.Screen
+                  name="BookingLesson"
+                  component={BookingLessonScreen}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="BookingDetails"
+                  component={BookingDetailsScreen}
+                  options={{ headerShown: false }}
+                />
+              </Stack.Navigator>
+            </NavigationContainer>
+          </AuthProvider>
         </SafeAreaView>
       </SafeAreaProvider>
     </>

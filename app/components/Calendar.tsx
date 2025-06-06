@@ -16,7 +16,7 @@ import {
 } from 'date-fns';
 import { pl } from 'date-fns/locale';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import AvailabilityModal from '../components/AvailabilityModal';
+import AvailabilityModal from './AvailabilityModal';
 import { apiCall } from '../utils/ApiHandler';
 
 type TimeBlock = {
@@ -52,7 +52,7 @@ const Calendar: FC<CalendarType> = ({ tutor_id, className = '', onSelect }) => {
   const [isloading, setIsloading] = useState(false);
   const [calendarDays, setCalendarDays] = useState<CalendarDay[]>([]);
 
-  /*const fetchAvailableBlocks = async () => {
+  const fetchAvailableBlocks = async () => {
     setIsloading(true);
 
     const data = (await apiCall({
@@ -75,35 +75,14 @@ const Calendar: FC<CalendarType> = ({ tutor_id, className = '', onSelect }) => {
 
     setCalendarDays(calendar);
     setIsloading(false);
-  };*/
-
-  // zmodyfikowane na potrzeby "żeby było coś widać" (bez pobierania danych z backendu)
-  const fetchAvailableBlocks = async () => {
-    setIsloading(true);
-
-    // Przykładowe dane zamiast fetchowania z API
-    const blocks = [{ start_date: '2025-05-05T10:00:00', end_date: '2025-05-05T11:00:00' }];
-
-    const calendar = daysInCalendar();
-
-    // Logika przypisania dostępnych godzin do dni kalendarza
-    let monthStart = startOfMonth(currentMonth).getDay();
-    monthStart = monthStart == 0 ? 6 : monthStart - 1;
-
-    // Przypisanie dostępnych godzin do odpowiednich dni w kalendarzu
-    for (let i = 0; i < blocks.length; i++) {
-      let day = parseInt(blocks[i].start_date.substring(8, 10)) - 1;
-      let idx = day + monthStart;
-      calendar[idx].isAvailable = true;
-      calendar[idx].times.push(blocks[i]);
-    }
-
-    setCalendarDays(calendar);
-    setIsloading(false);
   };
 
   useEffect(() => {
-    fetchAvailableBlocks();
+    try {
+      fetchAvailableBlocks();
+    } catch (e) {
+      console.error('GET /tutors/${tutor_id}/available-hours?start_date=${start_date}');
+    }
   }, [currentMonth, tutor_id]);
 
   const handlePrevMonth = () => {
@@ -111,6 +90,7 @@ const Calendar: FC<CalendarType> = ({ tutor_id, className = '', onSelect }) => {
 
     if (isSameMonth(currentMonth, earliestDate)) return;
     setSelectedDay(0);
+    onSelect?.([]);
 
     const prevMonth = subMonths(currentMonth, 1);
 
@@ -128,6 +108,7 @@ const Calendar: FC<CalendarType> = ({ tutor_id, className = '', onSelect }) => {
 
     const nextMonth = addMonths(currentMonth, 1);
     setSelectedDay(0);
+    onSelect?.([]);
     setCurrentMonth(setDate(nextMonth, 1));
   };
 

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Pressable, Image } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import ModalAtButton from './ModalAtButton';
+import { useNavigation } from '@react-navigation/native';
 
 export type TopPanelProps = {
   onBackPress: () => void;
@@ -20,8 +21,21 @@ const TopPanel = ({
   className = '',
   centerContentClassName = '',
 }: TopPanelProps) => {
+  const nav = useNavigation();
+
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const settingsOptions = ['PROFIL', 'Edytuj', 'Regulamin', 'Zgłoś problem', 'Wyloguj'];
+
+  const handleOptionPress = (option: string) => {
+    if (option === settingsOptions[0]) {
+    } else if (option === settingsOptions[1]) {
+      nav.navigate('EditProfile' as never);
+    } else if (option === settingsOptions[2]) {
+    } else if (option === settingsOptions[3]) {
+    } else if (option === settingsOptions[4]) {
+    }
+    console.log('Wybrano opcję:', option);
+  };
 
   const settingsButton = (
     <Pressable className="p-1">
@@ -63,7 +77,7 @@ const TopPanel = ({
                 key={option}
                 onPress={() => {
                   setDropdownVisible(false);
-                  console.log('Wybrano opcję:', option);
+                  handleOptionPress(option);
                 }}
               >
                 <Text className="text-text-dark text-right">{option}</Text>

@@ -10,7 +10,7 @@ export { default as ReportScreen } from './screens/ReportScreen';
 export { default as SearchScreen } from './screens/SearchScreen';
 export { default as SortOptionsScreen } from './screens/SortOptionsScreen';
 export { default as UserDetailsScreen } from './screens/UserDetailsScreen';
-export { default as TutorPublicProfile } from './screens/TutorPublicProfileScreen';
+export { default as TutorProfileScreen } from './screens/TutorProfileScreen';
 export { default as CompleteProfileScreen } from './screens/CompleteProfileScreen';
 export { default as ProfileEditAvailabilityScreen } from './screens/ProfileEditAvailabilityScreen';
 export { default as EditAvailabilityScreen } from './screens/EditAvailabilityScreen';
@@ -26,6 +26,9 @@ export { default as ProfileScreen } from './screens/tabs/ProfileScreen';
 export { default as HomeScreen } from './screens/tabs/HomeScreen';
 export { default as ChatsListScreen } from './screens/tabs/ChatsListScreen';
 export { default as ClassesListScreen } from './screens/tabs/ClassesListScreen';
+
+export { default as BookingLessonScreen } from './screens/BookingLessonScreen';
+export { default as BookingDetailsScreen } from './screens/BookingDetailsScreen';
 
 // registerRootComponent calls AppRegistry.registerComponent('main', () => App);
 // It also ensures that whether you load the app in Expo Go or in a native build,
