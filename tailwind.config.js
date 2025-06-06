@@ -16,6 +16,7 @@ module.exports = {
         'text-dark': '#000000',
         'text-medium': '#3d3d3d',
         'text-light': '#424242',
+        'text-grey': '#656565',
         'border-gray': '#D9D9D9',
         'empty-image': '#999999',
       },

@@ -24,6 +24,7 @@ import {
   BookingLessonScreen,
   BookingDetailsScreen,
   ProfileEditAvailabilityScreen,
+  EditAvailabilityScreen,
 } from './index';
 import AuthProvider from './utils/AuthProvider';
 
@@ -97,6 +98,11 @@ export default function App() {
                 <Stack.Screen
                   name="ProfileEditAvailability"
                   component={ProfileEditAvailabilityScreen}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="EditAvailability"
+                  component={EditAvailabilityScreen}
                   options={{ headerShown: false }}
                 />
                 <Stack.Screen name="Role" component={RoleScreen} options={{ headerShown: false }} />

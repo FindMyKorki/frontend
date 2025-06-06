@@ -38,7 +38,7 @@ const ProfileEditAvailability = () => {
   // Do przejścia w tryb edycji dostępności (nawigacja)
   const RootStackParamList = {
     ProfileEditAvailability: undefined, // Brak parametrów dla tego ekranu
-    EditAvailabilityScreen: undefined, // Brak parametrów dla tego ekranu
+    EditAvailability: undefined, // Brak parametrów dla tego ekranu
   };
 
   return (
@@ -122,7 +122,7 @@ const ProfileEditAvailability = () => {
                 name="edit"
                 size={15}
                 color="#1A5100"
-                onPress={() => navigation.navigate('EditAvailabilityScreen')}
+                onPress={() => navigation.navigate('EditAvailability')}
               />
             </View>
             <Calendar className="mt-2" tutor_id="1" />
