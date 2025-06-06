@@ -76,16 +76,16 @@ const AvailabilityCalendar: FC<AvailabilityCalendarType> = ({
   const handlePrevMonth = () => {
     if (isloading) return;
 
-    if (isSameMonth(currentMonth, today)) return;
+    // if (isSameMonth(currentMonth, today)) return;
+
+    const prevMonth = subMonths(currentMonth, 1);
     setSelectedDay(0);
     onSelect(null);
 
-    const prevMonth = subMonths(currentMonth, 1);
-
-    if (isSameMonth(prevMonth, today)) {
-      setCurrentMonth(today);
-      return;
-    }
+    // if (isSameMonth(prevMonth, today)) {
+    //   setCurrentMonth(today);
+    //   return;
+    // }
 
     setCurrentMonth(prevMonth);
   };

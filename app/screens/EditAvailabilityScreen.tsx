@@ -88,12 +88,6 @@ const EditAvailabilityScreen = () => {
     }
   };
 
-  const handleSaveFilters = async () => {
-    console.log('Wybrane: ', selectedAvailability);
-    console.log('Avalabilities: ', availabilities);
-    console.log('DATA wybrana: ', selectedDate);
-  };
-
   function getSelectedAvailabilityIDX() {
     if (!selectedDate) return null;
     if (availabilities.length === 0) return null;
@@ -178,7 +172,7 @@ const EditAvailabilityScreen = () => {
 
       {/* Dolny panel z przyciskiem Dalej */}
       <View className="bg-background px-4 py-3 shadow-xl/70" style={{ elevation: 10 }}>
-        <AppButton label="Dalej" size="full" onPress={handleSaveFilters} />
+        <AppButton label="Dalej" size="full" onPress={() => navigation.goBack()} />
       </View>
     </View>
   );
