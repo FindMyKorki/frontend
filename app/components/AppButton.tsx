@@ -1,7 +1,6 @@
 import React from 'react';
 import { Pressable, Text, View, ActivityIndicator } from 'react-native';
 import { tv } from 'tailwind-variants';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const button = tv({
   base: 'flex-row items-center justify-center box-border',
@@ -16,7 +15,7 @@ const button = tv({
       transparent: 'border-transparent',
     },
     disabled: {
-      true: 'opacity-80',
+      true: 'opacity-50',
       false: '',
     },
   },
@@ -30,7 +29,8 @@ const button = tv({
 export type ButtonProps = {
   label: string;
   onPress: () => void;
-  icon?: React.ReactNode;
+  icon?: React.ReactNode; // left icon
+  rightIcon?: React.ReactNode; // right icon
   disabled?: boolean;
   appearance?: 'filled' | 'outlined' | 'transparent';
   size?: 'auto' | 'full';
@@ -43,6 +43,7 @@ const Button = ({
   label,
   onPress,
   icon,
+  rightIcon,
   disabled = false,
   appearance = 'filled',
   size = 'auto',
@@ -55,7 +56,7 @@ const Button = ({
   const textColor = ['outlined', 'transparent'].includes(appearance)
     ? 'text-primary'
     : 'text-white';
-  const isFullSize = size == 'full';
+  const isFullSize = size === 'full';
   const fontWeight = isFullSize ? 'font-bold' : 'font-semibold';
   const finalTextClass = `text-sm ${fontWeight} ${textColor} ${textClassName}`;
 
@@ -71,8 +72,9 @@ const Button = ({
         <ActivityIndicator color={'#FFFFFF'} size={'small'} />
       ) : (
         <>
-          {icon && <MaterialCommunityIcons className="mr-1" name={icon} color={'#FFFFFF'} />}
+          {icon && <Text className="mr-1">{icon}</Text>}
           <Text className={finalTextClass.trim()}>{label}</Text>
+          {rightIcon && <Text className="ml-1">{rightIcon}</Text>}
         </>
       )}
     </Pressable>

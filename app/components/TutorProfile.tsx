@@ -11,6 +11,7 @@ type TutorProfileProps = {
   reviewCount: number;
   description: string;
   onPressReviews?: () => void;
+  isEditable: boolean;
 };
 
 const TutorProfile: FC<TutorProfileProps> = ({

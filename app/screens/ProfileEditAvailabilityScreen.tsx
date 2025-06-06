@@ -12,11 +12,17 @@ import BottomModal from '../components/BottomModal';
 import Button from '../components/AppButton';
 import React from 'react';
 import { Colors } from '../../src/colors';
+import Calendar from '../components/Calendar';
+import TutorDescription from '../components/TutorDescription';
+//import { apiCall } from '../utils/ApiHandler';
+import EditAvailabilityScreen from '../screens/EditAvailabilityScreen';
+import { NavigationProp } from '@react-navigation/native';
 
-const TutorPublicProfile = () => {
+const ProfileEditAvailability = () => {
   const [activeTab, setActiveTab] = useState('Oferty');
   const [bottomModalVisible, setBottomModalVisible] = useState(false);
-  const navigation = useNavigation();
+  const [userType, setUserType] = useState('tutor'); // 'student' lub 'tutor'
+  const navigation = useNavigation<NavigationProp<typeof RootStackParamList>>();
 
   const reviewSortOptions = [
     'Po ocenie malejąco',
@@ -29,17 +35,22 @@ const TutorPublicProfile = () => {
     setActiveTab(tab);
   };
 
+  // Do przejścia w tryb edycji dostępności (nawigacja)
+  const RootStackParamList = {
+    ProfileEditAvailability: undefined, // Brak parametrów dla tego ekranu
+    EditAvailability: undefined, // Brak parametrów dla tego ekranu
+  };
+
   return (
     <View className="flex-1">
+      <TopPanel
+        onBackPress={() => navigation.goBack()}
+        name="Jan Kowalski"
+        image="https://randomuser.me/api/portraits/men/32.jpg"
+        centerContentClassName="ml-3"
+        showSettings={userType === 'tutor'}
+      />
       <ScrollView showsVerticalScrollIndicator={false} className="bg-background pb-10">
-        <TopPanel
-          onBackPress={() => console.log('Back')}
-          onSettingsPress={() => console.log('Settings')}
-          name="Jan Kowalski"
-          image="https://randomuser.me/api/portraits/men/32.jpg"
-          centerContentClassName="ml-3"
-        />
-
         {/* Profil tutora */}
         <View className="px-2 pt-2">
           <TutorProfile
@@ -49,6 +60,7 @@ const TutorPublicProfile = () => {
             reviewCount={15}
             description="Jestem doświadczonym korepetytorem matematyki i fizyki. Pomagam uczniom zrozumieć trudne tematy oraz przygotowuję ich do egzaminów."
             onPressReviews={() => handleTabPress('Opinie')}
+            isEditable={userType === 'tutor'}
           />
         </View>
 
@@ -87,6 +99,41 @@ const TutorPublicProfile = () => {
             </View>
           ))}
         </View>
+
+        {/* Sekcja Informacje */}
+        {activeTab === 'Informacje' && (
+          <View className="px-4">
+            {/* Kontakt */}
+            <View className="flex-row justify-between items-center py-2 mt-5">
+              <Text className="font-medium text-lg">E-mail:</Text>
+              <Text className="font-medium text-lg text-right">example@asd.com</Text>
+            </View>
+            <View style={{ borderTopWidth: 4, borderColor: '#f1f1f1' }} />
+            <View className="flex-row justify-between items-center py-2 mt-2">
+              <Text className="font-medium text-lg">Telefon:</Text>
+              <Text className="font-medium text-lg text-right">123 456 789</Text>
+            </View>
+            <View style={{ borderTopWidth: 4, borderColor: '#f1f1f1' }} />
+
+            {/* Sekcja DOSTĘPNOŚĆ*/}
+            <View className="flex-row justify-between items-center mt-6 mb-5">
+              <Text className="font-inter font-bold text-xl text-primary">DOSTĘPNOŚĆ</Text>
+              <MaterialIcons
+                name="edit"
+                size={15}
+                color="#1A5100"
+                onPress={() => navigation.navigate('EditAvailability')}
+              />
+            </View>
+            <Calendar className="mt-2" tutor_id="1" />
+
+            <Text className="font-inter font-bold text-xl text-primary mt-12">O MNIE</Text>
+            <TutorDescription
+              className="mt-4"
+              description="Jestem doświadczonym korepetytorem matematyki i fizyki. Pomagam uczniom zrozumieć trudne tematy oraz przygotowuję ich do egzaminów."
+            />
+          </View>
+        )}
 
         {/* Informacja o cenie */}
         {activeTab === 'Oferty' && (
@@ -176,12 +223,6 @@ const TutorPublicProfile = () => {
             </>
           )}
 
-          {activeTab === 'Informacje' && (
-            <View className="px-4">
-              <Text className="text-lg font-bold">Tutaj będą informacje</Text>
-            </View>
-          )}
-
           {activeTab === 'Opinie' && (
             <>
               <SortDropdown
@@ -227,8 +268,8 @@ const TutorPublicProfile = () => {
         leftButtonProps={{
           label: 'Wyślij wiadomość',
           onPress: () => {
-            console.log('Wyślij wiadomość');
-            // navigation.navigate('Chat');
+            //@ts-expect-error
+            navigation.navigate('Chat');
           },
           icon: <MaterialIcons name="chat-bubble" size={20} color="white" />,
         }}
@@ -268,4 +309,4 @@ const TutorPublicProfile = () => {
   );
 };
 
-export default TutorPublicProfile;
+export default ProfileEditAvailability;

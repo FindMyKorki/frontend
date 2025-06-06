@@ -1,15 +1,17 @@
-import { ScrollView } from 'react-native';
-import ReusableExampleComponent from '../../components/ReusableExampleComponent';
+import React from 'react';
+import { useNavigation } from '@react-navigation/native';
+import EditProfileForm from '../../components/EditProfileForm';
 
 const EditProfileScreen = () => {
-  const customFunction = () => {
-    console.log('Hello World!');
-  };
+  const nav = useNavigation();
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
-      <ReusableExampleComponent exampleProp={'EditProfileScreen screen'} />
-    </ScrollView>
+    <EditProfileForm
+      navigateTo={() => {
+        nav.goBack();
+      }}
+      buttonLabel="Zapisz zminay"
+    />
   );
 };
 

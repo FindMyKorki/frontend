@@ -1,4 +1,8 @@
 import { apiCall } from '../utils/ApiHandler';
+import { Review } from '../types/Tutor';
+import { TutorOffer } from '../types/Tutor';
+import { TutorProfile } from '../types/Tutor';
+import { User } from '../types/User';
 
 export const updateUserProfile = async (
   fullName: string,
@@ -41,7 +45,7 @@ export const updateTutorInfo = async (
 ) => {
   try {
     return await apiCall({
-      method: 'POST',
+      method: 'PUT',
       url: '/tutors',
       data: { bio: bio, bio_long: bioLong, contact_email: contactEmail, phone_number: phoneNumber },
     });
@@ -60,6 +64,77 @@ export const createProfile = async (isTutor: boolean) => {
     });
   } catch (e) {
     console.error('POST /profiles', e);
+    return null;
+  }
+};
+
+export const getUser = async (): Promise<User | null> => {
+  const url = '/user';
+  try {
+    return await apiCall({
+      method: 'GET',
+      url: url,
+    });
+  } catch (e) {
+    console.error('GET', url, e);
+    return null;
+  }
+};
+
+export const getTutorProfile = async (tutorId: string): Promise<TutorProfile | null> => {
+  const url = `/tutors/${tutorId}`;
+  try {
+    return await apiCall({
+      method: 'GET',
+      url: url,
+    });
+  } catch (e) {
+    console.error('GET', url, e);
+    return null;
+  }
+};
+
+export const getTutorReviews = async (
+  tutorId: string,
+  sortBy: 'rating' | 'date',
+  orderBy: 'increasing' | 'decreasing',
+): Promise<Review[] | null> => {
+  const query = new URLSearchParams({ sort_by: sortBy, order: orderBy }).toString();
+  const url = `/tutor-reviews/${tutorId}?${query}`;
+  try {
+    return await apiCall({
+      method: 'GET',
+      url: url,
+    });
+  } catch (e) {
+    console.error('GET', url, e);
+    return null;
+  }
+};
+
+export const getActiveTutorOffers = async (tutorId: string): Promise<TutorOffer[] | null> => {
+  const url = `/active-offers/${tutorId}`;
+  try {
+    return await apiCall({
+      method: 'GET',
+      url: url,
+    });
+  } catch (e) {
+    console.error('GET', url, e);
+    return null;
+  }
+};
+
+// Returns all offers owned by currently authenticated user
+export const getAllTutorOffers = async (): Promise<TutorOffer[] | null> => {
+  const url = '/tutor-offers/by-tutor';
+  try {
+    return await apiCall({
+      method: 'GET',
+      url: url,
+    });
+  } catch (e) {
+    console.error('GET', url, e);
     return null;
   }
 };

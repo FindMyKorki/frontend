@@ -50,7 +50,7 @@ const BottomModal: FC<BottomModalProps> = ({ visible, setVisible, children }) =>
             }}
           >
             <View className="items-center">
-              <View className="h-1 bg-background-alt w-14 my-5 rounded-full" />
+              <View className="h-1 bg-border-gray w-14 my-5 rounded-full" />
             </View>
 
             {children}
