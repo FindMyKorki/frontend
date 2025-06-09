@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, Image, Pressable } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import dayjs from 'dayjs'; // Import biblioteki dayjs
+import dayjs from 'dayjs';
+
 import ChatHeader from './ChatHeader';
 import ChatMessagePreview from './ChatMessagePreview';
 import ChatMenuModal from './ChatMenuModal';
@@ -25,7 +26,7 @@ const ChatPreview = ({
   avatarUrl,
   lastMessage,
   timestamp,
-  unreadCount,
+  unreadCount = 0,
   onPress,
   onArchive,
 }: ChatPreviewProps) => {
@@ -33,20 +34,25 @@ const ChatPreview = ({
   const [menuVisible, setMenuVisible] = useState(false);
   const navigation = useNavigation();
 
-  const muteChat = (chatId: string) => {
-    console.log(`Wyciszam czat: ${chatId}`);
-    // Tutaj można dodać rzeczywiste wywołanie API
+  const muteChat = () => {
+    console.log(`Wyciszam czat: ${id}`);
+    setMenuVisible(false);
+    setMuteOptionsVisible(true);
   };
 
-  const reportChat = (chatId: string, chatName: string) => {
+  const reportChat = () => {
     // @ts-ignore
-    navigation.navigate('ReportChat', { chatId, name: chatName });
+    navigation.navigate('ReportChat', { chatId: id, name });
+    setMenuVisible(false);
   };
 
-  const displayAvatar = avatarUrl || 'https://via.placeholder.com/150';
+  const handleArchive = () => {
+    onArchive(id);
+    setMenuVisible(false);
+  };
 
-  // Formatowanie daty – tutaj możesz dostosować format
   const formattedTimestamp = dayjs(timestamp).format('DD.MM.YYYY HH:mm');
+  const displayAvatar = avatarUrl || 'https://via.placeholder.com/150';
 
   return (
     <>
@@ -62,7 +68,12 @@ const ChatPreview = ({
 
         <View className="flex-1 ml-4">
           <ChatHeader name={name} timestamp={formattedTimestamp} />
-          <ChatMessagePreview lastMessage={lastMessage} unreadCount={unreadCount} />
+          <ChatMessagePreview lastMessage={lastMessage} />
+          {unreadCount > 0 && (
+            <View className="mt-1 bg-red-500 rounded-full px-2 py-0.5 self-start">
+              <Text className="text-white text-xs font-medium">{unreadCount}</Text>
+            </View>
+          )}
         </View>
 
         <Pressable onPress={() => setMenuVisible(true)} className="pl-3 pr-1" hitSlop={10}>
@@ -73,19 +84,9 @@ const ChatPreview = ({
       <ChatMenuModal
         visible={menuVisible}
         onClose={() => setMenuVisible(false)}
-        onMute={() => {
-          muteChat(id);
-          setMenuVisible(false);
-          setMuteOptionsVisible(true);
-        }}
-        onArchive={() => {
-          onArchive(id);
-          setMenuVisible(false);
-        }}
-        onReport={() => {
-          setMenuVisible(false);
-          reportChat(id, name);
-        }}
+        onMute={muteChat}
+        onArchive={handleArchive}
+        onReport={reportChat}
       />
 
       <MuteOptionsModal visible={muteOptionsVisible} onClose={() => setMuteOptionsVisible(false)} />

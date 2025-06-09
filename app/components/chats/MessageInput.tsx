@@ -29,6 +29,7 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSend }) => {
         value={text}
         onChangeText={setText}
         onSubmitEditing={handleSend}
+        multiline={true}
         returnKeyType="send"
         className="flex-1 text-base px-4 py-2 text-black"
         accessibilityLabel="Pole wiadomości"

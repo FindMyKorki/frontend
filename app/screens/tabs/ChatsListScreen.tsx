@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useFocusEffect } from '@react-navigation/native'; // Importuj hook
-
+import { useFocusEffect } from '@react-navigation/native';
 import { ScrollView, Text, View, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
