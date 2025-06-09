@@ -63,7 +63,14 @@ const ChatScreen = ({ route }: any) => {
           timestamp: new Date(data.sent_at).toLocaleTimeString().slice(0, 5),
           isSender: data.sender_id === userId,
         };
-        setMessages((prev) => [...prev, newMsg]);
+
+        // Sprawdzanie, czy wiadomość już istnieje
+        setMessages((prev) => {
+          if (!prev.find((msg) => msg.id === newMsg.id)) {
+            return [...prev, newMsg];
+          }
+          return prev;
+        });
       }
     };
 
@@ -92,16 +99,6 @@ const ChatScreen = ({ route }: any) => {
           is_media: false,
         }),
       );
-
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: Date.now(),
-          message: text,
-          timestamp: new Date().toLocaleTimeString().slice(0, 5),
-          isSender: true,
-        },
-      ]);
     } else {
       console.warn('WebSocket nie jest połączony');
     }
