@@ -5,6 +5,7 @@ import ChatMessage from '../components/chats/ChatMessage';
 import MessageInput from '../components/chats/MessageInput';
 import TopPanel from '../components/TopPanel';
 import { baseWS } from '../utils/ApiHandler';
+import dayjs from 'dayjs';
 
 type Message = {
   id?: string | number;
@@ -50,7 +51,7 @@ const ChatScreen = ({ route }: any) => {
         const mappedMessages = data.messages.map((msg: any) => ({
           id: msg.id,
           message: msg.content,
-          timestamp: new Date(msg.sent_at).toLocaleTimeString().slice(0, 5),
+          timestamp: dayjs(msg.sent_at).format('HH:mm'),
           isSender: msg.sender_id === userId,
           avatarUrl: msg.avatar_url,
         }));
@@ -60,7 +61,7 @@ const ChatScreen = ({ route }: any) => {
           id: data.id || Date.now().toString(),
           message:
             typeof data.content === 'string' ? data.content : '[Nieprawidłowy format wiadomości]',
-          timestamp: new Date(data.sent_at).toLocaleTimeString().slice(0, 5),
+          timestamp: dayjs(data.sent_at).format('HH:mm'),
           isSender: data.sender_id === userId,
         };
 
