@@ -23,6 +23,7 @@ import {
   CompleteProfileScreen,
   BookingLessonScreen,
   BookingDetailsScreen,
+  BookingScreen,
 } from './index';
 import AuthProvider from './utils/AuthProvider';
 
@@ -112,6 +113,11 @@ export default function App() {
                 <Stack.Screen
                   name="BookingDetails"
                   component={BookingDetailsScreen}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="BookingScreen"
+                  component={BookingScreen}
                   options={{ headerShown: false }}
                 />
               </Stack.Navigator>
