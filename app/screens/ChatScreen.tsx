@@ -109,7 +109,6 @@ const ChatScreen = ({ route }: any) => {
     <View style={{ flex: 1 }}>
       <TopPanel
         onBackPress={() => navigation.goBack()}
-        onSettingsPress={() => console.log('Opcje konwersacji')}
         name={user.name ? String(user.name) : 'Nieznany użytkownik'}
         image={user.avatarUrl}
       />

@@ -15,11 +15,11 @@ const SearchBar = ({ placeholderValue, onSearch, value, className = '' }: Search
   };
 
   return (
-    <View className={`flex-row text-sm rounded-lg bg-background-alt ${className}`}>
+    <View className={`flex-row text-sm rounded-lg mx-3 my-2 bg-background-alt ${className}`}>
       <View
         className={`flex-1 flex-row items-center rounded-lg border px-3 border-background-alt bg-background-alt`}
       >
-        <MaterialIcons name="search" size={20} className="mr-2" />
+        <MaterialIcons name="search" size={20} style={{ marginRight: 8 }} />
         <TextInput
           className="flex-1"
           placeholder={placeholderValue}
@@ -28,7 +28,7 @@ const SearchBar = ({ placeholderValue, onSearch, value, className = '' }: Search
           returnKeyType="done"
         />
         {value ? (
-          <Pressable onPress={handleClear} className="p-1">
+          <Pressable onPress={handleClear} style={{ padding: 4 }}>
             <MaterialIcons name="close" size={20} />
           </Pressable>
         ) : null}

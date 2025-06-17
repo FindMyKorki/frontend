@@ -4,7 +4,7 @@ import { ScrollView, Text, View, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import ChatPreview from '../../components/chats/ChatPreview';
-import SearchBar from '../../components/chats/SerchBar';
+import SearchBar from '../../components/chats/SearchBar';
 import { apiCall } from '../../utils/ApiHandler';
 
 type RootStackParamList = {
@@ -44,6 +44,7 @@ const ChatsListScreen = () => {
   const [error, setError] = useState<string | null>(null);
 
   const visibleChats = chats.filter((chat) => !archivedChatIds.includes(chat.id));
+  const [searchedChat, setSearchedChat] = useState<string>('');
 
   const fetchChats = async () => {
     setLoading(true);
@@ -111,21 +112,32 @@ const ChatsListScreen = () => {
     }, []),
   );
 
+  const searchChat = () => {
+    return visibleChats.filter((chat) =>
+      chat.name.toLowerCase().includes(searchedChat.toLowerCase()),
+    );
+  };
+
   const handleArchiveChat = (chatId: number) => {
     setArchivedChatIds((prev) => [...prev, chatId]);
   };
 
+  const filteredChats = searchedChat ? searchChat() : visibleChats;
+
   return (
     <View className="flex-1 bg-background">
-      {/*<SearchBar currentUserId={currentUserId} isTutor={isTutor} />*/}
-
+      <SearchBar
+        placeholderValue="Wyszukaj konwersację"
+        value={searchedChat}
+        onSearch={setSearchedChat}
+      />
       {loading ? (
         <ActivityIndicator size="large" className="mt-4" />
       ) : error ? (
         <Text className="text-red-500 text-center mt-4">{error}</Text>
       ) : (
         <ScrollView showsVerticalScrollIndicator={false}>
-          {visibleChats.length === 0 ? (
+          {filteredChats.length === 0 ? (
             <View className="items-center justify-center mt-10 px-4">
               <Text className="text-lg text-muted-foreground text-center">
                 Brak konwersacji do wyświetlenia.
@@ -135,7 +147,7 @@ const ChatsListScreen = () => {
               </Text>
             </View>
           ) : (
-            visibleChats.map((chat, index) => {
+            filteredChats.map((chat, index) => {
               console.log('Przygotowywany chat:', chat);
               console.log('Aktualny userId:', currentUserId);
               console.log('Czy tutor:', isTutor);

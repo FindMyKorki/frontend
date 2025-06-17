@@ -36,6 +36,7 @@ const ChatPreview = ({
 
   const muteChat = () => {
     console.log(`Wyciszam czat: ${id}`);
+    // @ts-ignore
     setMenuVisible(false);
     setMuteOptionsVisible(true);
   };
