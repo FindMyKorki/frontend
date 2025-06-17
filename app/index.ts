@@ -10,8 +10,12 @@ export { default as ReportScreen } from './screens/ReportScreen';
 export { default as SearchScreen } from './screens/SearchScreen';
 export { default as SortOptionsScreen } from './screens/SortOptionsScreen';
 export { default as UserDetailsScreen } from './screens/UserDetailsScreen';
-export { default as TutorPublicProfile } from './screens/TutorPublicProfileScreen';
+export { default as TutorProfileScreen } from './screens/TutorProfileScreen';
 export { default as CompleteProfileScreen } from './screens/CompleteProfileScreen';
+export { default as ProfileEditAvailabilityScreen } from './screens/ProfileEditAvailabilityScreen';
+export { default as EditAvailabilityScreen } from './screens/EditAvailabilityScreen';
+export { default as AvailabilityRepetitionScreen } from './screens/AvailabilityRepetitionScreen';
+export { default as BookingScreen } from './screens/BookingScreen';
 
 export { default as LoginScreen } from './screens/auth/LoginScreen';
 export { default as RoleScreen } from './screens/auth/RoleScreen';

@@ -17,7 +17,7 @@ const LabeledTextInput: FC<LabeledTextInputProps> = ({
     <View className={className}>
       <Text className="text-base mb-1 font-bold">{label}</Text>
       <TextInput
-        className={`py-2 px-3 border border-gray-300 rounded-lg text-base ${inputClassName}`}
+        className={`py-2 px-4 border border-gray-300 rounded-lg text-base ${inputClassName}`}
         {...props}
       />
     </View>

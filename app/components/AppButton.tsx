@@ -1,7 +1,6 @@
 import React from 'react';
 import { Pressable, Text, View, ActivityIndicator } from 'react-native';
 import { tv } from 'tailwind-variants';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const button = tv({
   base: 'flex-row items-center justify-center box-border',
@@ -16,7 +15,7 @@ const button = tv({
       transparent: 'border-transparent',
     },
     disabled: {
-      true: 'opacity-80',
+      true: 'opacity-50',
       false: '',
     },
   },
@@ -73,8 +72,9 @@ const Button = ({
         <ActivityIndicator color={'#FFFFFF'} size={'small'} />
       ) : (
         <>
-          {icon && <MaterialCommunityIcons className="mr-1" name={icon} color={'#FFFFFF'} />}
+          {icon && <Text className="mr-1">{icon}</Text>}
           <Text className={finalTextClass.trim()}>{label}</Text>
+          {rightIcon && <Text className="ml-1">{rightIcon}</Text>}
         </>
       )}
     </Pressable>

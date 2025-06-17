@@ -179,7 +179,7 @@ const BookingDetailsScreen = () => {
                 Temat zajęć
               </Text>
               <TextInput
-                className="border border-border-gray rounded-xl"
+                className="border border-border-gray rounded-xl px-4"
                 value={text}
                 onChangeText={setText}
               />
