@@ -1,7 +1,6 @@
 import React from 'react';
 import { Modal, Pressable, Text, View } from 'react-native';
-import { Entypo } from '@expo/vector-icons';
-import BellOffIcon from './BellOffIcon';
+import { Entypo, MaterialIcons } from '@expo/vector-icons';
 
 type Props = {
   visible: boolean;
@@ -19,7 +18,7 @@ const ChatMenuModal = ({ visible, onClose, onMute, onArchive, onReport, chatId }
         <View className="h-1 w-12 bg-gray-300 self-center rounded-full mb-2" />
 
         <Pressable onPress={onMute} className="flex-row items-center space-x-2 py-3">
-          <BellOffIcon />
+          <MaterialIcons name="notifications-off" size={20} color="#1A5100" />
           <Text className="text-base text-text-dark pl-4">Wycisz</Text>
         </Pressable>
 
