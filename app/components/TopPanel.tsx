@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Pressable, Image } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import ModalAtButton from './ModalAtButton';
+import { useNavigation } from '@react-navigation/native';
 
 export type TopPanelProps = {
   onBackPress: () => void;
-  onSettingsPress?: () => void;
+  showSettings?: boolean;
   name?: string;
   image?: string;
   className?: string;
@@ -13,12 +15,34 @@ export type TopPanelProps = {
 
 const TopPanel = ({
   onBackPress,
-  onSettingsPress,
+  showSettings = false,
   name,
   image,
   className = '',
   centerContentClassName = '',
 }: TopPanelProps) => {
+  const nav = useNavigation();
+
+  const [dropdownVisible, setDropdownVisible] = useState(false);
+  const settingsOptions = ['PROFIL', 'Edytuj', 'Regulamin', 'Zgłoś problem', 'Wyloguj'];
+
+  const handleOptionPress = (option: string) => {
+    if (option === settingsOptions[0]) {
+    } else if (option === settingsOptions[1]) {
+      nav.navigate('EditProfile' as never);
+    } else if (option === settingsOptions[2]) {
+    } else if (option === settingsOptions[3]) {
+    } else if (option === settingsOptions[4]) {
+    }
+    console.log('Wybrano opcję:', option);
+  };
+
+  const settingsButton = (
+    <Pressable className="p-1">
+      <MaterialIcons name="more-vert" size={24} color="black" />
+    </Pressable>
+  );
+
   return (
     <View
       className={`flex-row items-center justify-between px-4 py-2.5 bg-background ${className}`}
@@ -40,10 +64,27 @@ const TopPanel = ({
         </View>
       )}
 
-      {onSettingsPress && (
-        <Pressable onPress={onSettingsPress} className="p-1">
-          <MaterialIcons name="more-vert" size={24} color="black" />
-        </Pressable>
+      {showSettings && (
+        <ModalAtButton
+          spaceBetween={4}
+          button={settingsButton}
+          visible={dropdownVisible}
+          setVisible={setDropdownVisible}
+        >
+          <View className="py-4 px-5 gap-y-2">
+            {settingsOptions.map((option) => (
+              <Pressable
+                key={option}
+                onPress={() => {
+                  setDropdownVisible(false);
+                  handleOptionPress(option);
+                }}
+              >
+                <Text className="text-text-dark text-right">{option}</Text>
+              </Pressable>
+            ))}
+          </View>
+        </ModalAtButton>
       )}
     </View>
   );

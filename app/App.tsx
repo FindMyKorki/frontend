@@ -19,11 +19,13 @@ import {
   UserDetailsScreen,
   LoginScreen,
   RoleScreen,
-  TutorPublicProfile,
+  TutorProfileScreen,
   CompleteProfileScreen,
   BookingLessonScreen,
   BookingDetailsScreen,
-  BookingScreen,
+  ProfileEditAvailabilityScreen,
+  EditAvailabilityScreen,
+  BookingScreen
 } from './index';
 import AuthProvider from './utils/AuthProvider';
 
@@ -85,13 +87,8 @@ export default function App() {
                   options={{ headerShown: false }}
                 />
                 <Stack.Screen
-                  name="TutorProfile"
-                  component={ProfileScreen}
-                  options={{ headerShown: false }}
-                />
-                <Stack.Screen
-                  name="TutorPublicProfile"
-                  component={TutorPublicProfile}
+                  name="TutorProfileScreen"
+                  component={TutorProfileScreen}
                   options={{ headerShown: false }}
                 />
                 <Stack.Screen
@@ -100,8 +97,13 @@ export default function App() {
                   options={{ headerShown: false }}
                 />
                 <Stack.Screen
-                  name="Login"
-                  component={LoginScreen}
+                  name="ProfileEditAvailability"
+                  component={ProfileEditAvailabilityScreen}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="EditAvailability"
+                  component={EditAvailabilityScreen}
                   options={{ headerShown: false }}
                 />
                 <Stack.Screen name="Role" component={RoleScreen} options={{ headerShown: false }} />
