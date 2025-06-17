@@ -15,6 +15,7 @@ export { default as CompleteProfileScreen } from './screens/CompleteProfileScree
 export { default as ProfileEditAvailabilityScreen } from './screens/ProfileEditAvailabilityScreen';
 export { default as EditAvailabilityScreen } from './screens/EditAvailabilityScreen';
 export { default as AvailabilityRepetitionScreen } from './screens/AvailabilityRepetitionScreen';
+export { default as BookingScreen } from './screens/BookingScreen';
 
 export { default as LoginScreen } from './screens/auth/LoginScreen';
 export { default as RoleScreen } from './screens/auth/RoleScreen';
