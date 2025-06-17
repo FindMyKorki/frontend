@@ -78,11 +78,15 @@ const Calendar: FC<CalendarType> = ({ tutor_id, className = '', onSelect }) => {
   };
 
   useEffect(() => {
-    try {
-      fetchAvailableBlocks();
-    } catch (e) {
-      console.error('GET /tutors/${tutor_id}/available-hours?start_date=${start_date}');
-    }
+    const fetchData = async () => {
+      try {
+        await fetchAvailableBlocks();
+      } catch (e) {
+        console.error(`GET /tutors/${tutor_id}/available-hours failed`, e);
+      }
+    };
+
+    fetchData();
   }, [currentMonth, tutor_id]);
 
   const handlePrevMonth = () => {
@@ -164,7 +168,7 @@ const Calendar: FC<CalendarType> = ({ tutor_id, className = '', onSelect }) => {
     let monthStart = startOfMonth(currentMonth).getDay();
     monthStart = monthStart == 0 ? 5 : monthStart - 2;
     setSelectedDay(day.day);
-    onSelect?.(calendarDays[day.day + monthStart].times);
+    onSelect?.(day.times);
   };
 
   function chunkArray<T>(array: T[], chunkSize: number): T[][] {

@@ -49,7 +49,12 @@ const ModalAtButton: FC<ModalAtButtonProps> = ({
     <>
       {cloneElement(button as ReactElement, { ref: buttonRef, onPress: showModal })}
 
-      <Modal transparent visible={visible} animationType="fade">
+      <Modal
+        transparent
+        visible={visible}
+        animationType="fade"
+        onRequestClose={() => setVisible(false)}
+      >
         <Pressable className="flex-1 bg-black/30" onPress={() => setVisible(false)}>
           <View
             onLayout={handleDropdownLayout}

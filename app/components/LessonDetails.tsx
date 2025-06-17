@@ -25,12 +25,11 @@ const LessonDetails: FC<LessonDetailsProps> = ({
 }) => {
   let differenceH = 0;
   let differenceM = 0;
-  if (startTime == null || endTime == null) {
-  } else {
+  if (startTime && endTime) {
     differenceH = differenceInHours(endTime, startTime);
     differenceM = differenceInMinutes(endTime, startTime) % 60;
   }
-  const price = (differenceH + differenceM / 60) * offer.price;
+  const price = startTime && endTime ? (differenceH + differenceM / 60) * offer.price : 0;
 
   const duration = `${differenceH !== 0 ? `${differenceH}h` : ''}${differenceH !== 0 && differenceM === 0 ? '' : ` ${differenceM}min`}`;
 
