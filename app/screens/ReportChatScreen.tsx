@@ -20,8 +20,8 @@ const ReportChatScreen = () => {
   const [reason, setReason] = useState('');
 
   const handleSubmit = () => {
-    if (reason.trim() === '') {
-      Alert.alert('Błąd', 'Proszę wpisać powód zgłoszenia.');
+    if (reason.trim().length < 5) {
+      Alert.alert('Błąd', 'Podaj bardziej szczegółowy powód.');
       return;
     }
 

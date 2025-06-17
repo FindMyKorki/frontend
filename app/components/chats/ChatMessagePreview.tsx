@@ -11,11 +11,11 @@ const ChatMessagePreview = ({ lastMessage, unreadCount }: Props) => (
     <Text numberOfLines={1} className="flex-1 text-sm text-text-medium">
       {lastMessage}
     </Text>
-    {unreadCount ? (
+    {unreadCount && unreadCount > 0 && (
       <View className="bg-primary rounded-full w-5 h-5 items-center justify-center ml-2">
         <Text className="text-xs text-white font-bold">{unreadCount}</Text>
       </View>
-    ) : null}
+    )}
   </View>
 );
 

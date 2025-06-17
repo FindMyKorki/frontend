@@ -38,7 +38,7 @@ const ChatScreen = ({ route }: any) => {
     const socket = new WebSocket(wsUrl);
     ws.current = socket;
 
-    console.log('🔗 Łączenie z WebSocketem:', { chatId, userId, wsUrl });
+    console.log('Łączenie z WebSocketem:', { chatId, userId, wsUrl });
 
     socket.onopen = () => {
       console.log('WebSocket połączony');
@@ -80,7 +80,7 @@ const ChatScreen = ({ route }: any) => {
     };
 
     socket.onclose = () => {
-      console.log('🔌 WebSocket rozłączony');
+      console.log('WebSocket rozłączony');
       // Usuń tę linię:
       // socket.send(JSON.stringify({ action: 'mark_as_read', chatId }));
     };

@@ -9,9 +9,10 @@ type Props = {
   onMute: () => void;
   onArchive: (id: string) => void;
   onReport: () => void;
+  chatId: string;
 };
 
-const ChatMenuModal = ({ visible, onClose, onMute, onArchive, onReport }: Props) => (
+const ChatMenuModal = ({ visible, onClose, onMute, onArchive, onReport, chatId }: Props) => (
   <Modal transparent visible={visible} animationType="slide" onRequestClose={onClose}>
     <Pressable onPress={onClose} className="flex-1 bg-black/30 justify-end">
       <View className="bg-white p-6 rounded-t-2xl space-y-4 items-center">
@@ -22,7 +23,10 @@ const ChatMenuModal = ({ visible, onClose, onMute, onArchive, onReport }: Props)
           <Text className="text-base text-text-dark pl-4">Wycisz</Text>
         </Pressable>
 
-        <Pressable className="flex-row items-center space-x-2 py-3" onPress={onArchive}>
+        <Pressable
+          className="flex-row items-center space-x-2 py-3"
+          onPress={() => onArchive(chatId)}
+        >
           <Entypo name="download" size={20} color="#1A5100" />
           <Text className="text-base text-text-dark pl-4">Archiwizuj</Text>
         </Pressable>

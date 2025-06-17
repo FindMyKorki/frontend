@@ -87,6 +87,7 @@ const ChatPreview = ({
         onMute={muteChat}
         onArchive={handleArchive}
         onReport={reportChat}
+        chatId={id}
       />
 
       <MuteOptionsModal visible={muteOptionsVisible} onClose={() => setMuteOptionsVisible(false)} />

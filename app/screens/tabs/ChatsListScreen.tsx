@@ -73,7 +73,7 @@ const ChatsListScreen = () => {
         method: 'GET',
         url: endpoint,
       });
-      console.log('🛠️ Odebrane dane z backendu:', fetchedChatsRaw);
+      console.log('Odebrane dane z backendu:', fetchedChatsRaw);
 
       const mappedChats: Chat[] = tutorFlag
         ? fetchedChatsRaw.map((chat) => ({
@@ -151,7 +151,7 @@ const ChatsListScreen = () => {
                   unreadCount={chat.unreadCount}
                   onPress={() => {
                     if (!chat.id || !currentUserId) {
-                      console.warn('⛔ Nie można otworzyć chatu — brak ID');
+                      console.warn('Nie można otworzyć chatu — brak ID');
                       return;
                     }
 
