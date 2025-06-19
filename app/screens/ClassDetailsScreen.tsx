@@ -14,6 +14,7 @@ const ClassDetailsScreen = () => {
       <ReusableExampleComponent exampleProp={'ClassDetails screen'} />
       <Button title={'Przejdź do ReportScreen'} onPress={() => nav.navigate('Report')} />
       <Button title={'Wróć do TabsScreen'} onPress={() => nav.navigate('Tabs')} />
+      <Button title={'Przejdź do BookingScreen'} onPress={() => nav.navigate('BookingScreen')} />
     </ScrollView>
   );
 };

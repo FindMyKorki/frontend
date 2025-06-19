@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View, ActivityIndicator } from 'react-native';
 import { tv } from 'tailwind-variants';
 
 const button = tv({
@@ -7,7 +7,7 @@ const button = tv({
   variants: {
     size: {
       auto: 'self-start px-2.5 py-[5px] rounded',
-      full: 'flex-1 px-5 py-2.5 rounded-lg',
+      full: 'w-full px-5 py-2.5 rounded-lg',
     },
     appearance: {
       filled: 'border border-transparent bg-primary',
@@ -21,7 +21,7 @@ const button = tv({
   },
   defaultVariants: {
     size: 'auto',
-    type: 'filled',
+    appearance: 'filled',
     disabled: false,
   },
 });
@@ -29,30 +29,34 @@ const button = tv({
 export type ButtonProps = {
   label: string;
   onPress: () => void;
-  icon?: React.ReactNode;
+  icon?: React.ReactNode; // left icon
+  rightIcon?: React.ReactNode; // right icon
   disabled?: boolean;
   appearance?: 'filled' | 'outlined' | 'transparent';
   size?: 'auto' | 'full';
   className?: string;
   textClassName?: string;
+  loading?: boolean;
 };
 
 const Button = ({
   label,
   onPress,
   icon,
+  rightIcon,
   disabled = false,
   appearance = 'filled',
   size = 'auto',
   className = '',
   textClassName = '',
+  loading = false,
 }: ButtonProps) => {
-  const finalButtonClass = button({ appearance, disabled, size }) + ' ' + className;
+  const finalButtonClass = button({ appearance, size, disabled }) + ' ' + className;
 
   const textColor = ['outlined', 'transparent'].includes(appearance)
     ? 'text-primary'
     : 'text-white';
-  const isFullSize = size == 'full';
+  const isFullSize = size === 'full';
   const fontWeight = isFullSize ? 'font-bold' : 'font-semibold';
   const finalTextClass = `text-sm ${fontWeight} ${textColor} ${textClassName}`;
 
@@ -64,8 +68,15 @@ const Button = ({
       disabled={disabled}
       className={finalButtonClass.trim()}
     >
-      {icon && <View className="mr-1">{icon}</View>}
-      <Text className={finalTextClass.trim()}>{label}</Text>
+      {loading ? (
+        <ActivityIndicator color={'#FFFFFF'} size={'small'} />
+      ) : (
+        <>
+          {icon && <Text className="mr-1">{icon}</Text>}
+          <Text className={finalTextClass.trim()}>{label}</Text>
+          {rightIcon && <Text className="ml-1">{rightIcon}</Text>}
+        </>
+      )}
     </Pressable>
   );
 };

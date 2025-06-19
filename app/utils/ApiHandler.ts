@@ -7,6 +7,10 @@ let refreshToken: string | null = null;
 const baseURL = process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:8000';
 export const baseWS = process.env.EXPO_PUBLIC_WS_BASE_URL || 'ws://192.168.0.12:8000';
 
+interface RefreshTokenResponse {
+  access_token: string;
+}
+
 export const setAccessToken = async (token: string): Promise<void> => {
   accessToken = token;
   await SecureStore.setItemAsync('accessToken', token);
@@ -19,7 +23,7 @@ export const setRefreshToken = async (token: string): Promise<void> => {
 
 export const loadTokens = async (): Promise<void> => {
   const aToken = await SecureStore.getItemAsync('accessToken');
-  const rToken = await SecureStore.getItemAsync('accessToken');
+  const rToken = await SecureStore.getItemAsync('refreshToken');
 
   if (aToken) {
     accessToken = aToken;
@@ -36,7 +40,10 @@ const refreshAccessToken = async (options: any) => {
   }
 
   try {
-    const response = await apiCall({ method: 'GET', url: '/auth/refresh_token' });
+    const response = await apiCall<RefreshTokenResponse>({
+      method: 'GET',
+      url: '/auth/refresh-tokens',
+    });
     if (response?.access_token) {
       await setAccessToken(response?.access_token);
       await apiCall(options);
@@ -48,14 +55,18 @@ const refreshAccessToken = async (options: any) => {
 };
 
 export const apiCall = async <T>(
-  options: { method: string; url: string; data?: object | string },
+  options: { method: string; url: string; data?: object | string | FormData },
   refreshed: boolean = false,
 ): Promise<T> => {
-  console.log('APICall', options);
+  console.log('APICall', baseURL, options);
 
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-  };
+  const headers: Record<string, string> = {};
+
+  if (options.data instanceof FormData) {
+    headers['Content-Type'] = 'multipart/form-data';
+  } else {
+    headers['Content-Type'] = 'application/json';
+  }
 
   if (accessToken) {
     headers['Authorization'] = `Bearer ${accessToken}`;
@@ -67,7 +78,7 @@ export const apiCall = async <T>(
       url: `${baseURL}${options.url}`,
       headers,
       data: options.data,
-      timeout: 2000,
+      timeout: 10000,
     });
 
     return response.data;
