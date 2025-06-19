@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { ScrollView, Text, View, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -76,26 +76,14 @@ const ChatsListScreen = () => {
       });
       console.log('Odebrane dane z backendu:', fetchedChatsRaw);
 
-      const mappedChats: Chat[] = tutorFlag
-        ? fetchedChatsRaw.map((chat) => ({
-            id: chat.chat_id,
-            name: chat.their_full_name,
-            avatarUrl: chat.their_avatar_url || null,
-            lastMessage: chat.last_message_content || 'Brak wiadomości',
-            timestamp: chat.last_message_sent_at || '',
-            //unreadCount: chat.last_message_is_read ? 0 : 1,
-          }))
-        : fetchedChatsRaw.map((chatString) => {
-            const chat = JSON.parse(chatString);
-            return {
-              id: chat.chat_id || Date.now(),
-              name: chat.their_full_name || 'Nieznany użytkownik',
-              avatarUrl: chat.their_avatar_url || null,
-              lastMessage: chat.last_message_content || 'Brak wiadomości',
-              timestamp: chat.last_message_sent_at || '',
-              unreadCount: 0,
-            };
-          });
+      const mappedChats: Chat[] = fetchedChatsRaw.map((chat) => ({
+        id: chat.chat_id || Date.now(),
+        name: chat.their_full_name || 'Nieznany użytkownik',
+        avatarUrl: chat.their_avatar_url || null,
+        lastMessage: chat.last_message_content || 'Brak wiadomości',
+        timestamp: chat.last_message_sent_at || '',
+        unreadCount: 0,
+      }));
 
       setChats(mappedChats);
     } catch (err: any) {

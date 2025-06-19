@@ -201,7 +201,7 @@ export default function HomeScreen() {
 
   const navigateToTutorProfile = useCallback(
     (tutor_id: number) => {
-      navigation.navigate('TutorPublicProfile', { tutor_id });
+      navigation.navigate('TutorProfileScreen', { tutorId: tutor_id });
     },
     [navigation],
   );
