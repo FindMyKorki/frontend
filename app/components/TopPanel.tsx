@@ -5,7 +5,7 @@ import ModalAtButton from './ModalAtButton';
 import { useNavigation } from '@react-navigation/native';
 
 export type TopPanelProps = {
-  onBackPress: () => void;
+  onBackPress?: void;
   showSettings?: boolean;
   name?: string;
   image?: string;
@@ -14,7 +14,7 @@ export type TopPanelProps = {
 };
 
 const TopPanel = ({
-  onBackPress,
+  onBackPress = undefined,
   showSettings = false,
   name,
   image,
@@ -47,10 +47,12 @@ const TopPanel = ({
     <View
       className={`flex-row items-center justify-between px-4 py-2.5 bg-background ${className}`}
     >
+      {/* Back button */}
       <Pressable onPress={onBackPress} className="p-1">
-        <MaterialIcons name="arrow-back" size={24} color="black" />
+        <MaterialIcons name="arrow-back" size={24} color={onBackPress ? 'black' : 'transparent'} />
       </Pressable>
 
+      {/* Center: avatar and name */}
       {(name || image) && (
         <View className={`flex-1 flex-row items-center ${centerContentClassName}`}>
           {image && (
@@ -64,6 +66,7 @@ const TopPanel = ({
         </View>
       )}
 
+      {/* Settings dropdown */}
       {showSettings && (
         <ModalAtButton
           spaceBetween={4}

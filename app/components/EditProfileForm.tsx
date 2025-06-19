@@ -43,20 +43,25 @@ const ProfileForm: FC<ProfileFormProps> = ({
   const userFormDisplayed = true;
   const tutorFormDisplayed = !!auth.user?.profile?.is_tutor;
 
-  useEffect(() => {
-    if (userFormDisplayed) {
+  const validatePhone = (text: string) => {
+    const phoneRegex = /^\+?[0-9\s-]+$/;
+    if (phoneRegex.test(text) || text === '') {
+      setPhone(text);
+    } else {
+      console.warn('Nieprawidłowy format numeru telefonu');
     }
+  };
+
+  useEffect(() => {
     if (tutorFormDisplayed) {
       (async () => {
         const user = await getUser();
         setFullName(user?.profile?.full_name ?? '');
         setAvatar(user?.profile?.avatar_url ?? '');
-        if (user?.profile?.is_tutor) {
-          setEmail(user?.tutor_profile?.contact_email ?? '');
-          setPhone(user?.tutor_profile?.phone_number ?? '');
-          setBioLong(user?.tutor_profile?.bio_long ?? '');
-          setBio(user?.tutor_profile?.bio ?? '');
-        }
+        setEmail(user?.tutor_profile?.contact_email ?? '');
+        setPhone(user?.tutor_profile?.phone_number ?? '');
+        setBioLong(user?.tutor_profile?.bio_long ?? '');
+        setBio(user?.tutor_profile?.bio ?? '');
       })();
     }
   }, []);
@@ -132,7 +137,7 @@ const ProfileForm: FC<ProfileFormProps> = ({
 
   return (
     <View className="flex-1">
-      <TopPanel onBackPress={() => nav.goBack()} showSettings />
+      <TopPanel />
 
       <ScrollView className="flex-1 bg-background py-def-y px-def-x">
         <View className={'flex-1 items-center gap-y-4'}>
@@ -170,7 +175,7 @@ const ProfileForm: FC<ProfileFormProps> = ({
                 editable={!loading}
                 value={phone}
                 keyboardType={'phone-pad'}
-                onChangeText={setPhone}
+                onChangeText={validatePhone}
                 textContentType={'telephoneNumber'}
               />
               <LabeledTextInput
