@@ -2,6 +2,8 @@ import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 import Auth from '../../../assets/auth.svg';
 import AppButton from '../../components/AppButton';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 type LoginProps = {
   loading: false | 'google' | 'facebook';
@@ -26,7 +28,7 @@ const LoginScreen: FC<LoginProps> = ({ login, loading, authError }) => {
         <AppButton
           label={'Zaloguj się z Google'}
           className={'w-full mb-2'}
-          icon={'google'}
+          icon={<AntDesign name="google" size={20} color="white" />}
           disabled={!!loading}
           loading={loading === 'google'}
           onPress={() => login('google')}
@@ -34,7 +36,7 @@ const LoginScreen: FC<LoginProps> = ({ login, loading, authError }) => {
         <AppButton
           label={'Zaloguj się z Facebook'}
           className={'w-full mb-5'}
-          icon={'facebook'}
+          icon={<MaterialIcons name="facebook" size={20} color="white" />}
           disabled={!!loading}
           loading={loading === 'facebook'}
           onPress={() => login('facebook')}

@@ -72,7 +72,7 @@ const Button = ({
         <ActivityIndicator color={'#FFFFFF'} size={'small'} />
       ) : (
         <>
-          {icon && <Text className="mr-1">{icon}</Text>}
+          {icon && <Text className="mx-3">{icon}</Text>}
           <Text className={finalTextClass.trim()}>{label}</Text>
           {rightIcon && <Text className="ml-1">{rightIcon}</Text>}
         </>
