@@ -14,11 +14,11 @@ import TopPanel from './TopPanel';
 import { useNavigation } from '@react-navigation/native';
 
 type ProfileFormProps = {
-  navigateTo: () => void;
+  navigateTo?: () => void;
   buttonLabel: string;
 };
 
-const ProfileForm: FC<ProfileFormProps> = ({ navigateTo, buttonLabel }) => {
+const ProfileForm: FC<ProfileFormProps> = ({ navigateTo = () => {}, buttonLabel }) => {
   const auth = useAuth();
   const nav = useNavigation();
 
@@ -196,6 +196,7 @@ const ProfileForm: FC<ProfileFormProps> = ({ navigateTo, buttonLabel }) => {
             <Button
               label="Dodaj zdjęcie z aparatu"
               appearance="transparent"
+              className="self-center"
               onPress={async () => {
                 await getImageFromSource('camera');
                 setBottomModalVisible(false);
@@ -205,6 +206,7 @@ const ProfileForm: FC<ProfileFormProps> = ({ navigateTo, buttonLabel }) => {
             <Button
               label="Dodaj zdjęcie z galerii"
               appearance="transparent"
+              className="self-center"
               onPress={async () => {
                 await getImageFromSource('gallery');
                 setBottomModalVisible(false);
@@ -214,6 +216,7 @@ const ProfileForm: FC<ProfileFormProps> = ({ navigateTo, buttonLabel }) => {
             <Button
               label="Usuń zdjęcie"
               appearance="transparent"
+              className="self-center"
               onPress={() => {
                 setAvatar('');
                 setBottomModalVisible(false);

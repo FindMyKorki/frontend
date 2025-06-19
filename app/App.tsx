@@ -39,9 +39,9 @@ export default function App() {
       <StatusBar />
       <SafeAreaProvider testID={'App:SafeAreaProvider:AppContainer'}>
         <SafeAreaView className={`flex-1 bg-white justify-center align-center`}>
-          <AuthProvider>
-            <FiltersProvider>
-              <NavigationContainer>
+          <NavigationContainer>
+            <AuthProvider>
+              <FiltersProvider>
                 <Stack.Navigator screenOptions={{ navigationBarColor: 'white' }}>
                   <Stack.Screen
                     name="Tabs"
@@ -144,9 +144,9 @@ export default function App() {
                     options={{ headerShown: false }}
                   />
                 </Stack.Navigator>
-              </NavigationContainer>
-            </FiltersProvider>
-          </AuthProvider>
+              </FiltersProvider>
+            </AuthProvider>
+          </NavigationContainer>
         </SafeAreaView>
       </SafeAreaProvider>
     </>
