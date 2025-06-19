@@ -13,6 +13,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   signOut: () => Promise<void>;
 }
+const BACKEND_URL = process.env.EXPO_PUBLIC_API_BASE_URL!;
 
 interface OAuthResponse {
   oauth_response: { url: string };

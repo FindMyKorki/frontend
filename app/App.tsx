@@ -17,6 +17,7 @@ import {
   SearchScreen,
   SortOptionsScreen,
   UserDetailsScreen,
+  ReportChatScreen,
   LoginScreen,
   RoleScreen,
   CompleteProfileScreen,
@@ -98,8 +99,18 @@ export default function App() {
                     options={{ headerShown: false }}
                   />
                   <Stack.Screen
+                    name="TutorProfile"
+                    component={ProfileScreen}
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
                     name="Report"
                     component={ReportScreen}
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="ReportChat"
+                    component={ReportChatScreen}
                     options={{ headerShown: false }}
                   />
                   <Stack.Screen

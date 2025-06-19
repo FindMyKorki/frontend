@@ -14,15 +14,36 @@ import React from 'react';
 import { Colors } from '../../src/colors';
 import Calendar from '../components/Calendar';
 import TutorDescription from '../components/TutorDescription';
-//import { apiCall } from '../utils/ApiHandler';
+import { apiCall } from '../utils/ApiHandler';
 import EditAvailabilityScreen from '../screens/EditAvailabilityScreen';
 import { NavigationProp } from '@react-navigation/native';
+
+// Do przejścia w tryb edycji dostępności (nawigacja)
+type RootStackParamList = {
+  ProfileEditAvailability: undefined; // Brak parametrów dla tego ekranu
+  EditAvailability: undefined; // Brak parametrów dla tego ekranu
+  ChatScreen: { user: { id: string; userId: string } }; // Parametry dla ekranu czatu
+};
 
 const ProfileEditAvailability = () => {
   const [activeTab, setActiveTab] = useState('Oferty');
   const [bottomModalVisible, setBottomModalVisible] = useState(false);
   const [userType, setUserType] = useState('tutor'); // 'student' lub 'tutor'
-  const navigation = useNavigation<NavigationProp<typeof RootStackParamList>>();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+
+  const createChat = async (tutorId: string, studentId: string): Promise<any> => {
+    try {
+      const response = await apiCall({
+        method: 'POST',
+        url: '/chats',
+        data: { tutor_id: tutorId, student_id: studentId },
+      });
+      return response.chat;
+    } catch (error) {
+      console.error('Błąd tworzenia czatu:', error);
+      throw error;
+    }
+  };
 
   const reviewSortOptions = [
     'Po ocenie malejąco',
@@ -33,12 +54,6 @@ const ProfileEditAvailability = () => {
 
   const handleTabPress = (tab: string) => {
     setActiveTab(tab);
-  };
-
-  // Do przejścia w tryb edycji dostępności (nawigacja)
-  const RootStackParamList = {
-    ProfileEditAvailability: undefined, // Brak parametrów dla tego ekranu
-    EditAvailability: undefined, // Brak parametrów dla tego ekranu
   };
 
   return (
@@ -267,10 +282,27 @@ const ProfileEditAvailability = () => {
       <BottomPanelButtons
         leftButtonProps={{
           label: 'Wyślij wiadomość',
-          onPress: () => {
-            //@ts-expect-error
-            navigation.navigate('Chat');
+          onPress: async () => {
+            try {
+              const loggedUserId = '<ID_zalogowanego_użytkownika>';
+              const tutorId = '123';
+              const chat = await createChat(tutorId, loggedUserId);
+
+              if (chat && chat.id) {
+                navigation.navigate('ChatScreen', {
+                  user: {
+                    id: chat.id,
+                    userId: loggedUserId,
+                  },
+                });
+              } else {
+                console.error('Nie udało się utworzyć czatu');
+              }
+            } catch (error) {
+              console.error('Wystąpił błąd przy tworzeniu czatu:', error);
+            }
           },
+
           icon: <MaterialIcons name="chat-bubble" size={20} color="white" />,
         }}
         rightButtonProps={{
