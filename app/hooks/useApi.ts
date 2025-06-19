@@ -81,6 +81,30 @@ export const getUser = async (): Promise<User | null> => {
   }
 };
 
+export const createTutorProfile = async (
+  bio: string,
+  bioLong: string,
+  contactEmail: string,
+  phoneNumber: string,
+): Promise<string | null> => {
+  const url = '/tutors';
+  try {
+    return await apiCall({
+      method: 'POST',
+      url: url,
+      data: {
+        bio: bio,
+        bio_long: bioLong,
+        contact_email: contactEmail,
+        phone_number: phoneNumber,
+      },
+    });
+  } catch (e) {
+    console.error('POST', url, e);
+    return null;
+  }
+};
+
 export const getTutorProfile = async (tutorId: string): Promise<TutorProfile | null> => {
   const url = `/tutors/${tutorId}`;
   try {

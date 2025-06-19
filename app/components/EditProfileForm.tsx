@@ -3,7 +3,7 @@ import React, { useState, useEffect, FC } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from '../utils/AuthProvider';
 import LabeledTextInput from './LabeledTextInput';
-import { updateTutorInfo, updateUserProfile, getUser } from '../hooks/useApi';
+import { updateTutorInfo, updateUserProfile, getUser, createTutorProfile } from '../hooks/useApi';
 import ImageInput from './ImageInput';
 import BottomModal from './BottomModal';
 import Button from './AppButton';
@@ -16,9 +16,14 @@ import { useNavigation } from '@react-navigation/native';
 type ProfileFormProps = {
   navigateTo?: () => void;
   buttonLabel: string;
+  createProfile?: boolean;
 };
 
-const ProfileForm: FC<ProfileFormProps> = ({ navigateTo = () => {}, buttonLabel }) => {
+const ProfileForm: FC<ProfileFormProps> = ({
+  navigateTo = () => {},
+  buttonLabel,
+  createProfile = false,
+}) => {
   const auth = useAuth();
   const nav = useNavigation();
 
@@ -113,7 +118,11 @@ const ProfileForm: FC<ProfileFormProps> = ({ navigateTo = () => {}, buttonLabel 
     }
 
     if (tutorFormDisplayed) {
-      await updateTutorInfo(bio, bioLong, email, phone);
+      if (createProfile) {
+        await createTutorProfile(bio, bioLong, email, phone);
+      } else {
+        await updateTutorInfo(bio, bioLong, email, phone);
+      }
     }
 
     await auth.getSession();
