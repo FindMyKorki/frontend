@@ -137,7 +137,8 @@ const ProfileForm: FC<ProfileFormProps> = ({
 
   return (
     <View className="flex-1">
-      <TopPanel />
+      {createProfile && <TopPanel />}
+      {!createProfile && <TopPanel onBackPress={() => nav.goBack()} showSettings />}
 
       <ScrollView className="flex-1 bg-background py-def-y px-def-x">
         <View className={'flex-1 items-center gap-y-4'}>

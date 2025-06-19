@@ -5,7 +5,7 @@ import ModalAtButton from './ModalAtButton';
 import { useNavigation } from '@react-navigation/native';
 
 export type TopPanelProps = {
-  onBackPress?: void;
+  onBackPress?: () => void;
   showSettings?: boolean;
   name?: string;
   image?: string;
