@@ -34,7 +34,7 @@ const TutorOffer: FC<TutorOfferProps> = ({
         <Text className="text-sm font-bold text-left font-inter uppercase">{subject}</Text>
         <Text className="text-xs font-medium text-left font-inter mb-1">{educationLevel}</Text>
         {userType === 'tutor' && (
-          <Text className="text-xs font-bold text-left font-inter mb-1">{price}</Text>
+          <Text className="text-xs font-bold text-left font-inter mb-1">{price} zł</Text>
         )}
         <Text className="text-xs font-normal text-left font-inter mb-1 flex-1 max-w-[65%]">
           {description}
@@ -44,7 +44,7 @@ const TutorOffer: FC<TutorOfferProps> = ({
       <View className="flex flex-col items-end justify-center ml-4">
         {userType === 'student' ? (
           <View className="flex flex-col items-center">
-            <Text className="text-sm font-bold font-inter mb-2">{price}</Text>
+            <Text className="text-sm font-bold font-inter mb-2">{price} zł</Text>
             <Button
               label="Umów"
               onPress={() => {}}

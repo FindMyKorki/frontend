@@ -237,7 +237,16 @@ const TutorProfileScreen = () => {
           leftButtonProps={{
             label: 'Wyślij wiadomość',
             onPress: () => {
-              navigation.navigate('Chat' as never);
+              console.log(user);
+              navigation.navigate('Chat', {
+                user: {
+                  id: tutorId,
+                  userId: user?.id,
+                  isTutor: user?.profile?.is_tutor,
+                  name: user?.profile?.full_name,
+                  avatarUrl: user?.profile?.avatar_url,
+                },
+              });
             },
             icon: <MaterialIcons name="chat-bubble" size={20} color="white" />,
           }}
@@ -258,6 +267,7 @@ const TutorProfileScreen = () => {
             <Button
               label="Zadzwoń"
               appearance="transparent"
+              className="self-center"
               onPress={() => {
                 console.log(`Zadzwoń ${tutorProfile?.phone_number}`);
               }}
@@ -265,6 +275,7 @@ const TutorProfileScreen = () => {
             />
             <Button
               label="Wyślij SMS"
+              className="self-center"
               appearance="transparent"
               onPress={() => {
                 console.log(`Wyślij SMS ${tutorProfile?.phone_number}`);
