@@ -87,8 +87,10 @@ const ChatsListScreen = () => {
 
       setChats(mappedChats);
     } catch (err: any) {
-      console.error('Błąd ładowania czatów:', err.message);
-      setError('Nie udało się załadować czatów.');
+      if (err.message !== 'API error: Network Error') {
+        setError(err.message);
+      }
+      setChats([]);
     } finally {
       setLoading(false);
     }
